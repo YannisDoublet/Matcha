@@ -1,0 +1,184 @@
+@import url('https://fonts.googleapis.com/css?family=Poppins:300');
+
+.sign_up_container {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    flex-direction: column;
+}
+
+.valid_icon {
+    color: #9dc5ed;
+}
+
+.error_icon {
+    color: red;
+}
+
+.valid_input {
+    border: solid 2px #9dc5ed !important;
+}
+
+.error_input {
+    border: solid 2px red !important;
+}
+
+.input_container {
+    position: relative;
+}
+
+.input_container-enter {
+    transform: translateX(-50%);
+    opacity: 0;
+    transition: opacity 1.5s, transform 1s;
+}
+
+.input_container-enter-active {
+    transform: translateX(0);
+    opacity: 1;
+}
+
+.input_container-exit {
+    opacity: 1;
+}
+
+.input_container-exit-active {
+    opacity: 0;
+    transition: opacity 500ms ease-in;
+}
+
+
+.input_icon {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    top: 1.2rem;
+    left: 1.8rem;
+    transition: 1s;
+}
+
+.sign_up_input {
+    width: 27.5rem;
+    height: 2.5rem;
+    margin: 0.5rem;
+    border-radius: 10px;
+    border: none;
+    background-color: #e6e6e6;
+    font-family: 'Rubik', sans-serif;
+    font-size: 18px;
+    color: #666666;
+    padding-left: 3rem;
+    outline: none;
+    box-shadow: 1px 2px 4px lightgrey;
+}
+
+.sign_up_select {
+    width: 27.5rem;
+    height: 2.5rem;
+    margin: 0.5rem;
+    padding: 5px 35px 5px 5px;
+    background-color: #e6e6e6;
+    font-family: 'Rubik', sans-serif;
+    font-size: 16px;
+    border: none;
+    outline: none;
+    box-shadow: 1px 2px 4px lightgrey;
+}
+
+.sign_up_select-enter {
+    transform: translateX(-50%);
+    opacity: 0;
+    transition: opacity 1.5s, transform 1s;
+}
+
+.sign_up_select-enter-active {
+    transform: translateX(0);
+    opacity: 1;
+}
+
+.sign_up_select-exit {
+    opacity: 1;
+}
+
+.sign_up_select-exit-active {
+    opacity: 0;
+    transition: opacity 500ms ease-in;
+}
+
+.button_container {
+    display: flex;
+    justify-content: center;
+    align-content: center;
+}
+
+.sign_up_button {
+    width: 9rem;
+    height: 2.5rem;
+    margin: 0.5rem 0 0 1rem;
+    border-radius: 25px;
+    background-color: white;
+    font-size: 1.5rem;
+    font-family: Rubik, serif;
+    outline: none;
+    border: solid 2px #9dc5ed;
+    cursor: pointer;
+}
+
+.sign_up_button-enter {
+    transform: translateX(-75%);
+    opacity: 0;
+    transition: opacity 1.5s, transform 1s;
+}
+
+.sign_up_button-enter-active {
+    transform: translateX(0);
+    opacity: 1;
+}
+
+.sign_up_button-exit {
+    opacity: 1;
+}
+
+.sign_up_button-exit-active {
+    opacity: 0;
+    transition: opacity 500ms ease-in;
+}
+
+.sign_up_button:hover {
+    box-shadow: 1px 2px 8px #9dc5ed;
+}
+
+@media screen and (max-width: 1160px) {
+    .sign_up_container {
+        width: 86%;
+    }
+
+    div[class*='-enter'], select[class*='-enter'],button[class*='-enter'],p[class*='-enter'] {
+        transform: translateY(0%);
+        opacity: 1;
+    }
+
+    div[class*='-enter-active'], select[class*='-enter-active'],button[class*='-enter-active'],p[class*='-enter-active'] {
+        transform: translateY(0%);
+        opacity: 1;
+    }
+
+    div[class*='-enter-done'], select[class*='-enter-done'],button[class*='-enter-done'],p[class*='-enter-done'] {
+        transform: translateY(0%);
+        opacity: 1;
+    }
+}
+
+@media screen and (max-width: 650px) {
+    .sign_up_container {
+        width: 100%;
+    }
+
+    .sign_up_input {
+        width: 17rem;
+    }
+
+    .sign_up_select {
+        width: 17rem;
+    }
+}

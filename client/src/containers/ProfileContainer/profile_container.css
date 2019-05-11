@@ -1,0 +1,137 @@
+body {
+    background: rgb(251,252,252);
+    min-width: 244px;
+}
+
+#banner_pic_container {
+    width: 100vw;
+    height: 20rem;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    z-index: -1;
+}
+
+#profile_content_container {
+    display: grid;
+    grid-template-columns: auto 15rem minmax(0, 1000px) auto;
+    grid-template-areas: 'empty1 profile_card profile_content empty2';
+}
+
+#profile_content {
+    grid-area: profile_content;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#bio_container {
+    width: 80%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background: #FFFFFF;
+    box-shadow: 1px 1px 5px 1px lightgray;
+    border-radius: 15px;
+    margin: 1rem;
+}
+
+#bio_title {
+    color: rgb(179, 181, 183);
+    margin: 1rem;
+}
+
+#bio_content {
+    margin: 0 1rem 1rem 1rem;
+}
+
+#gallery_container {
+    width: 80%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background: #FFFFFF;
+    box-shadow: 1px 1px 5px 1px lightgray;
+    border-radius: 15px;
+    margin: 1rem;
+}
+
+#gallery_title {
+    color: rgb(179, 181, 183);
+    margin: 1rem 1rem 0.5rem 1rem;
+}
+
+#gallery_content {
+    display: flex;
+    margin: 0.5rem 1rem 1rem 1rem;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+}
+
+.gallery_picture {
+    flex: 0 0 auto;
+    width: 10rem;
+    height: 10rem;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    margin: 0 0.5rem;
+}
+
+#tag_container {
+    width: 80%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background: #FFFFFF;
+    box-shadow: 1px 1px 5px 1px lightgray;
+    border-radius: 15px;
+    margin: 1rem;
+}
+
+#tag_title {
+    color: rgb(179, 181, 183);
+    margin: 1rem 0 0 1rem;
+}
+
+#map_container {
+    width: 80%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background: #FFFFFF;
+    box-shadow: 1px 1px 5px 1px lightgray;
+    border-radius: 15px;
+    margin: 1rem;
+}
+
+#map_title {
+    color: rgb(179, 181, 183);
+    margin: 1rem 0 0 1rem;
+}
+
+#map_wrapper {
+    position: relative;
+    margin: 1rem 0 1rem 0.85rem;
+    width: 97%;
+    height: 20rem;
+}
+
+@media screen and (max-width: 1024px) {
+    #profile_content_container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    #profile_content {
+        width: 100vw;
+    }
+
+    #map_wrapper {
+        position: relative;
+        margin: 1rem 0 1rem 0.25rem;
+        width: 97%;
+        height: 20rem;
+    }
+}

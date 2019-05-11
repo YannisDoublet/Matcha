@@ -1,0 +1,208 @@
+/* GENERAL CSS */
+
+@import url('https://fonts.googleapis.com/css?family=Rubik');
+
+p {
+    margin: 0;
+}
+
+* {
+    font-family: Rubik, sans-serif;
+}
+
+button {
+    border-radius: 25px;
+    text-decoration: none;
+    outline: none;
+}
+
+/* PROFILE PAGE CSS */
+
+#profile .card {
+    grid-area: profile_card;
+    width: 15rem;
+    display: flex;
+    flex-direction: column;
+    margin-top: -8rem;
+}
+
+#profile #profile_pic {
+    width: 10rem;
+    height: 10rem;
+    border-radius: 50%;
+    align-self: center;
+    margin: 1rem 0;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+#profile #name {
+    text-align: center;
+    font-size: 1.33rem;
+}
+
+#profile #username {
+    align-self: center;
+    color: rgb(173, 172, 178);
+    font-style: italic;
+}
+
+#profile #gender_container {
+    display: flex;
+    justify-content: center;
+    margin-top: 1rem;
+}
+
+#profile #gender {
+    display: flex;
+    flex-direction: row;
+}
+
+#profile .fa-mars {
+    font-size: 1.8rem;
+    color: red;
+}
+
+#profile #gender_status {
+    align-self: center;
+    margin: 0 0.5rem;
+    font-size: 1.2rem;
+}
+
+#profile #sexuality {
+    display: flex;
+    flex-direction: row;
+}
+
+#profile .fa-venus-mars {
+    font-size: 1.5rem;
+    color: red;
+}
+
+#profile #orientation {
+    align-self: center;
+    margin: 0 0.5rem;
+    font-size: 1.2rem;
+}
+
+#profile #infos {
+    display: flex;
+    justify-content: center;
+    margin-top: 1rem;
+}
+
+#profile #location {
+    display: flex;
+    flex-direction: row;
+}
+
+#profile .fa-map-marker-alt {
+    font-size: 1.2rem;
+    color: red;
+}
+
+#profile #city {
+    align-self: center;
+    margin: 0 0.5rem;
+    font-size: 1rem;
+}
+
+#profile #popularity {
+    display: flex;
+    flex-direction: row;
+}
+
+#profile .fa-star {
+    color: gold;
+    font-size: 1.2rem;
+    margin: 0 0.5rem;
+}
+
+#profile #score {
+    align-self: center;
+    font-size: 1.2rem;
+}
+
+#profile #connection_status {
+    margin-top: 1rem;
+    align-self: center;
+}
+
+#profile #status_online::before {
+    display: inline-block;
+    content: '';
+    width: 5px;
+    height: 5px;
+    margin-right: 0.5rem;
+    background: lightgreen;
+    border-style: solid;
+    border-color: lightgreen;
+    border-radius: 50%;
+    box-shadow: 1px 1px 10px 2px lawngreen;
+}
+
+#profile #status_offline::before {
+    display: inline-block;
+    content: '';
+    width: 5px;
+    height: 5px;
+    margin-right: 0.5rem;
+    background: #FF1744;
+    border-style: solid;
+    border-color: #FF1744;
+    border-radius: 50%;
+    box-shadow: 1px 1px 10px 1px red;
+}
+
+#profile #interactions {
+    display: flex;
+    justify-content: space-evenly;
+    margin: 1rem;
+}
+
+#profile #like_button {
+    width: 5rem;
+    border: solid 2px #9dc5ed;
+    background: #FFFFFF;
+    cursor: pointer;
+    box-shadow: 1px 1px 10px lightgray;
+    transition: 0.3s;
+}
+
+#profile #like_button:hover {
+    box-shadow: 1px 1px 10px #9dc5ed;
+}
+
+#profile #unlike_button {
+    width: 5rem;
+    border: solid 2px #FFFFFF;
+    background: #9dc5ed;
+    cursor: pointer;
+    color: #FFFFFF;
+    box-shadow: 1px 1px 10px lightgray;
+    transition: 0.3s;
+}
+
+#profile #unlike_button:hover {
+    box-shadow: 1px 1px 10px #FFFFFF;
+}
+
+#profile #report {
+    width: 5rem;
+    color: white;
+    background-color: red;
+    cursor: pointer;
+    border: solid 1px red;
+    transition: 0.3s;
+    padding: 0.5rem;
+}
+
+#profile #report:hover {
+    box-shadow: 1px 1px 10px red;
+}
+
+/* RESEARCH PAGE CSS */
+
+#recherche .card {
+
+}

@@ -1,0 +1,162 @@
+
+p {
+    margin: 0;
+}
+
+.active_button {
+    border-bottom: solid 5px rgba(253, 103, 134, 0.8);
+}
+
+.container {
+    width: 100vw;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-image: linear-gradient(to bottom right, rgb(104,103,246), white);
+}
+
+.login_container {
+    display: grid;
+}
+
+.logo2 {
+    width: 40px;
+    height: 40px;
+    transition: .3s;
+}
+
+.title {
+    margin-left: 1.5rem;
+    font-size: 1.5rem;
+    font-weight: 100;
+    color: white;
+}
+
+.login_nav {
+    display: flex;
+    align-items: center;
+    font-family: Rubik, sans-serif;
+}
+
+.login_content {
+    display: flex;
+    justify-content: space-between;
+    width: 70rem;
+    height: 35rem;
+    background-color: #fff;
+    border-radius: 30px;
+}
+
+.login_picture {
+    width: 50%;
+    z-index: 3;
+}
+
+.picture {
+    position: relative;
+    top: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+}
+
+.login_forms {
+    display: flex;
+    justify-content: center;
+}
+
+.login_error {
+    width: 20rem;
+    height: 3rem;
+    color: white;
+    background: #FF1744;
+    z-index: 10;
+    position: fixed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 2rem;
+    border-radius: 10px;
+    font-family: Rubik, sans-serif;
+    font-size: 16px;
+    box-shadow: 2px 2px 15px #FF1744;
+    transition: 0.3s;
+}
+
+.login_box {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 35rem;
+    transition: 0.3s;
+}
+
+.login_option {
+    display: flex;
+    width: 100%;
+    height: 3rem;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    font-family: Rubik, serif;
+    font-size: 1.3rem;
+}
+
+.login_sign_in_button {;
+    margin-left: 2rem;
+    width: 6rem;
+    height: 2rem;
+    transition: .2s;
+}
+
+.login_sign_in_button:hover {
+    border-bottom: solid 5px rgba(253, 103, 134, 0.8);
+    cursor: pointer;
+}
+
+.login_sign_up_button {
+    margin-right: 2rem;
+    width: 6rem;
+    height: 2rem;
+    transition: .2s;
+}
+
+.login_sign_up_button:hover {
+    border-bottom: solid 5px rgba(253, 103, 134, 0.8);
+    cursor: pointer;
+}
+
+@media screen and (max-width: 1160px) {
+    .login_content {
+        width: 30rem;
+    }
+
+    .login_option {
+        width: 86%;
+    }
+
+    .login_error {
+        margin-left: -2.5rem;
+    }
+}
+
+@media screen and (max-width: 650px) {
+    .login_content {
+        width: 20rem;
+    }
+
+    .login_forms {
+        width: 100%;
+    }
+
+    .login_option {
+        width: 100%;
+    }
+
+    .login_error {
+        padding-left: 0.3rem;
+        width: 10rem;
+        margin-left: 0;
+    }
+}

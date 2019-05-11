@@ -1,0 +1,18 @@
+#matcher_container {
+    width: 100vw;
+    height: calc(100vh - 4rem - 9.5rem);
+    margin-top: 4rem;
+}
+
+#selector_container {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    background: red;
+}
+
+@media screen and (max-width: 375px) {
+    #matcher_container {
+        height: calc(100vh - 4rem - 7rem);
+    }
+}

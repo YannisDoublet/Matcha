@@ -1,0 +1,18 @@
+@import url('https://fonts.googleapis.com/css?family=Rubik');
+@import url('https://fonts.googleapis.com/css?family=Bree+Serif');
+
+* {
+    box-sizing: border-box;
+}
+
+.centered {
+    display: grid;
+    align-items: center;
+    justify-items: center;
+    width: 100vw;
+}
+
+.centered > div {
+    max-width: 1000px;
+    width: 100%;
+}

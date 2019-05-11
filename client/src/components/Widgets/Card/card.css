@@ -1,0 +1,101 @@
+.grid_container {
+    display: grid;
+    width: 100vw;
+    grid-template-columns: auto minmax(0, 1000px) auto;
+    grid-template-areas: "empty1 content empty2";
+}
+
+.content {
+    position: relative;
+    grid-area: content;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: center;
+}
+
+.content .vl {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translate(-50%);
+    width: 1px;
+    height: 100%;
+    border-right: solid 5px red;
+    z-index: -1;
+}
+
+.card_grid {
+    display: grid;
+    width: 80%;
+    height: 12rem;
+    margin: 2rem 0;
+    grid-template-columns: minmax(0, 250px) auto;
+    grid-template-areas: "picture content";
+    background-color: whitesmoke;
+    border: solid 1px lightgray;
+    border-radius: 10px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+    transition: all 0.3s cubic-bezier(.25, .8, .25, 1);
+}
+
+.card_grid:hover {
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+    transform: translate3d(-5px, -5px, 0);
+}
+
+.card_img {
+    grid-area: picture;
+    background-image: url("/assets/undraw_intense_feeling_ft9s.svg");
+    background-size: 95%;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.card_content {
+    display: flex;
+    /*justify-content: center;*/
+    /*align-items: center;*/
+    flex-direction: column;
+    margin: 0 0.5rem;
+}
+
+.card_title {
+    font-family: 'Bree Serif', serif;
+    font-size: 4rem;
+    align-self: center;
+    margin: 1rem 1rem 1rem 0;
+}
+
+.card_desc {
+    font-family: Rubik, serif;
+    font-size: 1rem;
+}
+
+@media screen and (max-width: 541px) {
+
+    .card_grid {
+        width: 90%;
+        height: 9rem;
+        margin: 1rem 0;
+        padding: 5px;
+    }
+
+    .card_title {
+        font-size: 2rem;
+    }
+}
+
+@media screen and (min-width: 542px) {
+    .content > div:nth-child(odd) {
+        align-self: flex-start;
+    }
+
+    .content > div:nth-child(even) {
+        align-self: flex-end;
+    }
+
+    .card_desc {
+        align-self: center;
+    }
+}

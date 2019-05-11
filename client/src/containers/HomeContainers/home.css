@@ -1,0 +1,12 @@
+body {
+    margin: 0;
+    padding: 0;
+}
+
+.home_image {
+    width: 100vw;
+    height: 50vh;
+    background: url('/assets/people-2562102_1280.jpg') center no-repeat;
+    background-size: cover;
+    /*filter: grayscale(100%);*/
+}

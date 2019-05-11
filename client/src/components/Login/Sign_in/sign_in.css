@@ -1,0 +1,230 @@
+.sign_in_container {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    flex-direction: column;
+}
+
+.line {
+    width: 50%;
+    border: solid 1px lightgray;
+    box-shadow: 1px 1px 2px lightgray;
+    margin: 1rem 0;
+}
+
+.line-enter {
+    transform: translateY(50%);
+    opacity: 0;
+    transition: opacity 1.5s, transform 1s;
+}
+
+.line-enter-active {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.line-exit {
+    opacity: 1;
+}
+
+.line-exit-active {
+    opacity: 0;
+    transition: opacity 500ms ease-in;
+}
+
+.input_container_sign_in {
+    position: relative;
+}
+
+.input_container_sign_in-enter {
+    transform: translateY(50%);
+    opacity: 0;
+    transition: opacity 1.5s, transform 1s;
+}
+
+.input_container_sign_in-enter-active {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.input_container_sign_in-exit {
+    opacity: 1;
+}
+
+.input_container_sign_in-exit-active {
+    opacity: 0;
+    transition: opacity 500ms ease-in;
+}
+
+.input_icon {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    top: 1.2rem;
+    left: 1.8rem;
+    transition: 1s;
+}
+
+.sign_in_input {
+    width: 27.5rem;
+    height: 2.5rem;
+    margin: 0.5rem;
+    border-radius: 10px;
+    border: none;
+    background-color: #e6e6e6;
+    font-family: 'Rubik', sans-serif;
+    font-size: 18px;
+    color: #666666;
+    padding-left: 3rem;
+    outline: none;
+    box-shadow: 1px 1px 2px lightgray;
+}
+
+.button_container {
+    display: flex;
+    justify-content: center;
+    align-content: center;
+}
+
+.sign_in_button {
+    width: 7.5rem;
+    height: 2.5rem;
+    margin: 0.5rem;
+    border-radius: 25px;
+    font-size: 1.25rem;
+    background-color: white;
+    font-family: Rubik, serif;
+    transition: 0.3s;
+    outline: none;
+    border: solid 2px #9dc5ed;
+    cursor: pointer;
+}
+
+.sign_in_button-enter {
+    transform: translateY(50%);
+    opacity: 0;
+    transition: opacity 1.5s, transform 1s;
+}
+
+.sign_in_button-enter-active {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.sign_in_button-exit {
+    opacity: 1;
+}
+
+.sign_in_button-exit-active {
+    opacity: 0;
+    transition: opacity 500ms ease-in;
+}
+
+button:hover {
+    box-shadow: 1px 2px 8px #9dc5ed;
+}
+
+.sign_in_option_text {
+    font-family: Rubik, serif;
+    font-size: 16px;
+}
+
+.sign_in_option_text-enter {
+    transform: translateY(50%);
+    opacity: 0;
+    transition: opacity 1.5s, transform 1s;
+}
+
+.sign_in_option_text-enter-active {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.sign_in_option_text-exit {
+    opacity: 1;
+}
+
+.sign_in_option_text-exit-active {
+    opacity: 0;
+    transition: opacity 500ms ease-in;
+}
+
+.OAUTH_container {
+    display: flex;
+    justify-content: space-between;
+    align-content: center;
+    width: 50%;
+    margin: 1rem;
+}
+
+.OAUTH_button {
+    display: flex;
+    justify-content: center;
+    width: 4.5rem;
+    height: 2.5rem;
+    border-radius: 25px;
+    background-color: white;
+    font-size: 1.5rem;
+    font-family: Rubik, serif;
+    transition: 0.3s;
+    outline: none;
+    border: solid 2px #9dc5ed;
+    cursor: pointer;
+}
+
+.OAUTH_button-enter {
+    transform: translateY(50%);
+    opacity: 0;
+    transition: opacity 1.5s, transform 1s;
+}
+
+.OAUTH_button-enter-active {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.OAUTH_button-exit {
+    opacity: 1;
+}
+
+.OAUTH_button-exit-active {
+    opacity: 0;
+    transition: opacity 500ms ease-in;
+}
+
+.fa-facebook-f {
+    color: rgb(61, 94, 158)
+}
+
+.fa-twitter {
+    color: rgb(41, 163, 239)
+}
+
+@media screen and (max-width: 1160px) {
+    .sign_in_container {
+        width: 86%;
+    }
+}
+
+@media screen and (max-width: 650px) {
+    .sign_in_container {
+        width: 100%;
+    }
+
+    .sign_in_input {
+        width: 17rem;
+    }
+
+    .sign_in_select {
+        width: 17rem;
+    }
+
+    .sign_up_button {
+        width: 6rem;
+        font-size: 1.15rem;
+    }
+
+    .OAUTH_container {
+        width: 75%;
+    }
+}

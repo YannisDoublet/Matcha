@@ -1,0 +1,54 @@
+.footer_container {
+    position: absolute;
+    bottom: 0;
+    width: 100vw;
+    height: 9.5rem;
+    background-color: #232F3E;
+    color: white;
+    font-family: Rubik, serif;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-areas: "info contact author";
+}
+
+.footer_info {
+    grid-area: info;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+.footer_title {
+    margin: 1rem 0 0 0;
+    text-align: center;
+}
+
+.footer_info_desc {
+    width: 20vw;
+    color: #DDD;
+    font-size: 12px;
+}
+
+.footer_author {
+    grid-area: author;
+}
+
+.footer_contact {
+    grid-area: contact;
+}
+
+@media screen and (max-width: 541px) {
+    .footer_container {
+        height: 7rem;
+    }
+
+    .footer_title {
+        font-size: 14px;
+    }
+
+    .footer_info_desc {
+        width: 100%;
+        font-size: 9px;
+    }
+}

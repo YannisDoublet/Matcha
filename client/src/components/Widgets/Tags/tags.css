@@ -1,0 +1,61 @@
+/* GENERAL CSS */
+
+
+/* PROFILE PAGE CSS */
+
+#profile #tags_container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+#profile .tag {
+    padding: 0.5rem;
+    margin: 0.5rem;
+    color: white;
+    background: rgb(70, 95, 196);
+    border-radius: 25px;
+    align-self: center;
+}
+
+/* MATCHER PAGE CSS */
+
+#input_tag_container #tags_container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+#input_tag_container .tag {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem;
+    margin: 0.5rem;
+    color: white;
+    background: rgb(70, 95, 196);
+    border-radius: 5px;
+    align-self: center;
+    cursor: pointer;
+}
+
+#input_tag_container .tag::before {
+    content: '#';
+    color: #FFFFFF;
+}
+
+
+#input_tag_container .tag > span {
+    white-space: nowrap;
+    max-width: 20rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#input_tag_container .tag::after {
+    content: '';
+    background: url('/assets/cancel-music.svg') no-repeat;
+    width: 0.75rem;
+    height: 0.75rem;
+    margin-left: 0.5rem;
+}

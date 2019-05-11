@@ -1,0 +1,121 @@
+* {
+    font-family: Rubik, sans-serif;
+}
+
+.active {
+    border-bottom: solid 5px red;
+}
+
+#popUp_container {
+    position: fixed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    min-height: 100vh;
+    background: rgba(50, 50, 50, 0.4);
+    z-index: 10;
+}
+
+#popUp_box {
+    width: 20rem;
+    border-radius: 5px;
+    background: #FFFFFF;
+}
+
+#popUp_choice {
+    display: flex;
+    justify-content: space-around;
+    font-weight: bold;
+    color: red;
+    font-size: 1.5rem;
+    margin: 1rem;
+}
+
+#popUp_choice > div {
+    cursor: pointer;
+}
+
+/* REPORT SECTION CSS */
+
+#report_container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#report_select {
+    width: 80%;
+    height: 1.7rem;
+    border-radius: 5px;
+    outline: none;
+    cursor: pointer;
+    margin-bottom: 1rem;
+}
+
+#select_error {
+    color: red;
+    margin-top: -0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+#report_message {
+    resize: none;
+    width: 80%;
+    height: 10rem;
+    border-radius: 5px;
+    outline: none;
+    margin-bottom: 1rem;
+}
+
+#report_button {
+    width: 5rem;
+    color: white;
+    outline: none;
+    text-decoration: none;
+    background-color: red;
+    cursor: pointer;
+    border: solid 1px red;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+    transition: 0.3s;
+}
+
+#report_button:hover {
+    box-shadow: 1px 1px 10px red;
+}
+
+/* BLOCK CSS SECTION */
+
+#block_container {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    flex-direction: column;
+}
+
+#block_warning {
+    margin: 0 1rem;
+    font-weight: bold;
+    color: red;
+    font-style: italic;
+    font-size: 1.05rem;
+}
+
+#block_button {
+    width: 40%;
+    color: white;
+    background: red;
+    border: none;
+    height: 2rem;
+    align-self: center;
+    margin: 1rem;
+    cursor: pointer;
+}
+
+@media screen and (max-width: 480px) {
+    #popUp_box {
+        width: 15rem;
+    }
+}

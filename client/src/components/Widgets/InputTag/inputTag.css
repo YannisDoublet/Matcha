@@ -1,0 +1,30 @@
+
+/* GLOBAL CSS */
+
+/* MATCHER PAGE CSS */
+
+#input_tag_container {
+    width: 30rem;
+    background: lightpink;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.fa-search {
+    display: flex;
+    align-self: center;
+    font-size: 1.25rem;
+    margin: 0.5rem 0.5rem 0.5rem 1rem;
+}
+
+#input_tag {
+    outline: none;
+    text-decoration: none;
+    background: transparent;
+    border: none;
+    border-bottom: solid 0.10rem rgb(179, 181, 183);
+    margin: 0.5rem;
+    font-size: 1.10rem;
+}
