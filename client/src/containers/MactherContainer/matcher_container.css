@@ -1,14 +1,36 @@
 #matcher_container {
     width: 100vw;
-    height: calc(100vh - 4rem - 9.5rem);
-    margin-top: 4rem;
+    height: calc(100vh - 5rem - 9.5rem);
+    margin-top: 5rem;
 }
 
-#selector_container {
-    width: 100%;
+#searchbar_container {
+    width: 97%;
     display: flex;
+    min-height: 50px;
+    align-items: center;
+    background: #FFFFFF;
+    border-bottom: solid 2px rgb(242, 243, 249);
+    margin: 1rem;
+}
+
+#container_title {
+    width: 100%;
+    text-align: center;
+    font-size: 1.3rem;
+    border-bottom: solid 2px rgb(242, 243, 249);
+    padding: 0.5rem;
+    font-weight: bold;
+}
+
+#research_container {
+    width: 25%;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
     justify-content: space-around;
-    background: red;
+    background: #FFFFFF;
+    margin: 1rem;
 }
 
 @media screen and (max-width: 375px) {

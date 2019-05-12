@@ -3,28 +3,54 @@
 
 /* MATCHER PAGE CSS */
 
-#input_tag_container {
-    width: 30rem;
-    background: lightpink;
+#matcher_container #input_tag_container {
+    width: 100%;
     border-radius: 5px;
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
 }
 
-.fa-search {
+#matcher_container .fa-search {
     display: flex;
     align-self: center;
     font-size: 1.25rem;
     margin: 0.5rem 0.5rem 0.5rem 1rem;
 }
 
-#input_tag {
+#matcher_container #form_container {
+    position: relative;
+}
+
+#matcher_container #input_tag {
     outline: none;
     text-decoration: none;
     background: transparent;
     border: none;
-    border-bottom: solid 0.10rem rgb(179, 181, 183);
     margin: 0.5rem;
     font-size: 1.10rem;
+}
+
+#matcher_container #autocomplete_container {
+    position: absolute;
+    width: 11.80rem;
+    top: calc(23px + 0.5rem);
+    left: 0.5rem;
+    border-radius: 5px;
+    z-index: 10;
+}
+
+#matcher_container .suggestion {
+    border: solid 1px rgb(179, 181, 183);
+    background: #FFFFFF;
+    padding: 0.5rem;
+}
+
+#matcher_container .suggestion-active {
+    background: rgb(70, 95, 196);
+    padding: 0.5rem;
+    color: white;
+}
+
+@media screen and (max-width: 375px) {
+    #matcher_container #input_tag {
+        width: 19rem;
+    }
 }

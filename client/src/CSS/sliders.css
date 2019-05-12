@@ -1,0 +1,46 @@
+.noUi-handle {
+    border: none;
+    border-radius: 100%;
+    outline: none;
+    background: rgb(70, 95, 196);
+    box-shadow: none;
+}
+
+.noUi-connect {
+    background: rgb(70, 95, 196)
+}
+
+html:not([dir="rtl"]) .noUi-horizontal .noUi-handle {
+    right: -10px;
+    left: auto;
+}
+
+.noUi-handle:before, .noUi-handle:after {
+    display: none;
+}
+
+.noUi-horizontal .noUi-handle {
+    width: 20px;
+    height: 20px;
+    left: -20px;
+    top: -6px;
+}
+
+.noUi-pips-horizontal {
+    padding: 10px 0;
+    height: 20px;
+    top: 100%;
+    left: 0;
+    width: 100%;
+}
+
+.noUi-value {
+    top: 20px
+}
+
+.noUi-tooltip {
+    display: none;
+}
+.noUi-active .noUi-tooltip {
+    display: block;
+}

@@ -2,6 +2,7 @@
     position: relative;
     padding: 0 0 9.5rem 0;
     min-height: 100vh;
+    background: rgb(248, 249, 255);
 }
 
 #container {

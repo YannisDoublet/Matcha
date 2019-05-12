@@ -4,8 +4,8 @@ import './tags.css'
 const Tags = (props) => {
     const renderTags = (tags) => {
         return tags.map((tag, i) => (
-            <div key={i} className={'tag'} onClick={props.delete}>
-                <span>{tag}</span>
+            <div key={i} className={'tag'} id={i} onClick={(evt) => props.delete(evt)}>
+                <span id={i}>{tag}</span>
             </div>
         ));
     };

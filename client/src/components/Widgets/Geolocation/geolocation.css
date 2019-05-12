@@ -1,0 +1,18 @@
+#geolocation_container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 7rem;
+    align-items: center;
+    border-bottom: solid 2px rgb(242, 243, 249);
+}
+
+#title {
+    margin-top: 1rem;
+}
+
+#slider {
+    margin: 1rem;
+    width: 80%;
+    height: 10px;
+}
