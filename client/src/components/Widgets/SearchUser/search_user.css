@@ -1,0 +1,20 @@
+#search_user_container {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.fa-user {
+    color: rgb(70, 95, 196);
+    align-self: center;
+    font-size: 1.5rem;
+}
+
+#search_user_input {
+    width: 70%;
+    border-radius: 5px;
+    border: none;
+    margin: 1rem;
+    outline: none;
+    text-decoration: none;
+}

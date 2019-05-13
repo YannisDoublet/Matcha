@@ -1,0 +1,11 @@
+#select_container {
+    display: flex;
+    justify-content: space-around;
+}
+
+.select {
+    margin: 1rem;
+    width: 40%;
+    border: solid 1px rgb(70, 95, 196);
+    outline: none;
+}

@@ -81,7 +81,7 @@ class ProfileContainer extends Component {
         let popUp = this.state.popUp;
         return (
             <div id={'profile'}>
-                {alert.status ? <Alert alert={alert} handleAlert={this.handleAlert}/> : null}
+                <Alert alert={alert} handleAlert={this.handleAlert}/>
                 {popUp ? <ReportPopUp popUp={this.showReport} alert={alert}
                                       handleAlert={this.handleAlert} closePopUp={this.closePopUp}/>
                                       : null}

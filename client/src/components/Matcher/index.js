@@ -1,6 +1,6 @@
 import React from 'react';
 
-import MatcherContainer from '../../containers/MactherContainer'
+import MatcherContainer from '../../containers/MatcherContainer'
 
 const Matcher = (props) => {
     return (

@@ -196,7 +196,6 @@ class SignUpStep1 extends Component {
 
     render() {
         const settings = this.props;
-        console.log(settings.data);
         return (
             <div className={'sign_up_container'}>
                 {this.fetchInput(settings.data)}

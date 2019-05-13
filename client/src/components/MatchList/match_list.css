@@ -1,0 +1,6 @@
+#matchlist_container {
+    margin: 1rem;
+    width: 70%;
+    overflow-y: scroll;
+    max-height: 820px;
+}

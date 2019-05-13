@@ -1,4 +1,5 @@
 import React from 'react'
+import {Link} from 'react-router-dom'
 import './profile_card.css'
 
 // import Tags from '../Tags'
@@ -11,21 +12,21 @@ const ProfileCard = (props) => {
             <p id={'username'}>Zucky47</p>
             <div id={'gender_container'}>
                 <div id={'gender'}>
-                    <i className="fas fa-mars" />
+                    <i className="fas fa-mars"/>
                     <p id={'gender_status'}>Man</p>
                 </div>
                 <div id={'sexuality'}>
-                    <i className="fas fa-venus-mars" />
+                    <i className="fas fa-venus-mars"/>
                     <p id={'orientation'}>Heterosexual</p>
                 </div>
             </div>
             <div id={'infos'}>
                 <div id={'location'}>
-                    <i className="fas fa-map-marker-alt" />
+                    <i className="fas fa-map-marker-alt"/>
                     <p id={'city'}>San Francisco, USA</p>
                 </div>
                 <div id={'popularity'}>
-                    <i className="fas fa-star" />
+                    <i className="fas fa-star"/>
                     <p id={'score'}>95</p>
                 </div>
             </div>
@@ -38,8 +39,12 @@ const ProfileCard = (props) => {
                 <button id={'like_button'} onClick={props.like}>Like</button>}
                 {props.match.path === '/profile' && props.like_status === 1 &&
                 <button id={'unlike_button'} onClick={props.like}>Unlike</button>}
-                {props.match.path === '/search' && <button id={'view_button'}>Profile</button>}
-                <button id={'report'} onClick={props.report}>Report</button>
+                {props.match.path === '/profile' &&
+                <button id={'report'} onClick={props.report}>Report</button>}
+                {props.match.path === '/match' &&
+                <Link to={'/profile'}>
+                    <button id={'report'}>Profile</button>
+                </Link>}
             </div>
         </div>
     );

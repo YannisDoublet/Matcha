@@ -9,6 +9,12 @@
     height: 4rem;
     max-height: 5rem;
     background: lightgreen;
+    margin-top: -5rem;
+    transition: margin-top ease-in 0.5s;
+}
+
+.active_alert {
+    margin-top: 0 !important;
 }
 
 #alert_message {

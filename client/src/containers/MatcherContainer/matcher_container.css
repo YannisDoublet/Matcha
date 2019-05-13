@@ -1,0 +1,96 @@
+#matcher_container {
+    width: 100vw;
+    height: calc(100vh - 5rem - 9.5rem);
+    margin-top: 5rem;
+    user-select: none;
+}
+
+#searchbar_container {
+    width: 97%;
+    display: flex;
+    min-height: 50px;
+    align-items: center;
+    background: #FFFFFF;
+    border-bottom: solid 2px rgb(242, 243, 249);
+    margin: 1rem;
+}
+
+#content_container {
+    display: flex;
+}
+
+#settings_container {
+    display: flex;
+    width: 25%;
+    flex-direction: column;
+    margin: 1rem;
+}
+
+#container_title {
+    width: 100%;
+    text-align: center;
+    font-size: 1.3rem;
+    border-bottom: solid 2px rgb(242, 243, 249);
+    padding: 0.5rem;
+    font-weight: bold;
+}
+
+#research_container {
+    width: 100%;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    background: #FFFFFF;
+}
+
+#advanced_research_container {
+    width: 100%;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    background: #FFFFFF;
+    margin-top: 1rem;
+}
+
+#advanced_research_title {
+    cursor: pointer;
+}
+
+#advanced_title {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    font-size: 1.3rem;
+    border-bottom: solid 2px rgb(242, 243, 249);
+    padding: 0.5rem;
+    font-weight: bold;
+}
+
+#arrow-down {
+    width: 1rem;
+    height: 1rem;
+    margin-left: 0.5rem;
+}
+
+#advanced_research_content {
+    height: 0;
+    overflow: hidden;
+    transition: height ease-in 0.3s;
+}
+
+.active_dropdown {
+    height: 108px !important;
+}
+
+#matchlist_container {
+    margin: 1rem;
+}
+
+@media screen and (max-width: 375px) {
+    #matcher_container {
+        height: calc(100vh - 4rem - 7rem);
+    }
+}

@@ -203,6 +203,185 @@ button {
 
 /* RESEARCH PAGE CSS */
 
-#recherche .card {
+#matchlist_container .card {
+    width: 15rem;
+    display: flex;
+    flex-direction: column;
+    background: #FFFFFF;
+    border-radius: 5px;
+}
 
+#matchlist_container #profile_pic {
+    width: 10rem;
+    height: 10rem;
+    border-radius: 50%;
+    align-self: center;
+    margin: 1rem 0;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+#matchlist_container #name {
+    text-align: center;
+    font-size: 1.33rem;
+}
+
+#matchlist_container #username {
+    align-self: center;
+    color: rgb(173, 172, 178);
+    font-style: italic;
+}
+
+#matchlist_container #gender_container {
+    display: flex;
+    justify-content: center;
+    margin-top: 1rem;
+}
+
+#matchlist_container #gender {
+    display: flex;
+    flex-direction: row;
+}
+
+#matchlist_container .fa-mars {
+    font-size: 1.8rem;
+    color: red;
+}
+
+#matchlist_container #gender_status {
+    align-self: center;
+    margin: 0 0.5rem;
+    font-size: 1.2rem;
+}
+
+#matchlist_container #sexuality {
+    display: flex;
+    flex-direction: row;
+}
+
+#matchlist_container .fa-venus-mars {
+    font-size: 1.5rem;
+    color: red;
+}
+
+#matchlist_container #orientation {
+    align-self: center;
+    margin: 0 0.5rem;
+    font-size: 1.2rem;
+}
+
+#matchlist_container #infos {
+    display: flex;
+    justify-content: center;
+    margin-top: 1rem;
+}
+
+#matchlist_container #location {
+    display: flex;
+    flex-direction: row;
+}
+
+#matchlist_container .fa-map-marker-alt {
+    font-size: 1.2rem;
+    color: red;
+}
+
+#matchlist_container #city {
+    align-self: center;
+    margin: 0 0.5rem;
+    font-size: 1rem;
+}
+
+#matchlist_container #popularity {
+    display: flex;
+    flex-direction: row;
+}
+
+#matchlist_container .fa-star {
+    color: gold;
+    font-size: 1.2rem;
+    margin: 0 0.5rem;
+}
+
+#matchlist_container #score {
+    align-self: center;
+    font-size: 1.2rem;
+}
+
+#matchlist_container #connection_status {
+    margin-top: 1rem;
+    align-self: center;
+}
+
+#matchlist_container #status_online::before {
+    display: inline-block;
+    content: '';
+    width: 5px;
+    height: 5px;
+    margin-right: 0.5rem;
+    background: lightgreen;
+    border-style: solid;
+    border-color: lightgreen;
+    border-radius: 50%;
+    box-shadow: 1px 1px 10px 2px lawngreen;
+}
+
+#matchlist_container #status_offline::before {
+    display: inline-block;
+    content: '';
+    width: 5px;
+    height: 5px;
+    margin-right: 0.5rem;
+    background: #FF1744;
+    border-style: solid;
+    border-color: #FF1744;
+    border-radius: 50%;
+    box-shadow: 1px 1px 10px 1px red;
+}
+
+#matchlist_container #interactions {
+    display: flex;
+    justify-content: space-evenly;
+    margin: 1rem;
+}
+
+#matchlist_container #like_button {
+    width: 5rem;
+    border: solid 2px #9dc5ed;
+    background: #FFFFFF;
+    cursor: pointer;
+    box-shadow: 1px 1px 10px lightgray;
+    transition: 0.3s;
+}
+
+#matchlist_container #like_button:hover {
+    box-shadow: 1px 1px 10px #9dc5ed;
+}
+
+#matchlist_container #unlike_button {
+    width: 5rem;
+    border: solid 2px #FFFFFF;
+    background: #9dc5ed;
+    cursor: pointer;
+    color: #FFFFFF;
+    box-shadow: 1px 1px 10px lightgray;
+    transition: 0.3s;
+}
+
+#matchlist_container #unlike_button:hover {
+    box-shadow: 1px 1px 10px #FFFFFF;
+}
+
+#matchlist_container #report {
+    width: 5rem;
+    color: white;
+    background-color: red;
+    cursor: pointer;
+    border: solid 1px red;
+    transition: 0.3s;
+    padding: 0.5rem;
+}
+
+#profile #report:hover {
+    box-shadow: 1px 1px 10px red;
 }
