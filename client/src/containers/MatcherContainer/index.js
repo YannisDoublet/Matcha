@@ -12,18 +12,35 @@ import PopularitySlider from '../../components/Widgets/Popularity_Slider'
 import SortResult from '../../components/Widgets/SortResult'
 import SearchUser from '../../components/Widgets/SearchUser'
 import MatchList from '../../components/MatchList'
+import ResearchList from '../../containers/ResearchListContainer'
 
 class MatcherContainer extends Component {
 
     state = {
-        users: {},
+        users: [
+            {
+                firstname: 'Mark', lastname: 'Zuckerberg', username: 'Zucky42' , age: '34',
+                gender: 'Man', sexuality: 'Heterosexual', location: 'San Francisco, USA',
+                popularity: '4.5', status: 'Connected', tags: ['Funny', 'Shana', 'Arnaud', 'WOW']
+            },
+            {
+                firstname: 'Mark', lastname: 'Zuckerberg', username: 'Zucky42', age: '34',
+                gender: 'Man', sexuality: 'Heterosexual', location: 'San Francisco, USA',
+                popularity: '4.5', status: 'Connected', tags: ['Funny', 'Shana', 'Arnaud', 'WOW']
+            },
+            {
+                firstname: 'Mark', lastname: 'Zuckerberg', username: 'Zucky42', age: '34',
+                gender: 'Man', sexuality: 'Heterosexual', location: 'San Francisco, USA',
+                popularity: '4.5', status: 'Connected', tags: ['Funny', 'Shana', 'Arnaud', 'WOW']
+            }
+        ],
         tags: [],
         dist: [],
         age: [],
         popularity: [],
         sort: [],
         adv_geo: [],
-        adv_search: [],
+        adv_search: '',
         advanced_opened: false
     };
 
@@ -83,6 +100,7 @@ class MatcherContainer extends Component {
     };
 
     render() {
+        const advanced = this.state.advanced_opened;
         return (
             <div id={'matcher_container'}>
                 <div id={'searchbar_container'}>
@@ -113,7 +131,9 @@ class MatcherContainer extends Component {
                             </div>
                         </div>
                     </div>
-                    <MatchList {...this.props}/>
+                    {!advanced ? <MatchList {...this.props} users={this.state.users} />
+                        :
+                    <ResearchList geo={this.state.adv_geo} search={this.state.adv_search} />}
                 </div>
             </div>
         );

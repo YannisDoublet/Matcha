@@ -12,6 +12,11 @@ import Tags from '../../components/Widgets/Tags'
 class ProfileContainer extends Component {
 
     state = {
+        user: {
+                firstname: 'Mark', lastname: 'Zuckerberg', username: 'Zucky42', age: '34',
+                gender: 'Man', sexuality: 'Heterosexual', location: 'San Francisco, USA',
+                popularity: '4.5', status: 'Connected', tags: ['Funny', 'Shana', 'Arnaud', 'WOW']
+            },
         alert: {
             status: false,
             type: '',
@@ -84,15 +89,25 @@ class ProfileContainer extends Component {
                 <Alert alert={alert} handleAlert={this.handleAlert}/>
                 {popUp ? <ReportPopUp popUp={this.showReport} alert={alert}
                                       handleAlert={this.handleAlert} closePopUp={this.closePopUp}/>
-                                      : null}
+                    : null}
                 <div id={'banner_pic_container'} style={{backgroundImage: "url('/assets/banner.png')"}}/>
                 <div id={'profile_content_container'}>
                     <ProfileCard {...this.props} like={this.like} like_status={this.state.like}
-                                 report={this.showReport} popUp_status={this.state.popUp}/>
+                                 report={this.showReport} popUp_status={this.state.popUp} users={this.state.user}/>
                     <div id={'profile_content'}>
                         <div id={'bio_container'}>
                             <p id={'bio_title'}>Biography</p>
-                            <p id={'bio_content'}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque elit metus, sollicitudin vel nibhas a, imperdiet porta lacus. Ut aliquam scelerisque leo vitae commodo. Morbi mi libero, semper non dictum sed, bibendum vel lectus. Ut scelerisque nisl id bibendum maximus. Pellentesque eleifend ipsum a ipsum fermentum blandit. Nunc ac ligula in nunc dapibus rhoncus ac quis mauris. Cras feugiat consectetur libero ut convallis. Pellentesque varius odio sit amet augue ornare, ut varius orci semper. Donec id placerat diam. Nam pretium nec urna vitae laoreet. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Mauris eu ultricies ante. Donec tempor sollicitudin nisi, eget aliquam lacus interdum in. Cras orci odio, mollis posuere ex ac, mollis tincidunt lectus. Pellentesque sit amet nisi at est imperdiet pellentesque id sed purus.</p>
+                            <p id={'bio_content'}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque elit
+                                metus, sollicitudin vel nibhas a, imperdiet porta lacus. Ut aliquam scelerisque leo
+                                vitae commodo. Morbi mi libero, semper non dictum sed, bibendum vel lectus. Ut
+                                scelerisque nisl id bibendum maximus. Pellentesque eleifend ipsum a ipsum fermentum
+                                blandit. Nunc ac ligula in nunc dapibus rhoncus ac quis mauris. Cras feugiat consectetur
+                                libero ut convallis. Pellentesque varius odio sit amet augue ornare, ut varius orci
+                                semper. Donec id placerat diam. Nam pretium nec urna vitae laoreet. Vestibulum ante
+                                ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Mauris eu
+                                ultricies ante. Donec tempor sollicitudin nisi, eget aliquam lacus interdum in. Cras
+                                orci odio, mollis posuere ex ac, mollis tincidunt lectus. Pellentesque sit amet nisi at
+                                est imperdiet pellentesque id sed purus.</p>
                         </div>
                         <div id={'gallery_container'}>
                             <p id={'gallery_title'}>Gallery</p>
@@ -102,12 +117,12 @@ class ProfileContainer extends Component {
                         </div>
                         <div id={'tag_container'}>
                             <p id={'tag_title'}>Tags</p>
-                            <Tags tags={this.state.tags} />
+                            <Tags tags={this.state.tags} id={'profile'}/>
                         </div>
                         <div id={'map_container'}>
                             <p id={'map_title'}>Maps</p>
                             <div id={'map_wrapper'}>
-                                <GoogleMaps />
+                                <GoogleMaps/>
                             </div>
                         </div>
                     </div>

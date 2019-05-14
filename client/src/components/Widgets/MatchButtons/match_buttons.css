@@ -1,0 +1,44 @@
+#match_buttons_container {
+    position: absolute;
+    width: 100%;
+    bottom: 0;
+    margin-bottom: -2rem;
+    display: flex;
+    justify-content: space-evenly;
+}
+
+#like_button_card {
+    height: 4rem;
+    width: 4rem;
+    border-radius: 50%;
+    background: rgb(234, 87, 107);
+    color: white;
+    transition: box-shadow 0.3s;
+    cursor: pointer;
+    outline: none;
+    border: none;
+}
+
+#match_buttons_container i {
+    font-size: 2.25rem;
+}
+
+#like_button_card:hover {
+    box-shadow: 1px 1px 10px rgb(234, 87, 107);
+}
+
+#dislike_button_card {
+    height: 4rem;
+    width: 4rem;
+    background: rgb(152,91,152);
+    border-radius: 50%;
+    color: white;
+    cursor: pointer;
+    outline: none;
+    border: none;
+    transition: box-shadow 0.3s;
+}
+
+#dislike_button_card:hover {
+    box-shadow: 1px 1px 10px rgb(152,91,152);
+}

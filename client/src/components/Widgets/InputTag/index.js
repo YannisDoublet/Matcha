@@ -128,7 +128,7 @@ class InputTag extends Component {
         let autoComplete = this.renderAutoComplete(filtered);
         return (
             <div id={'input_tag_container'}>
-                <Tags tags={tags} location={this.props.match.path} delete={this.deleteTag}>
+                <Tags tags={tags} location={this.props.match.path} delete={this.deleteTag} id={'searchbar'}>
                     <i className="fas fa-search"/>
                     <form id='form_container' onSubmit={this.submitTag}>
                         <input id={'input_tag'} type={'text'} value={this.state.input_value} placeholder={'Tags...'}

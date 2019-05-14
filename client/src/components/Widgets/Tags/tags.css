@@ -9,6 +9,11 @@
     flex-wrap: wrap;
 }
 
+#profile .tag::before {
+    content: '#';
+    color: #FFFFFF;
+}
+
 #profile .tag {
     padding: 0.5rem;
     margin: 0.5rem;
@@ -24,6 +29,7 @@
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
+    min-height: 50px;
     align-items: center;
 }
 
@@ -58,4 +64,28 @@
     width: 0.75rem;
     height: 0.75rem;
     margin-left: 0.5rem;
+}
+
+/* MATCH CARD CSS */
+
+#card #tags_container {
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+#card .tag::before {
+    content: '#';
+    color: #FFFFFF;
+}
+
+#card .tag {
+    padding: 0.5rem;
+    margin: 0.5rem;
+    color: white;
+    background: rgb(70, 95, 196);
+    border-radius: 25px;
+    align-self: center;
 }

@@ -1,13 +1,53 @@
 import React, {Component} from 'react'
 import ProfileCard from '../Widgets/ProfileCard'
 import '../Widgets/ProfileCard/profile_card.css'
+import MatchButtons from "../Widgets/MatchButtons"
 import './match_list.css'
 
 class MatchList extends Component {
+
+    state = {
+        count: 0
+    };
+
+    likeUser = (id, username) => {
+        let card = document.getElementById(`card ${id}`);
+        card.classList.add('isLiked');
+        setTimeout(() => {
+            this.props.users.pop();
+            this.setState({
+                count: this.state.count + 1
+            });
+        }, 200)
+    };
+
+    dislikeUser = (id, username) => {
+        let card = document.getElementById(`card ${id}`);
+        card.classList.add('isDisliked');
+        setTimeout(() => {
+            this.props.users.pop();
+            this.setState({
+                count: this.state.count + 1
+            });
+        }, 200)
+    };
+
     render() {
+        const users = this.props.users;
         return (
             <div id={'matchlist_container'}>
-              <ProfileCard {...this.props}/>
+                {users.map((user, i) => (
+                    <div id={`card ${i}`} style={{zIndex: `${i}`}} key={i} className={'match_card_container'}>
+                        <ProfileCard {...this.props} users={user}/>
+                        <MatchButtons username={user.username} like={this.likeUser}
+                                      dislike={this.dislikeUser} id={i}/>
+                    </div>))}
+                <div id={'excuse_message'}>
+                    <div id={'pulse'}>
+                        <i id='marker' className="fas fa-map-marker-alt"/>
+                    </div>
+                    <p id={'message'}>No more users in your zone...</p>
+                </div>
             </div>
         );
     }
