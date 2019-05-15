@@ -1,0 +1,17 @@
+#container_title {
+    width: 100%;
+    text-align: center;
+    font-size: 1.3rem;
+    border-bottom: solid 2px rgb(242, 243, 249);
+    padding: 0.5rem;
+    font-weight: bold;
+}
+
+#research_container {
+    width: 100%;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    background: #FFFFFF;
+}

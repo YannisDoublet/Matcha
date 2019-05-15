@@ -1,0 +1,40 @@
+#advanced_research_container {
+    width: 100%;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    background: #FFFFFF;
+    margin-top: 1rem;
+}
+
+#advanced_research_title {
+    cursor: pointer;
+}
+
+#advanced_title {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    font-size: 1.3rem;
+    border-bottom: solid 2px rgb(242, 243, 249);
+    padding: 0.5rem;
+    font-weight: bold;
+}
+
+#arrow-down {
+    width: 1rem;
+    height: 1rem;
+    margin-left: 0.5rem;
+}
+
+#advanced_research_content {
+    height: 0;
+    overflow: hidden;
+    transition: height ease-in 0.3s;
+}
+
+.active_dropdown {
+    height: 108px !important;
+}

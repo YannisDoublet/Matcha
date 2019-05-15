@@ -19,7 +19,7 @@ class Geolocation extends Component {
         this.setState({
             limit: [parseInt(value[0]), parseInt(value[1])]
         }, () => {
-            this.props.updateValue('Geo', this.state.limit);
+            props.updateValue('Geo', this.state.limit);
         })
     };
 

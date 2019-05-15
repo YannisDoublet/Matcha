@@ -1,16 +1,11 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import classnames from 'classnames';
 
 import './matcher_container.css'
 
 import InputTag from '../../components/Widgets/InputTag'
-import GeolocationSlider from '../../components/Widgets/Geolocation'
-import GeolocationInput from '../../components/Widgets/GeolocationInput'
-import AgeSlider from '../../components/Widgets/Age_Slider'
-import PopularitySlider from '../../components/Widgets/Popularity_Slider'
-import SortResult from '../../components/Widgets/SortResult'
-import SearchUser from '../../components/Widgets/SearchUser'
+import SettingsBar from '../../components/Widgets/SettingsBar'
+import AdvancedResearch from '../../components/Widgets/AdvancedResearch'
 import MatchList from '../../components/MatchList'
 import ResearchList from '../../containers/ResearchListContainer'
 
@@ -19,7 +14,7 @@ class MatcherContainer extends Component {
     state = {
         users: [
             {
-                firstname: 'Mark', lastname: 'Zuckerberg', username: 'Zucky42' , age: '34',
+                firstname: 'Mark', lastname: 'Zuckerberg', username: 'Zucky42', age: '34',
                 gender: 'Man', sexuality: 'Heterosexual', location: 'San Francisco, USA',
                 popularity: '4.5', status: 'Connected', tags: ['Funny', 'Shana', 'Arnaud', 'WOW']
             },
@@ -34,17 +29,26 @@ class MatcherContainer extends Component {
                 popularity: '4.5', status: 'Connected', tags: ['Funny', 'Shana', 'Arnaud', 'WOW']
             }
         ],
-        tags: [],
-        dist: [],
-        age: [],
-        popularity: [],
-        sort: [],
+        matcher: {
+            tags: [],
+            dist: [],
+            age: [],
+            popularity: [],
+            sort: [],
+        },
+        research: {
+            tags: [],
+            dist: [],
+            age: [],
+            popularity: [],
+            sort: [],
+        },
         adv_geo: [],
         adv_search: '',
         advanced_opened: false
     };
 
-    updateComponentValue = (id, value) => {
+    updateComponentValue = (area, id, value) => {
         switch (id) {
             case('Tags'):
                 this.setState({
@@ -109,31 +113,13 @@ class MatcherContainer extends Component {
                 </div>
                 <div id={'content_container'}>
                     <div id={'settings_container'}>
-                        <div id={'research_container'}>
-                            <p id={'container_title'}>Sorted by</p>
-                            <SortResult updateValue={this.updateComponentValue}/>
-                            <p id={'container_title'}>Filter by</p>
-                            <GeolocationSlider updateValue={this.updateComponentValue}/>
-                            <AgeSlider updateValue={this.updateComponentValue}/>
-                            <PopularitySlider updateValue={this.updateComponentValue}/>
-                        </div>
-                        <div id={'advanced_research_container'}>
-                            <div id={'advanced_research_title'} onClick={this.toggleResearch}>
-                                <p id={'advanced_title'}>
-                                    Advanced research
-                                    <img id={'arrow-down'} src={'/assets/down-arrow.svg'} alt={'arrow-down'}/>
-                                </p>
-                            </div>
-                            <div id={'advanced_research_content'}
-                                 className={classnames('', {'active_dropdown': this.state.advanced_opened})}>
-                                <GeolocationInput updateValue={this.updateComponentValue}/>
-                                <SearchUser updateValue={this.updateComponentValue}/>
-                            </div>
-                        </div>
+                        <SettingsBar advanced={advanced} updateValue={this.updateComponentValue}/>
+                        <AdvancedResearch advanced={advanced} open={this.toggleResearch}
+                                          updateValue={this.updateComponentValue}/>
                     </div>
-                    {!advanced ? <MatchList {...this.props} users={this.state.users} />
+                    {!advanced ? <MatchList {...this.props} users={this.state.users}/>
                         :
-                    <ResearchList geo={this.state.adv_geo} search={this.state.adv_search} />}
+                        <ResearchList geo={this.state.adv_geo} search={this.state.adv_search}/>}
                 </div>
             </div>
         );

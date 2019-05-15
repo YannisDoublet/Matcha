@@ -1,10 +1,11 @@
-import React, {Component} from 'react';
-import {connect} from 'react-redux';
+import React, {Component} from 'react'
+import {connect} from 'react-redux'
+import './research_list.css'
 
 class ResearchList extends Component {
     render() {
         return (
-            <div>
+            <div id={'research_list_container'}>
                 RECHERCHE
             </div>
         );
