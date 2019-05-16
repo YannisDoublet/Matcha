@@ -1,8 +1,9 @@
 import React from 'react'
 import './advanced_research.css'
-import classnames from "classnames"
-import GeolocationInput from "../GeolocationInput"
-import SearchUser from "../SearchUser"
+import classnames from 'classnames'
+import GeolocationInput from '../GeolocationInput'
+import SearchUser from '../SearchUser'
+import SubmitButton from '../SettingsBar/submit_button';
 
 const AdvancedResearch = (props) => {
     const advanced = props.advanced;
@@ -18,6 +19,7 @@ const AdvancedResearch = (props) => {
                  className={classnames('', {'active_dropdown': advanced})}>
                 <GeolocationInput updateValue={props.updateValue}/>
                 <SearchUser updateValue={props.updateValue}/>
+                <SubmitButton submit={props.submit}/>
             </div>
         </div>
     );

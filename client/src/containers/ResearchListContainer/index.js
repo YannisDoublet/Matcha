@@ -1,19 +1,21 @@
-import React, {Component} from 'react'
-import {connect} from 'react-redux'
+import React from 'react'
 import './research_list.css'
+import ProfileCard from '../../components/Widgets/ProfileCard';
 
-class ResearchList extends Component {
-    render() {
+const ResearchList = (props) => {
+    const renderResearch = (users) => {
         return (
-            <div id={'research_list_container'}>
-                RECHERCHE
-            </div>
-        );
-    }
+            users.map((user, i) => (
+                <ProfileCard users={user} key={i} research={true}/>
+            ))
+        )
+    };
+    const users = props.users;
+    return (
+        <div id={'research_list_container'}>
+            {users.length > 0 ? renderResearch(users) : <p>Search</p>}
+        </div>
+    );
 }
 
-function mapStateToProps(state) {
-    return {};
-}
-
-export default connect(mapStateToProps)(ResearchList);
+export default ResearchList;

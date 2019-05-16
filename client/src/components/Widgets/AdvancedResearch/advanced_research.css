@@ -32,9 +32,23 @@
 #advanced_research_content {
     height: 0;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
     transition: height ease-in 0.3s;
 }
 
 .active_dropdown {
-    height: 108px !important;
+    height: 165px !important;
+}
+
+@media screen and (max-width: 768px) {
+    #advanced_research_container {
+        width: 75%;
+    }
+}
+
+@media screen and (max-width: 375px) {
+    #advanced_research_container {
+        width: 100%;
+    }
 }

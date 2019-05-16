@@ -24,7 +24,7 @@ class Popularity extends Component {
     componentDidMount() {
         let handlesSlider = document.getElementById('popularity_slider');
         noUiSlider.create(handlesSlider, {
-            start: [3.5, 5],
+            start: [0, 0],
             connect: true,
             tooltips: true,
             format: wNumb({

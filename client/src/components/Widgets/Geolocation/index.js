@@ -19,14 +19,14 @@ class Geolocation extends Component {
         this.setState({
             limit: [parseInt(value[0]), parseInt(value[1])]
         }, () => {
-            props.updateValue('Geo', this.state.limit);
+            this.props.updateValue('Geo', this.state.limit);
         })
     };
 
     componentDidMount() {
         let handlesSlider = document.getElementById('slider');
         noUiSlider.create(handlesSlider, {
-            start: [0, 50],
+            start: [0, 0],
             connect: true,
             tooltips: true,
             format: wNumb({

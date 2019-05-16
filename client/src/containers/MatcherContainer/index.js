@@ -27,28 +27,39 @@ class MatcherContainer extends Component {
                 firstname: 'Mark', lastname: 'Zuckerberg', username: 'Zucky42', age: '34',
                 gender: 'Man', sexuality: 'Heterosexual', location: 'San Francisco, USA',
                 popularity: '4.5', status: 'Connected', tags: ['Funny', 'Shana', 'Arnaud', 'WOW']
+            },
+            {
+                firstname: 'Mark', lastname: 'Zuckerberg', username: 'Zucky42', age: '34',
+                gender: 'Man', sexuality: 'Heterosexual', location: 'San Francisco, USA',
+                popularity: '4.5', status: 'Connected', tags: ['Funny', 'Shana', 'Arnaud', 'WOW']
+            },
+            {
+                firstname: 'Mark', lastname: 'Zuckerberg', username: 'Zucky42', age: '34',
+                gender: 'Man', sexuality: 'Heterosexual', location: 'San Francisco, USA',
+                popularity: '4.5', status: 'Connected', tags: ['Funny', 'Shana', 'Arnaud', 'WOW']
+            },
+            {
+                firstname: 'Mark', lastname: 'Zuckerberg', username: 'Zucky42', age: '34',
+                gender: 'Man', sexuality: 'Heterosexual', location: 'San Francisco, USA',
+                popularity: '4.5', status: 'Connected', tags: ['Funny', 'Shana', 'Arnaud', 'WOW']
             }
         ],
-        matcher: {
-            tags: [],
-            dist: [],
-            age: [],
-            popularity: [],
-            sort: [],
-        },
-        research: {
-            tags: [],
-            dist: [],
-            age: [],
-            popularity: [],
-            sort: [],
-        },
+        tags: [],
+        dist: [],
+        age: [],
+        popularity: [],
+        sort: '',
+        order: '',
         adv_geo: [],
         adv_search: '',
         advanced_opened: false
     };
 
-    updateComponentValue = (area, id, value) => {
+    componentDidMount() {
+        setTimeout(this.requestDispatcher, 1);
+    }
+
+    updateComponentValue = (id, value) => {
         switch (id) {
             case('Tags'):
                 this.setState({
@@ -75,9 +86,19 @@ class MatcherContainer extends Component {
                     sort: value
                 });
                 break;
+            case('Order'):
+                this.setState({
+                    order: value
+                });
+                break;
             case('Advanced_geo'):
                 this.setState({
                     adv_geo: value
+                });
+                break;
+            case('Advanced_search'):
+                this.setState({
+                    adv_search: value
                 });
                 break;
             default:
@@ -99,27 +120,55 @@ class MatcherContainer extends Component {
         })
     };
 
-    Vision = () => {
+    requestDispatcher = (evt) => {
+        const state = this.state;
+        const advanced = state.advanced_opened;
+        evt && evt.preventDefault();
+        let data = {
+            tags: state.tags,
+            dist: state.dist,
+            age: state.age,
+            pop: state.popularity,
+            sort: state.sort,
+            order: state.order
+        };
+        if (advanced) {
+            data = {
+                ...data,
+                adv_geo: state.adv_geo,
+                adv_search: state.adv_search
+            };
+            this.Vision(data, advanced);
+        } else {
 
+        }
+    };
+
+    Vision = (data, advanced) => {
+        console.log(data, advanced);
     };
 
     render() {
+        console.log(this.state);
         const advanced = this.state.advanced_opened;
         return (
-            <div id={'matcher_container'}>
-                <div id={'searchbar_container'}>
-                    <InputTag {...this.props} updateValue={this.updateComponentValue}
-                              deleteValue={this.deleteComponentValue}/>
-                </div>
-                <div id={'content_container'}>
-                    <div id={'settings_container'}>
-                        <SettingsBar advanced={advanced} updateValue={this.updateComponentValue}/>
-                        <AdvancedResearch advanced={advanced} open={this.toggleResearch}
-                                          updateValue={this.updateComponentValue}/>
+            <div id={'matcher_wrapper'}>
+                <div id={'matcher_container'}>
+                    <div id={'searchbar_container'}>
+                        <InputTag {...this.props} updateValue={this.updateComponentValue}
+                                  deleteValue={this.deleteComponentValue}/>
                     </div>
-                    {!advanced ? <MatchList {...this.props} users={this.state.users}/>
-                        :
-                        <ResearchList geo={this.state.adv_geo} search={this.state.adv_search}/>}
+                    <div id={'content_container'}>
+                        <form id={'settings_container'} onSubmit={this.requestDispatcher}>
+                            <SettingsBar advanced={advanced} updateValue={this.updateComponentValue}
+                                         submit={this.requestDispatcher}/>
+                            <AdvancedResearch advanced={advanced} open={this.toggleResearch}
+                                              updateValue={this.updateComponentValue}
+                                              submit={this.requestDispatcher}/>
+                        </form>
+                        {!advanced ? <MatchList {...this.props} users={this.state.users}/>
+                            : <ResearchList users={this.state.users}/>}
+                    </div>
                 </div>
             </div>
         );

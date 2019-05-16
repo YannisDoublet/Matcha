@@ -201,7 +201,7 @@ button {
     box-shadow: 1px 1px 10px red;
 }
 
-/* RESEARCH PAGE CSS */
+/* MATCH_LIST CSS */
 
 #matchlist_container .card {
     width: 100%;
@@ -238,7 +238,7 @@ button {
 #matchlist_container #gender_container {
     display: flex;
     justify-content: center;
-    margin-top: 1.5rem;
+    margin-top: 0.75rem;
 }
 
 #matchlist_container #gender {
@@ -247,14 +247,14 @@ button {
 }
 
 #matchlist_container .fa-mars {
-    font-size: 1.8rem;
+    font-size: 2rem;
     color: red;
 }
 
 #matchlist_container #gender_status {
     align-self: center;
     margin: 0 0.5rem;
-    font-size: 1.2rem;
+    font-size: 1.5rem;
 }
 
 #matchlist_container #sexuality {
@@ -263,14 +263,14 @@ button {
 }
 
 #matchlist_container .fa-venus-mars {
-    font-size: 1.5rem;
+    font-size: 2rem;
     color: red;
 }
 
 #matchlist_container #orientation {
     align-self: center;
     margin: 0 0.5rem;
-    font-size: 1.2rem;
+    font-size: 1.5rem;
 }
 
 #matchlist_container #infos {
@@ -285,14 +285,14 @@ button {
 }
 
 #matchlist_container .fa-map-marker-alt {
-    font-size: 1.2rem;
+    font-size: 1.8rem;
     color: red;
 }
 
 #matchlist_container #city {
     align-self: center;
     margin: 0 0.5rem;
-    font-size: 1rem;
+    font-size: 1.3rem;
 }
 
 #matchlist_container #popularity {
@@ -302,13 +302,13 @@ button {
 
 #matchlist_container .fa-star {
     color: gold;
-    font-size: 1.2rem;
+    font-size: 1.8rem;
     margin: 0 0.5rem;
 }
 
 #matchlist_container #score {
     align-self: center;
-    font-size: 1.2rem;
+    font-size: 1.5rem;
 }
 
 #matchlist_container #connection_status {
@@ -385,6 +385,172 @@ button {
     padding: 0.5rem;
 }
 
-#profile #report:hover {
-    box-shadow: 1px 1px 10px red;
+/* RESEARCH LIST CONTAINER CSS */
+
+#research_list_container .card {
+    width: 17rem;
+    max-height: 22rem;
+    display: flex;
+    flex-direction: column;
+    background: #FFFFFF;
+    border-radius: 10px;
+    border-bottom: solid 2px rgb(242, 243, 249);
+    margin: 0.35rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+    transition: all 0.3s cubic-bezier(.25,.8,.25,1);
 }
+
+#research_list_container .card:hover {
+    box-shadow: 0 10px 10px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+}
+
+#research_list_container #profile_pic {
+    width: 8rem;
+    height: 8rem;
+    border-radius: 50%;
+    align-self: center;
+    margin: 1rem 0;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    box-shadow: 1px 1px 10px black;
+}
+
+#research_list_container #name {
+    text-align: center;
+    font-size: 1.10rem;
+}
+
+#research_list_container #username {
+    font-size: 0.80rem;
+    align-self: center;
+    color: rgb(173, 172, 178);
+    font-style: italic;
+}
+
+#research_list_container #gender_container {
+    display: flex;
+    justify-content: center;
+    margin-top: 0.60rem;
+}
+
+#research_list_container #gender {
+    display: flex;
+    flex-direction: row;
+}
+
+#research_list_container .fa-mars {
+    font-size: 1.5rem;
+    color: red;
+}
+
+#research_list_container #gender_status {
+    align-self: center;
+    margin: 0 0.5rem;
+    font-size: 1.10rem;
+}
+
+#research_list_container #sexuality {
+    display: flex;
+    flex-direction: row;
+}
+
+#research_list_container .fa-venus-mars {
+    font-size: 1.5rem;
+    color: red;
+}
+
+#research_list_container #orientation {
+    align-self: center;
+    margin: 0 0.5rem;
+    font-size: 1.1rem;
+}
+
+#research_list_container #infos {
+    display: flex;
+    justify-content: center;
+    margin-top: 0.60rem;
+}
+
+#research_list_container #location {
+    display: flex;
+    flex-direction: row;
+}
+
+#research_list_container .fa-map-marker-alt {
+    font-size: 1.2rem;
+    color: red;
+}
+
+#research_list_container #city {
+    align-self: center;
+    margin: 0 0.5rem;
+    font-size: 1rem;
+}
+
+#research_list_container #popularity {
+    display: flex;
+    flex-direction: row;
+}
+
+#research_list_container .fa-star {
+    color: gold;
+    font-size: 1.2rem;
+    margin: 0 0.5rem;
+}
+
+#research_list_container #score {
+    align-self: center;
+    font-size: 1.1rem;
+}
+
+#research_list_container #connection_status {
+    margin-top: 0.60rem;
+    align-self: center;
+}
+
+#research_list_container #status_online::before {
+    display: inline-block;
+    content: '';
+    width: 5px;
+    height: 5px;
+    margin-right: 0.5rem;
+    background: lightgreen;
+    border-style: solid;
+    border-color: lightgreen;
+    border-radius: 50%;
+    box-shadow: 1px 1px 10px 2px lawngreen;
+}
+
+#research_list_container #status_offline::before {
+    display: inline-block;
+    content: '';
+    width: 5px;
+    height: 5px;
+    margin-right: 0.5rem;
+    background: #FF1744;
+    border-style: solid;
+    border-color: #FF1744;
+    border-radius: 50%;
+    box-shadow: 1px 1px 10px 1px red;
+}
+
+#research_list_container #interactions {
+    display: flex;
+    justify-content: space-evenly;
+    margin: 0.60rem;
+}
+
+#research_list_container #profile_button {
+    width: 6.5rem;
+    background: rgb(70, 95, 196);
+    cursor: pointer;
+    box-shadow: 1px 1px 10px lightgray;
+    transition: 0.3s;
+    color: #FFFFFF;
+}
+
+#research_list_container #profile_button:hover {
+    box-shadow: 1px 1px 10px #9dc5ed;
+}
+

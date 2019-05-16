@@ -1,8 +1,11 @@
 #research_list_container {
     display: flex;
-    justify-content: center;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
     margin: 1rem;
+    padding: 0.5rem;
     width: 70%;
     overflow-y: scroll;
     max-height: 820px;
+    border-radius: 5px;
 }

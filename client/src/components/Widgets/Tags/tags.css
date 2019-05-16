@@ -69,11 +69,12 @@
 /* MATCH CARD CSS */
 
 #card #tags_container {
-    margin-top: 1rem;
+    margin-top: 0.5rem;
     display: flex;
     flex-direction: row;
     justify-content: center;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
+    overflow-y: scroll;
 }
 
 #card .tag::before {

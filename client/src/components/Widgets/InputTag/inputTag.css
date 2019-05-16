@@ -34,7 +34,7 @@
     top: calc(23px + 0.5rem);
     left: 0.5rem;
     border-radius: 5px;
-    z-index: 10;
+    z-index: 8;
 }
 
 #matcher_container .suggestion {
@@ -51,6 +51,6 @@
 
 @media screen and (max-width: 375px) {
     #matcher_container #input_tag {
-        width: 19rem;
+        width: 15rem;
     }
 }

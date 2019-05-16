@@ -28,7 +28,7 @@ class GeolocationInput extends Component {
                 lng: place.geometry.location.lng(),
                 value: place.address_components[0].long_name + ', ' + place.address_components[3].long_name
             }, () => {
-                this.props.updateValue('research', 'Advanced_geo', this.state);
+                this.props.updateValue('Advanced_geo', this.state);
             })
         } else if (!place.address_components && !this.state.value) {
             this.setState({
@@ -37,7 +37,7 @@ class GeolocationInput extends Component {
                 lat: null,
                 lng: null,
             }, () => {
-                this.props.updateValue('research', 'Advanced_geo', this.state);
+                this.props.updateValue('Advanced_geo', this.state);
             })
         }
     };
@@ -47,6 +47,7 @@ class GeolocationInput extends Component {
             <div id={'google_map_autocomplete_container'}>
                 <i className="fas fa-map-marker-alt"/>
                 <Autocomplete
+                    autoComplete={'disabled'}
                     id={'google_map_autocomplete'}
                     onPlaceSelected={this.onPlaceSelected}
                     types={['(regions)']}

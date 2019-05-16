@@ -1,10 +1,12 @@
 import React from 'react'
 import Tags from '../Tags'
+import {Link} from 'react-router-dom'
 import './profile_card.css'
 
 const ProfileCard = (props) => {
     const user = props.users;
-    const path = props.match.path;
+    const path = props.match ? props.match.path : null;
+    const research = props.research ? props.research : null;
     return (
         <div id={'card'} className={'card'}>
             <div id={'profile_pic'} style={{backgroundImage: "url('/assets/zuckywola.jpg')"}}/>
@@ -42,6 +44,10 @@ const ProfileCard = (props) => {
                 <button id={'unlike_button'} onClick={props.like}>Unlike</button>}
                 {path === '/profile' &&
                 <button id={'report'} onClick={props.report}>Report</button>}
+                {research &&
+                <Link to={'/profile'}>
+                    <button id={'profile_button'}>Profile</button>
+                </Link>}
             </div>
         </div>
     );

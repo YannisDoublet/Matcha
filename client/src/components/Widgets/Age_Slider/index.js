@@ -24,7 +24,7 @@ class Age extends Component {
     componentDidMount() {
         let handlesSlider = document.getElementById('age_slider');
         noUiSlider.create(handlesSlider, {
-            start: [18, 25],
+            start: [18, 18],
             connect: true,
             tooltips: true,
             format: wNumb({

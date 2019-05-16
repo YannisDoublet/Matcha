@@ -5,6 +5,7 @@ class SortResult extends Component {
 
     state = {
         sort: {
+            id: 'sort',
             element: 'select',
             type: 'select',
             name: 'sort by',
@@ -16,6 +17,7 @@ class SortResult extends Component {
             ],
         },
         order: {
+            id: 'order',
             element: 'select',
             type: 'select',
             name: 'order by',
@@ -23,6 +25,20 @@ class SortResult extends Component {
                 'Ascending',
                 'Descending'
             ]
+        },
+    };
+
+    handleChange = (evt) => {
+        let {id, value} = evt.target;
+        switch(id) {
+            case('sort'):
+                this.props.updateValue('Sort', value);
+                break;
+            case('order'):
+                this.props.updateValue('Order', value);
+                break;
+            default:
+                break;
         }
     };
 
@@ -37,7 +53,7 @@ class SortResult extends Component {
 
     renderSelect = (item, i) => {
         return (
-            <select className={'select'} key={i}>
+            <select id={item.id} className={'select'} key={i} onChange={(evt) => this.handleChange(evt)}>
                 <option hidden>{item.name.charAt(0).toUpperCase() + item.name.slice(1)}</option>
                 {item.options ? item.options.map((item, i) => (
                     <option key={i}>{item}</option>

@@ -1,8 +1,14 @@
-#matcher_container {
+#matcher_wrapper {
+    display: flex;
+    justify-content: center;
     width: 100vw;
-    height: calc(100vh - 5rem - 9.5rem);
+    min-height: calc(100vh - 5rem - 9.5rem);
     margin-top: 5rem;
     user-select: none;
+}
+
+#matcher_container {
+    width: 75%;
 }
 
 #searchbar_container {
@@ -17,23 +23,68 @@
 
 #settings_container {
     display: flex;
-    width: 25%;
+    min-width: 20rem;
     flex-direction: column;
     margin: 1rem;
+    z-index: 8;
 }
 
 #content_container {
     display: flex;
 }
 
-
-
 #matchlist_container {
     margin: 1rem;
 }
 
-@media screen and (max-width: 375px) {
+
+@media screen and (max-width: 1440px) {
     #matcher_container {
-        height: calc(100vh - 4rem - 7rem);
+        width: 90%;
+    }
+}
+
+@media screen and (max-width: 1024px) {
+    #matcher_container {
+        width: 100%;
+    }
+
+    #searchbar_container {
+        width: 95%;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    #matcher_wrapper {
+        margin-top: 4rem;
+    }
+
+    #content_container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    #settings_container {
+        width: 90%;
+        margin: 0.5rem;
+        align-items: center;
+    }
+
+    #searchbar_container {
+        width: 90%;
+        margin: 0.5rem 0 0.5rem 2rem;
+    }
+}
+
+@media screen and (max-width: 425px) {
+    #searchbar_container {
+        width: 90%;
+        margin: 0.5rem 1.20rem;
+    }
+}
+
+@media screen and (max-width: 375px) {
+    #settings_container {
+        z-index: 0;
     }
 }

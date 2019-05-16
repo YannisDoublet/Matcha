@@ -18,7 +18,7 @@ class MatchList extends Component {
             this.setState({
                 count: this.state.count + 1
             });
-        }, 200)
+        }, 800)
     };
 
     dislikeUser = (id, username) => {
@@ -29,7 +29,7 @@ class MatchList extends Component {
             this.setState({
                 count: this.state.count + 1
             });
-        }, 200)
+        }, 800)
     };
 
     render() {
