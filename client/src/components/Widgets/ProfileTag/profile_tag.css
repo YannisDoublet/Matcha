@@ -1,0 +1,19 @@
+#profile_tag_wrapper {
+    width: 10rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-left: 3rem;
+}
+
+#profile_tag_img {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+}
+
+#profile_tag_menu {
+    display: flex;
+    font-size: 1.2rem;
+    align-items: center;
+}

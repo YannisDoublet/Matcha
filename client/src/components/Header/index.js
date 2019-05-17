@@ -1,18 +1,19 @@
 import React, {Component} from 'react'
 import {Link} from 'react-router-dom'
+import HeaderConnectedOptions from './header_connected_options'
 import './header.css'
 
 class Header extends Component {
 
     state = {
         navbarItems: {
-            meet: {
+            match: {
                 title: 'Match',
                 path: '/match',
                 restricted: true,
                 exclude: false
             },
-            search: {
+            chat: {
                 title: 'Chat',
                 path: '/chat',
                 restricted: false
@@ -22,21 +23,12 @@ class Header extends Component {
                 path: '/register',
                 restricted: false,
                 exclude: true
-            },
-            profile: {
-                title: 'Profile',
-                path: '/profile',
-                restricted: true
-            },
-            logout: {
-                title: 'Logout',
-                path: '/logout',
-                restricted: true
             }
         },
         scrollPosition: 0,
         showNav: true,
-        background: false
+        background: false,
+        connected: true
     };
 
     toggleBackground = () => {
@@ -94,8 +86,8 @@ class Header extends Component {
                 <div className={'blur'}/>
                 <div className={'navbar_content_left'}>
                     {this.renderNavbarContent({
-                            meet: this.state.navbarItems.meet,
-                            search: this.state.navbarItems.search
+                            match: this.state.navbarItems.match,
+                            chat: this.state.navbarItems.chat
                         }
                     )}
                 </div>
@@ -105,10 +97,9 @@ class Header extends Component {
                     </Link>
                 </div>
                 <div className={'navbar_content_right'}>
-                    {this.renderNavbarContent({
-                        sign_in: this.state.navbarItems.sign_in,
-                        // profile: this.state.navbarItems.profile,
-                        // logout: this.state.navbarItems.logout
+                    {this.state.connected ? <HeaderConnectedOptions /> :
+                        this.renderNavbarContent({
+                        sign_in: this.state.navbarItems.sign_in
                     })}
                 </div>
             </div>
