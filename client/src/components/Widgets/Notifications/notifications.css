@@ -1,5 +1,6 @@
 .show {
     opacity: 1 !important;
+    visibility: visible !important;
 }
 
 .switch_menu {
@@ -8,14 +9,7 @@
     width: 0;
 }
 
-#no_notification {
-    height: 3rem;
-    text-align: center;
-    line-height: 3rem;
-    color: #666666;
-}
-
-#notification_wrapper {
+#notifications_wrapper {
     position: relative;
     width: 2.5rem;
     background-color: rgb(255, 255, 255);
@@ -29,7 +23,7 @@
     margin-top: 0.30rem;
 }
 
-#notification_numbers {
+#notifications_numbers {
     position: absolute;
     min-width: 1.25rem;
     min-height: 1.25rem;
@@ -47,7 +41,7 @@
     position: relative;
 }
 
-#notification_dropdown {
+#notifications_dropdown {
     min-height: 5.5rem;
     border-radius: 5px;
     position: absolute;
@@ -56,16 +50,16 @@
     width: 20rem;
     background: #FFFFFF;
     border: solid 2px rgb(200, 200, 200);
-    transition: opacity 0.25s ease;
+    transition: opacity 0.2s ease;
     cursor: default;
     opacity: 0;
+    visibility: hidden;
     user-select: none;
 }
 
-#notification_content {
+#notifications_content {
     overflow-y: scroll;
     max-height: 20rem;
-    transition: all 0.5s ease-in;
 }
 
 #triangle {
@@ -81,7 +75,7 @@
     height: 0;
 }
 
-#notification_title {
+#notifications_title {
     padding: .5rem;
     width: 100%;
     display: flex;
@@ -94,7 +88,7 @@
     cursor: pointer;
 }
 
-.notif_container {
+.notifications_container {
     display: flex;
     width: 100%;
     flex-direction: row;
@@ -103,18 +97,34 @@
     padding: 0.5rem;
 }
 
-.notif_img {
+.notifications_img {
     width: 2.5rem;
     height: 2.5rem;
     margin-left: 1rem;
 }
 
-.notif_msg {
+.notifications_msg {
     margin-left: 1rem;
 }
 
 @media screen and (max-width: 480px) {
-    #notification_container {
+    #notifications_container {
         width: 2rem;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    #notifications_dropdown {
+        right: -75px;
+    }
+
+    #triangle {
+        display: none;
+    }
+}
+
+@media screen and (max-width: 375px) {
+    #notifications_dropdown {
+        right: -97px;
     }
 }

@@ -6,9 +6,7 @@ exports.router = (function () {
 
     apiRouter.route('/account/register').post(userManagement.register);
     apiRouter.route('/account/login').post(userManagement.login);
-	apiRouter.route('/test').get((req, res) => {
-	   res.json({test: 'success'});
-    });
+    apiRouter.route('/account/validate').get(userManagement.validate);
 
     return apiRouter;
 })();

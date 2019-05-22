@@ -39,8 +39,9 @@ class Alert extends Component {
 
     render() {
         let alert = this.props.alert;
+        let type = this.props.alert.type === 'error' ? 'error' : 'success';
         return (
-            <div id={'alert_container'} className={classnames('', {'active_alert': this.state.step === 2})}>
+            <div id={'alert_container'} className={classnames(`${type}`, {'active_alert': this.state.step === 2})}>
                 <div id={'alert_message'}>{alert.message}</div>
                 <div id={'alert_close_button'} onClick={this.closeAlert}><i className="fas fa-times"/></div>
             </div>

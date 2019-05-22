@@ -1,51 +1,42 @@
-const db = require('mysql');
+const Database = require('../config/db.config').Database;
+const dbCredentials = require('../config/private/db.credentials').dbCredentials;
+const db = new Database(dbCredentials);
+db.query('CREATE DATABASE IF NOT EXISTS `Matcha`');
+db.query('USE `Matcha`');
 
-const con = db.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: 'root'
-});
-
-con.connect(function (err) {
-    if (err) throw err;
-    console.log('Database Matcha connected !');
-    con.query('CREATE DATABASE IF NOT EXISTS Matcha', function (err, result) {
-        if (err) throw err;
-    });
-    con.query('USE Matcha', function (err, result) {
-        if (err) throw err;
-    });
-    con.query('CREATE TABLE IF NOT EXISTS `user` (' +
-        '`id` int NOT NULL AUTO_INCREMENT,' +
-        '`E_MAIL` varchar(100) NOT NULL,' +
-        '`FIRST_NAME` varchar(100) NOT NULL,' +
-        '`LAST_NAME` varchar(50) DEFAULT NULL,' +
-        '`PASSWORD` varchar(100) NOT NULL,' +
-        '`AGE` int NOT NULL,' +
-        '`GENDER` varchar(100) NOT NULL,' +
-        '`LIKE` int NOT NULL,' +
-        '`TOKEN` varchar(100) NOT NULL,' +
-        '`ACTIVATE` int,' +
-        'PRIMARY KEY (`id`))', function (err, result) {
-        if (err) throw err;
-    });
-});
+db.query('CREATE TABLE IF NOT EXISTS `user` (' +
+    '`id` int PRIMARY KEY NOT NULL AUTO_INCREMENT,' +
+    '`acc_id` varchar(10) NOT NULL,' +
+    '`email` varchar(100) NOT NULL,' +
+    '`firstname` varchar(100) NOT NULL,' +
+    '`lastname` varchar(50) DEFAULT NULL,' +
+    '`username` varchar(50) DEFAULT NULL,' +
+    '`password` varchar(100) NOT NULL,' +
+    '`age` int NOT NULL,' +
+    '`gender` varchar(100) NOT NULL,' +
+    '`sexuality` varchar(100) NOT NULL,' +
+    '`token` varchar(100) NOT NULL,' +
+    '`activate` int)');
 
 module.exports = {
-    searchEmail: function (email) {
-        let user = con.query("SELECT email FROM user WHERE email=?", email, function (err, result) {
-            let mail = result.email;
-            return mail;
-        });
-        return user;
-    },
-    insertUser: function (table, email, prenom, nom, psw, age, gender, like, token, activate) {
-        con.query("INSERT INTO" + table + "SET E_MAIL=?, FIRST_NAME=?," +
-            "LAST_NAME=?, PASSWORD=?, AGE=?, GENDER=?, LIKE=?, TOKEN=?, ACTIVATE=?",
-            [email, prenom, nom, psw, age, gender, like, token, activate],
-            function (err, result) {
-                if (err) throw err;
+    searchUserByEmailOrUsername: (email, username) => {
+        return db.query('SELECT * FROM user WHERE email=? OR username=?', [email, username])
+            .then(data => {
+                 return data[0];
             });
-        return true;
-    }
+    },
+    searchUserByToken: (token) => {
+        return db.query('SELECT * FROM user WHERE token=?', [token])
+            .then(data => {
+                return data[0];
+            });
+    },
+    insertUser: (acc_id, email, firstname, lastname, user, psw, age, gender, sexuality, token, activate) => {
+        return db.query("INSERT INTO `user` SET acc_id=?, email=?, firstname=?," +
+            "lastname=?, username=?, password=?, age=?, gender=?, sexuality=?, token=?, activate=?",
+            [acc_id, email, firstname, lastname, user, psw, age, gender, sexuality, token, activate]);
+    },
+    validateUser: (token) => {
+        return db.query('UPDATE user SET activate=? WHERE token=?', [1, token]);
+    },
 };

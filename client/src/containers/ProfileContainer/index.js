@@ -25,14 +25,13 @@ class ProfileContainer extends Component {
         like: 0,
         popUp: 0,
         tags: [
-            '#Funny',
-            '#Facebook',
-            '#Start-up',
-            '#Sylicon Valley',
-            '#Funny',
-            '#Facebook',
-            '#Start-up',
-            '#Sylicon Valley'
+            'Funny',
+            'Facebook',
+            'Start-up',
+            'Sylicon Valley',
+            'Funny',
+            'Facebook',
+            'Start-up'
         ],
         gallery: [
             '/assets/zuckywola.jpg',

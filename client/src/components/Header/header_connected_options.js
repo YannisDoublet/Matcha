@@ -15,10 +15,11 @@ class HeaderConnectedOptions extends Component {
         ],
         user: {img: '/assets/zuckywola.jpg', firstname: 'Mark'},
         dropdown_content: [
-            {img: '/assets/resume.svg', msg: 'Manage my account', link: '/manage'},
+            {img: '/assets/resume.svg', msg: 'My profile page', link: '/profile'},
             {img: '/assets/settings-gears.svg', msg: 'Settings', link: '/settings'},
-            {img: '/assests/logout.svg', msg: 'Logout', link: '/logout'},
+            {img: '/assets/logout.svg', msg: 'Logout', link: '/logout'},
         ],
+        notifications_number: 0,
         notification_opened: false,
         profile_tag_opened: false
     };
@@ -36,33 +37,52 @@ class HeaderConnectedOptions extends Component {
         })
     };
 
+    untoggleDropdown = (evt) => {
+        let target = evt.target;
+        let notif = this.state.notification_opened;
+        let tag = this.state.profile_tag_opened;
+        console.log(target.id);
+        if (target.id.indexOf('notifications') < 0 && target.id.indexOf('profile_tag') < 0
+            && (notif || tag)) {
+            this.setState({
+                notification_opened: false,
+                profile_tag_opened: false
+            })
+        }
+    };
+
     toggleDropdown = (evt) => {
         const id = evt.target.id;
-        switch(id) {
-            case('notification_wrapper'):
-                this.setState({
-                    notification_opened: !this.state.notification_opened,
-                    profile_tag_opened: false,
-                    notifications: this.state.notification_opened ? [] : this.state.notifications
-                });
-                break;
-            case('profile_tag_wrapper'):
+        if (id === 'notifications_wrapper') {
+            this.setState({
+                notification_opened: !this.state.notification_opened,
+                profile_tag_opened: false,
+                notifications_number: 0
+            });
+        } else if (id.indexOf('profile_tag') === 0) {
+            if (this.state.notification_opened) {
                 this.setState({
                     profile_tag_opened: !this.state.profile_tag_opened,
-                    notification_opened: false,
-                    notifications: this.state.notification_opened ? [] : this.state.notifications
+                    notification_opened: false
                 });
-                break;
-            default:
-                break;
+            } else {
+                this.setState({
+                    profile_tag_opened: !this.state.profile_tag_opened,
+                });
+            }
         }
     };
 
     componentDidMount() {
+        this.setState({
+            notifications_number: this.state.notifications.length
+        });
+        window.addEventListener('mousedown', this.untoggleDropdown, false);
         window.addEventListener("scroll", this.hideDropdown, false);
     }
 
     componentWillUnmount() {
+        window.addEventListener('mousedown', this.untoggleDropdown);
         window.removeEventListener('scroll', this.hideDropdown);
     }
 
@@ -70,9 +90,9 @@ class HeaderConnectedOptions extends Component {
         return (
             <div id={'connected_options_wrapper'}>
                 <Notifications opened={this.state.notification_opened} toggle={this.toggleDropdown}
-                notifications={this.state.notifications}/>
+                               notifications={this.state.notifications} number={this.state.notifications_number}/>
                 <ProfileTag opened={this.state.profile_tag_opened} user={this.state.user}
-                options={this.state.dropdown_content} toggle={this.toggleDropdown}/>
+                            options={this.state.dropdown_content} toggle={this.toggleDropdown}/>
             </div>
         );
     }

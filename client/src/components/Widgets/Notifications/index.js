@@ -7,31 +7,30 @@ class Notifications extends Component {
     state = {
     };
 
-    renderNotification = (notifications, filter) => {
-        const filtered = notifications.filter;
+    renderNotification = (notifications) => {
         return notifications.map((notif, i) => (
-            <div key={i} id={i} className={'notif_container'}>
-                <img src={notif.img} className={'notif_img'}/>
-                <p className={'notif_msg'}>{notif.msg}</p>
+            <div key={i} id={`notifications ${i}`} className={'notifications_container'}>
+                <img src={notif.img} id={`notifications_img ${i}`} className={'notifications_img'} alt={'notification_img'}/>
+                <p id={`notifications_msg ${i}`} className={'notifications_msg'}>{notif.msg}</p>
             </div>
         ))
     };
 
     render() {
         const notif = this.props.notifications;
+        const number = this.props.number;
         const opened = this.props.opened;
         return (
-            <div id={'notification_wrapper'} onClick={(evt) => this.props.toggle(evt)}>
-                {notif.length > 0 && <div id={'notification_numbers'}>{notif.length}</div>}
+            <div id={'notifications_wrapper'} onClick={(evt) => this.props.toggle(evt)}>
+                {number > 0 && <div id={'notifications_numbers'}>{number}</div>}
                 <div id={'notifications_container'}>
-                    <div id={'notification_dropdown'} className={classnames('', {'show': opened})}>
+                    <div id={'notifications_dropdown'} className={classnames('', {'show': opened})}>
                         <div id={'triangle'} className={classnames('', {'show': opened})}/>
-                        <div id={'notification_title'} className={classnames('', {'show': opened})}>
-                            <p>Notifications</p>
+                        <div id={'notifications_title'} className={classnames('', {'show': opened})}>
+                            <p id={'notifications'}>Notifications</p>
                         </div>
-                        <div id={'notification_content'}>
-                            {notif.length > 0 ? this.renderNotification(notif)
-                                : <p id={'no_notification'}>No notifications</p>}
+                        <div id={'notifications_content'}>
+                            {this.renderNotification(notif)}
                         </div>
                     </div>
                 </div>

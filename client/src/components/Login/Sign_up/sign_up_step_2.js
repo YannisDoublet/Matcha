@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-import {connect} from 'react-redux';
 import {CSSTransition} from 'react-transition-group';
 import './sign_up.css'
 
@@ -216,9 +215,5 @@ class SignUpStep2 extends Component {
     }
 }
 
-function mapStateToProps(state) {
-    return {};
-}
-
-export default connect(mapStateToProps)(SignUpStep2);
+export default SignUpStep2;
 

@@ -8,9 +8,17 @@
     width: 100vw;
     height: 4rem;
     max-height: 5rem;
-    background: lightgreen;
     margin-top: -5rem;
     transition: margin-top ease-in 0.5s;
+}
+
+.success {
+    background: lightgreen;
+}
+
+.error {
+    background: #FF1744;
+    color: white;
 }
 
 .active_alert {

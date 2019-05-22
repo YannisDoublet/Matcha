@@ -6,11 +6,13 @@ import Login from './components/Login'
 import Profile from './components/Profile'
 import Matcher from './components/Matcher'
 import Layout from "./HOC/Layout"
+import ValidateEmail from "./components/Widgets/ValidateEmail";
 
 const Routes = () => {
     return (
         <Switch>
             <Route path={'/register'} exact component={Login}/>
+            <Route path={'/validate:token'} exact component={ValidateEmail} />
             <Layout>
                 <Route path={'/'} exact component={Home}/>
                 <Route path={'/profile'} exact component={Profile} />

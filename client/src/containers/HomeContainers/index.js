@@ -30,7 +30,7 @@ class HomeContainer extends Component {
         return (
             <div>
                 <div className="home_image" />
-             <Card content={this.state.card} />
+                <Card content={this.state.card} />
             </div>
         );
     }

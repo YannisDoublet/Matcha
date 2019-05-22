@@ -28,7 +28,7 @@ class Header extends Component {
         scrollPosition: 0,
         showNav: true,
         background: false,
-        connected: true
+        connected: false
     };
 
     toggleBackground = () => {

@@ -554,3 +554,9 @@ button {
     box-shadow: 1px 1px 10px #9dc5ed;
 }
 
+@media screen and (max-width: 375px) {
+    #research_list_container #city {
+        font-size: 0.8rem;
+    }
+}
+

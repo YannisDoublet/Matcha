@@ -2,6 +2,7 @@ import React, {Component} from 'react'
 import {Link} from 'react-router-dom'
 import './login.css'
 
+import Alert from '../Widgets/Alert'
 import SignUpForm from './Sign_up'
 import SignInForm from './Sign_in'
 
@@ -12,8 +13,28 @@ class Login extends Component {
         sign_up: true,
         error: false,
         error_value: '',
+        alert: {
+            status: false,
+            type: '',
+            message: ''
+        },
         last_clicked: 'sign_in'
     };
+
+    componentDidMount() {
+        if (this.props.location.state && this.props.location.state.validateAlert) {
+            let newState = this.state;
+            let alert = this.props.location.state.validateAlert;
+            newState.alert.status = alert.status;
+            newState.alert.type = alert.type;
+            newState.alert.message = alert.message;
+            newState.sign_in = true;
+            newState.sign_up = false;
+            this.setState({
+                ...newState
+            })
+        }
+    }
 
     toggleForms = (evt) => {
         if (evt.target.id === 'sign_in' && this.state.sign_in === false) {
@@ -31,7 +52,21 @@ class Login extends Component {
         }
     };
 
-    errorHandler = (error) => {
+    handleAlert = (alert) => {
+        let newState = this.state;
+        newState.alert.status = alert.status;
+        newState.alert.type = alert.type;
+        newState.alert.message = alert.message;
+        if (alert.type === 'success') {
+            newState.sign_in = true;
+            newState.sign_up = false;
+        }
+        this.setState({
+            ...newState
+        })
+    };
+
+    errorInputHandler = (error) => {
         if (error) {
             this.setState({
                 error: true,
@@ -50,8 +85,10 @@ class Login extends Component {
             sign_in: this.state.sign_in ? 'active_button' : '',
             sign_up: this.state.sign_up ? 'active_button' : ''
         };
+        console.log(this.props.location);
         return (
             <div className={'container'}>
+                <Alert alert={this.state.alert} handleAlert={this.handleAlert}/>
                 <div className={'login_container'}>
                     <div className={'login_nav'}>
                         <Link to={'/'}>
@@ -74,8 +111,9 @@ class Login extends Component {
                                          onClick={this.toggleForms}>Sign in
                                     </div>
                                 </div>
-                                {this.state.sign_in ? <SignInForm error={this.errorHandler}/>
-                                    : <SignUpForm error={this.errorHandler}/>}
+                                {this.state.sign_in ? <SignInForm error={this.errorInputHandler}
+                                    alert={this.handleAlert}/>
+                                    : <SignUpForm error={this.errorInputHandler} alert={this.handleAlert}/>}
                             </div>
                         </div>
                     </div>

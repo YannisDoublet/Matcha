@@ -173,7 +173,7 @@ class SignUpStep1 extends Component {
                 inputTemplate = (
                     <CSSTransition key={i} timeout={950} classNames="sign_up_select" in={this.state.mounted}
                                    value={settings.value}>
-                        <select className={'sign_up_select'} onChange={(evt) => this.handleChange(evt, input.name)}>
+                        <select id={input.name} className={'sign_up_select'} onChange={(evt) => this.handleChange(evt, input.name)}>
                             <option hidden>{input.name.charAt(0).toUpperCase() + input.name.slice(1)}</option>
                             {input.options ? input.options.map((item, i) => (
                                 <option key={i}>{item}</option>

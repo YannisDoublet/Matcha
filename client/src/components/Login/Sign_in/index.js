@@ -2,22 +2,25 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import './sign_in.css'
 import {CSSTransition} from "react-transition-group";
+import {loginUser} from "../../../actions/authActions";
+import {Redirect} from 'react-router-dom'
 
-class SignUpForm extends Component {
+class SignInForm extends Component {
 
     state = {
+        redirect: false,
         mounted: false,
-        error: false,
-        error_message: false,
         formData: {
-            user: {
+            email: {
                 element: 'input',
                 config: {
                     type: 'text',
-                    name: 'user',
+                    name: 'email',
                     placeholder: 'Email',
-                    autoComplete: 'username'
+                    autoComplete: 'email'
                 },
+                valid: '',
+                touched: '',
                 icon: 'fas fa-envelope',
                 value: ''
 
@@ -26,7 +29,7 @@ class SignUpForm extends Component {
                 element: 'input',
                 config: {
                     type: 'password',
-                    name: 'psw',
+                    name: 'password',
                     placeholder: 'Password',
                     autoComplete: 'current-password'
                 },
@@ -36,10 +39,47 @@ class SignUpForm extends Component {
         }
     };
 
+    validation = (data) => {
+        if (!data.email.length || !data.password.length) {
+            this.props.error('Empty fields !');
+            return false;
+        } else {
+            return true;
+        }
+    };
+
+    handleChange = (evt) => {
+        let newState = this.state;
+        this.props.error();
+        newState.formData[evt.target.name].value = evt.target.value;
+        this.setState({
+            ...newState
+        })
+    };
+
     handleSubmit = (evt) => {
         evt.preventDefault();
-        console.log('salut');
+        let data = {};
+        Object.keys(this.state.formData).map(key => {
+            data[key] = this.state.formData[key].value;
+        });
+        if (this.validation(data)) {
+            this.props.dispatch(loginUser(data));
+        }
     };
+
+    componentWillReceiveProps(nextProps, nextContext) {
+        if (nextProps.login.res.type === 'error')
+            this.props.alert(nextProps.login.res);
+        else if (nextProps.login.res.success) {
+            localStorage.setItem('T', nextProps.login.res.success);
+            let newState = this.state;
+            newState.redirect = true;
+            this.setState({
+                ...newState
+            });
+        }
+    }
 
     componentDidMount() {
         this.setState({
@@ -48,19 +88,23 @@ class SignUpForm extends Component {
     }
 
     render() {
+        console.log(this.state);
         return (
             <form className={'sign_in_container'} onSubmit={this.handleSubmit}>
+                {this.state.redirect && <Redirect to={'/'}/>}
                 <CSSTransition timeout={950} classNames="input_container_sign_in" in={this.state.mounted}>
                     <div className={'input_container_sign_in'}>
-                        <input {...this.state.formData.user.config} className={'sign_in_input'}/>
+                        <input {...this.state.formData.email.config} className={'sign_in_input'}
+                               onChange={(evt) => this.handleChange(evt)}/>
                         <span className={'input_icon'}>
-                            <i className={this.state.formData.user.icon}/>
+                            <i className={this.state.formData.email.icon}/>
                         </span>
                     </div>
                 </CSSTransition>
                 <CSSTransition timeout={950} classNames="input_container_sign_in" in={this.state.mounted}>
                     <div className={'input_container_sign_in'}>
-                        <input {...this.state.formData.password.config} className={'sign_in_input'}/>
+                        <input {...this.state.formData.password.config} className={'sign_in_input'}
+                               onChange={(evt) => this.handleChange(evt)}/>
                         <span className={'input_icon'}>
                             <i className={this.state.formData.password.icon}/>
                         </span>
@@ -105,7 +149,10 @@ class SignUpForm extends Component {
 }
 
 function mapStateToProps(state) {
-    return {};
+    const login = state.user;
+    return {
+        login
+    };
 }
 
-export default connect(mapStateToProps)(SignUpForm);
+export default connect(mapStateToProps)(SignInForm);

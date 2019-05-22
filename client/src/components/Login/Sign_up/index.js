@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
+import { registerUser } from "../../../actions/authActions";
 import './sign_up.css'
 
 // Forgot-password remaining
@@ -80,7 +81,16 @@ class SignUpForm extends Component {
 
     submitForm = (evt) => {
         evt.preventDefault();
+        let user = {};
+        Object.keys(this.state).map(key => {
+            if (key !== 'stage') user[key] = this.state[key].value;
+        });
+        this.props.dispatch(registerUser(user));
     };
+
+    componentWillReceiveProps(nextProps, nextContext) {
+        this.props.alert(nextProps.register.res);
+    }
 
     componentWillUnmount() {
         this.props.error();
@@ -88,6 +98,7 @@ class SignUpForm extends Component {
 
     render() {
         const stage = this.state.stage;
+        console.log(this.props);
         return (
             <form onSubmit={this.submitForm}>
                 {stage === 1 ? <SignUpStep1 data={{
@@ -110,7 +121,10 @@ class SignUpForm extends Component {
 }
 
 function mapStateToProps(state) {
-    return {};
+    const register = state.user;
+    return {
+        register
+    };
 }
 
 export default connect(mapStateToProps)(SignUpForm);

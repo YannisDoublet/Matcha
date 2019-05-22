@@ -5,7 +5,7 @@
     width: 100vw;
     height: 4rem;
     display: grid;
-    grid-template-columns: 1fr 10fr 1fr 10fr 1fr;
+    grid-template-columns: 2fr 10fr 1fr 10fr 2fr;
     grid-template-areas: "empty1 left middle right empty2";
     transition: .4s;
     z-index: 10;
@@ -57,7 +57,7 @@
 
 .navbar_content_left {
     grid-area: left;
-    justify-self: center;
+    justify-self: start;
 }
 
 .navbar_content_middle {
@@ -84,5 +84,53 @@
 }
 
 @media screen and (max-width: 1024px) {
+    .navbar {
+        grid-template-columns: 2fr 8fr 1fr 8fr 2fr;
+    }
+}
 
+@media screen and (max-width: 970px) {
+    .navbar {
+        grid-template-columns: 0 8fr 1fr 8fr 0;
+    }
+
+    .navbar_content_left {
+        justify-self: center;
+    }
+
+    .navbar_content_right {
+        justify-self: center;
+    }
+
+    .navbar a {
+        text-decoration: none;
+        color: #ffffff;
+        font-size: 18px;
+        font-family: 'Rubik', sans-serif;
+    }
+
+    .navbar_item {
+        margin: 0.5rem 2rem;
+        width: 4rem;
+        height: 3rem;
+    }
+}
+
+@media screen and (max-width: 530px) {
+    .navbar a {
+        text-decoration: none;
+        color: #ffffff;
+        font-size: 18px;
+        font-family: 'Rubik', sans-serif;
+    }
+
+    .navbar_item {
+        margin: 0.5rem;
+        width: 4rem;
+        height: 3rem;
+    }
+
+    .navbar_item:first-child {
+        margin-right: 0;
+    }
 }

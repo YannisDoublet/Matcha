@@ -5,7 +5,7 @@
     border-bottom: solid 2px rgb(242, 243, 249);
 }
 
-.fa-user {
+#search_user_container .fa-user {
     color: rgb(70, 95, 196);
     align-self: center;
     font-size: 1.5rem;
