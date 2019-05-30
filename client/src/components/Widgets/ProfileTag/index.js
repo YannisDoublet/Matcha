@@ -21,12 +21,12 @@ class ProfileTag extends Component {
     };
 
     render() {
-        const user = this.props.user;
+        const user_img = this.props.user_img;
         const options = this.props.options;
         const opened = this.props.opened;
         return (
             <div id={'profile_tag_wrapper'} onClick={(evt) => this.props.toggle(evt)}>
-                <img id={'profile_tag_img'} src={user.img} alt={'user_img'}/>
+                <img id={'profile_tag_img'} src={user_img} alt={'user_img'}/>
                 <div id={'profile_tag_container'}>
                     <p id={'profile_tag_greetings'}>Profile</p>
                     <img id={'profile_tag_arrow-down'} src={'/assets/down-arrow.svg'} alt={'arrow-down'}/>

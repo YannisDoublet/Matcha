@@ -1,22 +1,21 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import GoogleMaps from '../../components/GoogleMaps'
-
-import './profile_container.css'
-
 import Alert from '../../components/Widgets/Alert'
 import ReportPopUp from '../../components/Widgets/ReportPopUp'
 import ProfileCard from '../../components/Widgets/ProfileCard'
 import Tags from '../../components/Widgets/Tags'
+import './profile_container.css'
+import {fetchUser} from "../../actions/profileActions";
 
 class ProfileContainer extends Component {
 
     state = {
         user: {
-                firstname: 'Mark', lastname: 'Zuckerberg', username: 'Zucky42', age: '34',
-                gender: 'Man', sexuality: 'Heterosexual', location: 'San Francisco, USA',
-                popularity: '4.5', status: 'Connected', tags: ['Funny', 'Shana', 'Arnaud', 'WOW']
-            },
+            firstname: 'Mark', lastname: 'Zuckerberg', username: 'Zucky42', age: '34',
+            gender: 'Man', sexuality: 'Heterosexual', location: 'San Francisco, USA',
+            popularity: '4.5', status: 'Connected', tags: ['Funny', 'Shana', 'Arnaud', 'WOW']
+        },
         alert: {
             status: false,
             type: '',
@@ -41,6 +40,13 @@ class ProfileContainer extends Component {
             '/assets/zuckywola.jpg'
         ]
     };
+
+    componentWillMount() {
+        if (this.props.match.params.id) {
+            this.props.dispatch(fetchUser(this.props.match.params.id))
+        }
+    }
+
 
     closePopUp = () => {
         this.setState({
@@ -83,6 +89,7 @@ class ProfileContainer extends Component {
     render() {
         let alert = this.state.alert;
         let popUp = this.state.popUp;
+        console.log(this.props);
         return (
             <div id={'profile'}>
                 <Alert alert={alert} handleAlert={this.handleAlert}/>
@@ -116,7 +123,7 @@ class ProfileContainer extends Component {
                         </div>
                         <div id={'tag_container'}>
                             <p id={'tag_title'}>Tags</p>
-                            <Tags tags={this.state.tags} id={'profile'}/>
+                            <Tags tags={this.state.user.tags} id={'profile'}/>
                         </div>
                         <div id={'map_container'}>
                             <p id={'map_title'}>Maps</p>
@@ -132,7 +139,10 @@ class ProfileContainer extends Component {
 }
 
 function mapStateToProps(state) {
-    return {};
+    let user = state.user;
+    return {
+        user
+    };
 }
 
 export default connect(mapStateToProps)(ProfileContainer);

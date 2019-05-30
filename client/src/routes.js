@@ -16,7 +16,7 @@ const Routes = () => {
             <Route path={'/validate:token'} exact component={ValidateEmail} />
             <Layout>
                 <Route path={'/'} exact component={Home}/>
-                <Route path={'/profile'} exact component={Profile} />
+                <Route path={'/profile/:id'} exact component={Profile} />
                 <Route path={'/match'} exact component={Matcher} />
                 <Route path={'/chat'} exact component={Chat} />
             </Layout>

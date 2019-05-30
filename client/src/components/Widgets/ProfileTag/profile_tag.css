@@ -27,6 +27,10 @@
     align-items: center;
 }
 
+#profile_tag_greetings {
+    color: white;
+}
+
 #profile_tag_dropdown {
     position: absolute;
     width: 15rem;

@@ -1,9 +1,11 @@
+
 const bcrypt = require('bcrypt');
 const rand = require('rand-token');
 const jwtUtils = require('../utils/jwt.utils');
 const dbUtils = require('../utils/db.query');
 const mailsUtils = require('../utils/mails.utils');
 const validationUtils = require('../utils/validation.utils');
+const axios = require('axios');
 
 module.exports = {
     register: (req, res) => {
@@ -24,10 +26,18 @@ module.exports = {
             return res.status(400).json({status: true, type: 'error', message: 'Invalid inputs !'});
         return dbUtils.searchUserByEmailOrUsername(email, username).then(user => {
             if (!user) {
+                let profile;
+                let banner = '/assets/banner.jpg';
                 psw = bcrypt.hashSync(psw, 10);
                 let token = rand.generate(50);
                 let acc_id = Math.random().toString(36).substr(2, 9);
-                dbUtils.insertUser(acc_id, email, firstname, lastname, username, psw, age, gender, sexuality, token, 0);
+                if (gender === 'Man' || gender === 'Woman') {
+                    profile = gender === 'Man' ? '/assets/profile_man.jpg' : '/assets/profile_woman.jgp'
+                } else {
+                    profile = '/assets/undefined_profile.png'
+                }
+                dbUtils.insertUser(acc_id, profile, banner, email, firstname, lastname, username,
+                    psw, age, gender, sexuality, token, 0);
                 mailsUtils.sendEmail(email, token);
             } else {
                 return res.status(200).json({
@@ -44,25 +54,38 @@ module.exports = {
         });
     },
     login: (req, res) => {
+        console.log('IT WORKS');
         let email = req.body.email;
         let psw = req.body.password;
 
-        if (!email.length || !psw.length) return res.status(400).json({status: true, type: 'error', message: 'Invalid inputs !'});
+        if (!email.length || !psw.length) return res.status(400).json({
+            status: true,
+            type: 'error',
+            message: 'Invalid inputs !'
+        });
         return dbUtils.searchUserByEmailOrUsername(email, '').then(user => {
             if (user) {
-                bcrypt.compare(psw, user.password, (err, result) => {
-                    if (err) throw err;
-                    if (result === false) {
-                        return res.status(200).json({
-                            status: true,
-                            type: 'error',
-                            message: 'Wrong password !'
-                        });
-                    } else {
-                        let token = jwtUtils.generateTokenforUser(user);
-                        return res.status(200).json({success: token});
-                    }
-                })
+                if (user.activate === 0) {
+                    return res.status(200).json({
+                        status: true,
+                        type: 'error',
+                        message: 'Account unvalidated ! Check your mails !'
+                    });
+                } else {
+                    bcrypt.compare(psw, user.password, (err, result) => {
+                        if (err) throw err;
+                        if (result === false) {
+                            return res.status(200).json({
+                                status: true,
+                                type: 'error',
+                                message: 'Wrong password !'
+                            });
+                        } else {
+                            let token = jwtUtils.generateTokenforUser(user);
+                            return res.status(200).json({success: token});
+                        }
+                    })
+                }
             } else {
                 return res.status(200).json({
                     status: true,
@@ -108,5 +131,45 @@ module.exports = {
                 message: 'Invalid token provided !'
             });
         }
-    }
+    },
+    verifyToken: (req, res) => {
+        let token = req.body.token;
+
+        if (token) {
+            let decoded = jwtUtils.verifyUserToken(token);
+            console.log(decoded);
+            if (!decoded.id) {
+                module.exports.logoutUser();
+            } else {
+                return res.status(200).json(decoded);
+            }
+        } else {
+            module.exports.logoutUser();
+        }
+    },
+    userInfo: (req, res) => {
+        let acc_id = req.body.acc_id;
+
+        if (acc_id) {
+            return dbUtils.searchUserByAccountId(acc_id)
+                .then(user => {
+                    return res.status(200).json(user);
+                })
+        } else {
+            return res.status(200).json({'error': 'Invalid id'});
+        }
+    },
+    fetchUserByUsername: (req, res) => {
+        let username = req.body.username;
+
+        if (username) {
+            dbUtils.searchUserByEmailOrUsername('', username)
+                .then(user => {
+                    return res.status(200).json(user);
+                })
+        }
+    },
+    logoutUser: (req, res) => {
+        console.log('expired');
+    },
 };

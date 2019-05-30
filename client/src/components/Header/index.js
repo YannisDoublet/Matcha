@@ -1,6 +1,8 @@
 import React, {Component} from 'react'
 import {Link} from 'react-router-dom'
+import {connect} from 'react-redux'
 import HeaderConnectedOptions from './header_connected_options'
+import {verifyToken} from "../../actions/authActions";
 import './header.css'
 
 class Header extends Component {
@@ -30,6 +32,18 @@ class Header extends Component {
         background: false,
         connected: false
     };
+
+    componentWillMount() {
+        this.props.dispatch(verifyToken(localStorage.getItem('T')));
+    }
+
+    componentWillReceiveProps(nextProps, nextContext) {
+        if (nextProps.user.res.id) {
+            this.setState({
+                connected: true
+            });
+        }
+    }
 
     toggleBackground = () => {
         let st = window.pageYOffset || document.documentElement.scrollTop;
@@ -97,7 +111,7 @@ class Header extends Component {
                     </Link>
                 </div>
                 <div className={'navbar_content_right'}>
-                    {this.state.connected ? <HeaderConnectedOptions /> :
+                    {this.state.connected ? <HeaderConnectedOptions id={this.props.user.res.id}/> :
                         this.renderNavbarContent({
                         sign_in: this.state.navbarItems.sign_in
                     })}
@@ -107,4 +121,11 @@ class Header extends Component {
     }
 }
 
-export default Header;
+function mapStateToProps(state) {
+    const user = state.user;
+    return {
+        user
+    };
+}
+
+export default connect(mapStateToProps)(Header);

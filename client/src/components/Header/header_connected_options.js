@@ -1,6 +1,8 @@
 import React, {Component} from 'react'
+import {connect} from 'react-redux'
 import ProfileTag from '../Widgets/ProfileTag'
 import Notifications from '../Widgets/Notifications'
+import {userInfo} from "../../actions/authActions";
 import './header_connected_options.css'
 
 class HeaderConnectedOptions extends Component {
@@ -13,9 +15,9 @@ class HeaderConnectedOptions extends Component {
             {type: 'match', img: '/assets/match.svg', msg: 'Congratulation ! It\'s a match !'},
             {type: 'dislike', img: '/assets/broken-heart.svg', msg: 'Someone dislike your profile !'}
         ],
-        user: {img: '/assets/zuckywola.jpg', firstname: 'Mark'},
+        user_img: '',
         dropdown_content: [
-            {img: '/assets/resume.svg', msg: 'My profile page', link: '/profile'},
+            {img: '/assets/resume.svg', msg: 'My profile page', link: ''},
             {img: '/assets/settings-gears.svg', msg: 'Settings', link: '/settings'},
             {img: '/assets/logout.svg', msg: 'Logout', link: '/logout'},
         ],
@@ -23,6 +25,21 @@ class HeaderConnectedOptions extends Component {
         notification_opened: false,
         profile_tag_opened: false
     };
+
+    componentWillMount() {
+        this.props.dispatch(userInfo(this.props.id));
+    }
+
+    componentWillReceiveProps(nextProps, nextContext) {
+        if (nextProps.user.info.acc_id) {
+            let newState = this.state;
+            newState.user_img = nextProps.user.info.profile_pic;
+            newState.dropdown_content[0].link = `/profile/${nextProps.user.info.username}`;
+            this.setState({
+                ...newState
+            });
+        }
+    }
 
     hideDropdown = () => {
         let st = window.pageYOffset || document.documentElement.scrollTop;
@@ -91,11 +108,18 @@ class HeaderConnectedOptions extends Component {
             <div id={'connected_options_wrapper'}>
                 <Notifications opened={this.state.notification_opened} toggle={this.toggleDropdown}
                                notifications={this.state.notifications} number={this.state.notifications_number}/>
-                <ProfileTag opened={this.state.profile_tag_opened} user={this.state.user}
+                <ProfileTag opened={this.state.profile_tag_opened} user_img={this.state.user_img}
                             options={this.state.dropdown_content} toggle={this.toggleDropdown}/>
             </div>
         );
     }
 }
 
-export default HeaderConnectedOptions;
+function mapStateToProps(state) {
+    const user = state.user;
+    return {
+        user
+    };
+}
+
+export default connect(mapStateToProps)(HeaderConnectedOptions);

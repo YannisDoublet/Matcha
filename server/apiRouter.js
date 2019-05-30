@@ -7,6 +7,9 @@ exports.router = (function () {
     apiRouter.route('/account/register').post(userManagement.register);
     apiRouter.route('/account/login').post(userManagement.login);
     apiRouter.route('/account/validate').get(userManagement.validate);
+    apiRouter.route('/account/verify_token').post(userManagement.verifyToken);
+    apiRouter.route('/account/user_info').post(userManagement.userInfo);
+    apiRouter.route('/account/fetch_user').post(userManagement.fetchUserByUsername);
 
     return apiRouter;
 })();
