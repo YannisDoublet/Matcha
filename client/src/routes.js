@@ -5,6 +5,7 @@ import Home from './components/Home'
 import Login from './components/Login'
 import Profile from './components/Profile'
 import Matcher from './components/Matcher'
+import Chat from './containers/ChatContainer'
 import Layout from "./HOC/Layout"
 import ValidateEmail from "./components/Widgets/ValidateEmail";
 
@@ -17,6 +18,7 @@ const Routes = () => {
                 <Route path={'/'} exact component={Home}/>
                 <Route path={'/profile'} exact component={Profile} />
                 <Route path={'/match'} exact component={Matcher} />
+                <Route path={'/chat'} exact component={Chat} />
             </Layout>
         </Switch>
     );

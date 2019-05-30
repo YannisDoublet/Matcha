@@ -1,0 +1,18 @@
+#chat_wrapper {
+    display: flex;
+    width: 100vw;
+    min-height: calc(100vh - 4rem - 9.5rem);
+    margin-top: 4rem;
+    user-select: none;
+}
+
+#chat_navbar_container {
+    display: flex;
+    flex-direction: column;
+    min-width: 20rem;
+    border-right: 2px solid rgb(242, 243, 249);
+}
+
+#chat_box_container {
+    width: 100%;
+}

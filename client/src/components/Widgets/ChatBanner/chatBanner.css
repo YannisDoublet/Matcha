@@ -1,0 +1,44 @@
+@import url('https://fonts.googleapis.com/css?family=PT+Sans&display=swap');
+
+.chat_banner_container {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    padding: 0.9rem;
+    border-bottom: 2px solid rgb(242, 243, 249);
+    background: white;
+}
+
+.chat_banner_container  p {
+    margin: 0.45rem;
+    font-size: 1.2rem;
+    font-family: 'PT-Sans', sans-serif !important;
+}
+
+.chat_banner_user_status_online:before {
+    display: inline-block;
+    content: '';
+    width: 5px;
+    height: 5px;
+    margin-right: 0.75rem;
+    background: lightgreen;
+    border-style: solid;
+    border-color: lightgreen;
+    border-radius: 50%;
+    box-shadow: 1px 1px 10px 2px lawngreen;
+}
+
+.chat_banner_user_status_offline:before {
+    display: inline-block;
+    content: '';
+    width: 5px;
+    height: 5px;
+    margin-right: 0.5rem;
+    background: #FF1744;
+    border-style: solid;
+    border-color: #FF1744;
+    border-radius: 50%;
+    box-shadow: 1px 1px 10px 1px red;
+}

@@ -1,0 +1,38 @@
+.my_message {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    align-items: flex-end;
+    font-family: 'PT-Sans', sans-serif;
+}
+
+.my_message .message {
+    margin: 0.5rem 1rem;
+    padding: 0.5rem;
+    border-radius: 5px;
+    background: rgb(70, 95, 196);
+    color: white;
+}
+
+.others_message {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    align-items: flex-start;
+    font-family: 'PT-Sans', sans-serif;
+}
+
+.others_message .message {
+    float: left;
+    margin: 0.5rem 1rem;
+    padding: 0.5rem;
+    border-radius: 5px;
+    background: rgb(234, 87, 107);
+    color: white;
+}
+
+.date {
+    padding: 0 1rem;
+    font-size: 0.8rem;
+    color: #888888;
+}

@@ -1,0 +1,12 @@
+#chat_input_container {
+    width: 100%;
+    height: 5rem;
+    background: white;
+}
+
+#chat_input {
+    width: 100%;
+    border: none;
+    outline: none;
+    padding: 0.8rem;
+}
