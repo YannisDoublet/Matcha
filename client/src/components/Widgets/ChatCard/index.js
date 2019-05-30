@@ -9,11 +9,10 @@ const ChatCard = (props) => {
             <div className={'chatCard_user'}>
                 <div className={'chatCard_info'}>
                     <p className={'chatCard_user_name'}>{user.name}</p>
-                    {parseInt(user.unread_msg) > 0 && <div className={'chatCard_notif'}>{user.unread_msg}</div>}
+                    <p className={'chatCard_date'}>{user.last_msg_time}</p>
                 </div>
                 <p className={'chatCard_last_msg'}>{user.last_msg}</p>
             </div>
-            <p className={'chatCard_date'}>{user.last_msg_time}</p>
         </div>
     );
 };

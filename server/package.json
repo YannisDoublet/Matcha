@@ -3,7 +3,8 @@
 	"version": "1.0.0",
 	"description": "Un site de rencontres pour les personnes désirant rencontrer des rencontres sans rencontre.",
 	"scripts": {
-		"dev": "concurrently \"nodemon server\" \"npm start --prefix ../client\""
+		"dev": "concurrently \"nodemon server\" \"npm start --prefix ../client\"",
+		"seed": "node ./utils/seed-creator.js"
 	},
 	"author": "yadouble",
 	"license": "MIT",

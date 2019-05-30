@@ -10,7 +10,7 @@ class ChatBox extends Component {
         let user_info = this.props.conversation;
         return (
             <Fragment>
-                <ChatBanner user={user_info}/>
+                <ChatBanner user={user_info} toggle={this.props.toggle}/>
                 <ChatContent user={user_info} />
                 <ChatInput />
             </Fragment>

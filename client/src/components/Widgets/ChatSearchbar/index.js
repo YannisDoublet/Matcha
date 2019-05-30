@@ -16,12 +16,10 @@ class ChatSearchbar extends Component {
     };
 
     render() {
-        console.log(this.state.value);
         return (
             <form id={'chat_searchbar_container'}>
-                <i id={'loupe'} className="fas fa-search"/>
                 <input id={'chat_searchbar'} type={'text'} onChange={this.handleChange}
-                value={this.state.value} placeholder={'Search for conversation...'}/>
+                value={this.state.value} placeholder={'Search for conversation...'} />
             </form>
         );
     }

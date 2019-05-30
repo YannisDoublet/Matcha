@@ -83,7 +83,8 @@ class SignUpForm extends Component {
         evt.preventDefault();
         let user = {};
         Object.keys(this.state).map(key => {
-            if (key !== 'stage') user[key] = this.state[key].value;
+            if (key !== 'stage') return user[key] = this.state[key].value;
+            return null;
         });
         this.props.dispatch(registerUser(user));
     };

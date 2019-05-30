@@ -1,5 +1,5 @@
 import axios from 'axios'
-import {REGISTER_USER, LOGIN_USER, LOGOUT_USER} from "./types";
+import {REGISTER_USER, LOGIN_USER} from "./types";
 
 export const registerUser = (data) => dispatch => {
     axios.post('/api/account/register', data)

@@ -1,5 +1,4 @@
 .chatCard_container {
-    position: relative;
     width: 100%;
     display: flex;
     border-bottom: 2px solid rgb(242, 243, 249);
@@ -24,30 +23,19 @@
 
 .chatCard_user {
     display: flex;
+    width: 75%;
     flex-direction: column;
     padding: 0.25rem 0.5rem;
 }
 
 .chatCard_info {
     display: flex;
+    justify-content: space-between;
 }
 
 .chatCard_user_name {
     margin-bottom: 0.75rem;
     margin-right: 0.5rem;
-}
-
-.chatCard_notif {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 0.5rem;
-    min-width: 1.2rem;
-    height: 1.2rem;
-    border-radius: 50%;
-    color: white;
-    border: none;
-    background: #FF1744;
 }
 
 .chatCard_last_msg {
@@ -56,10 +44,8 @@
 }
 
 .chatCard_date {
-    position: absolute;
     padding: 0.25rem;
-    top: 0;
-    right: 0;
+    margin: -10px -35px 0 0;
     color: #888;
     font-size: 0.75rem;
 }

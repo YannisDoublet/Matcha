@@ -1,3 +1,7 @@
+.hidden {
+    margin-right: -25rem;
+}
+
 #chat_wrapper {
     display: flex;
     width: 100vw;
@@ -6,13 +10,29 @@
     user-select: none;
 }
 
-#chat_navbar_container {
+.chat_navbar_container {
     display: flex;
     flex-direction: column;
-    min-width: 20rem;
+    min-width: 25rem;
     border-right: 2px solid rgb(242, 243, 249);
+    transition: margin-right 1s ease;
 }
 
 #chat_box_container {
     width: 100%;
+}
+
+@media screen and (max-width: 670px) {
+    .chat_navbar_container {
+        min-width: 100vw;
+    }
+
+    .hidden {
+        margin-right: -100vw;
+        z-index: -10;
+    }
+
+    #chat_wrapper {
+        overflow-x: hidden;
+    }
 }

@@ -61,7 +61,7 @@ class SignInForm extends Component {
         evt.preventDefault();
         let data = {};
         Object.keys(this.state.formData).map(key => {
-            data[key] = this.state.formData[key].value;
+            return data[key] = this.state.formData[key].value;
         });
         if (this.validation(data)) {
             this.props.dispatch(loginUser(data));

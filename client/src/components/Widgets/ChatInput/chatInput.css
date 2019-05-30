@@ -1,6 +1,6 @@
 #chat_input_container {
+    position: relative;
     width: 100%;
-    height: 5rem;
     background: white;
 }
 

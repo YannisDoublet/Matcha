@@ -6,8 +6,34 @@ import './chat_navbar.css'
 
 class ChatNavbar extends Component {
 
-    sortMatch = () => {
+    state = {
+        card: [],
+        filter: [],
+        value: ''
+    };
 
+    componentWillMount() {
+        this.setState({
+            card: this.props.users
+        });
+    }
+
+    sortMatch = (value) => {
+        console.log(value);
+        let card = this.state.card;
+        if (card.length > 0) {
+            const filteredSuggestions = card.filter(user =>
+                user.name.indexOf(value.charAt(0).toUpperCase() + value.slice(1)) === 0);
+            this.setState({
+                filter: filteredSuggestions,
+                value: value
+            })
+        } else {
+            this.setState({
+                filter: [],
+                value: value
+            })
+        }
     };
 
     renderChatCard = (users) => {
@@ -17,12 +43,12 @@ class ChatNavbar extends Component {
     };
 
     render() {
-        let users = this.props.users;
+        let filter = this.state.value.length > 0 ? this.state.filter : this.state.card;
         return (
             <Fragment>
                 <ChatSearchbar sort={this.sortMatch}/>
                 <div id={'chat_card_wrapper'}>
-                    {this.renderChatCard(users)}
+                    {filter.length ? this.renderChatCard(filter) : <p id={'chat_searchbar_excuse_msg'}>No conversation found...</p>}
                 </div>
             </Fragment>
         );

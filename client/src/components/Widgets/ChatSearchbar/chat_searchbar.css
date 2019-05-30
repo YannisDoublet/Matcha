@@ -1,5 +1,4 @@
 #chat_searchbar_container {
-    position: relative;
     width: 100%;
     display: flex;
     justify-content: center;
@@ -7,18 +6,13 @@
     border-bottom: 2px solid rgb(242, 243, 249);
 }
 
+
+
 #chat_searchbar {
     outline: none;
     border-radius: 5px;
     border: none;
     width: 100%;
     height: 2rem;
-    padding-left: 2.5rem;
-}
-
-#loupe {
-    position: absolute;
-    left: 2rem;
-    bottom: 1.5rem;
-    color: #9dc5ed;
+    padding-left: 0.5rem;
 }

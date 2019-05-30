@@ -1,6 +1,7 @@
 @import url('https://fonts.googleapis.com/css?family=PT+Sans&display=swap');
 
 .chat_banner_container {
+    position: relative;
     display: flex;
     justify-content: center;
     flex-direction: column;
@@ -15,6 +16,13 @@
     margin: 0.45rem;
     font-size: 1.2rem;
     font-family: 'PT-Sans', sans-serif !important;
+}
+
+.fa-bars {
+    position: absolute;
+    left: 1rem;
+    cursor: pointer;
+    font-size: 1.1rem;
 }
 
 .chat_banner_user_status_online:before {
