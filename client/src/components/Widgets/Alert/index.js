@@ -10,17 +10,10 @@ class Alert extends Component {
     };
 
     componentWillReceiveProps(nextProps, nextContext) {
-        console.log(nextProps);
         if (nextProps !== this.props && nextProps.alert && nextProps.alert.message !== '') {
             this.setState({
                 step: 2
             });
-            setTimeout(() => {
-                this.setState({
-                    step: 1
-                });
-                this.closeAlert();
-            }, 5000);
         }
     }
 
@@ -28,13 +21,11 @@ class Alert extends Component {
         this.setState({
             step: 1
         });
-        setTimeout( () => {
-            let alert = this.props.alert;
-            alert.status = false;
-            alert.type = '';
-            alert.message = '';
-            this.props.handleAlert(alert);
-        }, 500)
+        let alert = this.props.alert;
+        alert.status = false;
+        alert.type = '';
+        alert.message = '';
+        this.props.handleAlert(alert);
     };
 
     render() {

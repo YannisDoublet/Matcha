@@ -6,7 +6,6 @@ import {userInfo} from "../../actions/authActions";
 import './header_connected_options.css'
 
 class HeaderConnectedOptions extends Component {
-
     state = {
         notifications: [
             {type: 'like', img: '/assets/heart.svg', msg: 'Someone like your profile !'},
@@ -31,7 +30,8 @@ class HeaderConnectedOptions extends Component {
     }
 
     componentWillReceiveProps(nextProps, nextContext) {
-        if (nextProps.user.info.acc_id) {
+        if (nextProps.user.info) {
+            console.log('JE SUIS USER INFO: ', nextProps.user.info);
             let newState = this.state;
             newState.user_img = nextProps.user.info.profile_pic;
             newState.dropdown_content[0].link = `/profile/${nextProps.user.info.username}`;
@@ -58,7 +58,6 @@ class HeaderConnectedOptions extends Component {
         let target = evt.target;
         let notif = this.state.notification_opened;
         let tag = this.state.profile_tag_opened;
-        console.log(target.id);
         if (target.id.indexOf('notifications') < 0 && target.id.indexOf('profile_tag') < 0
             && (notif || tag)) {
             this.setState({
@@ -91,19 +90,20 @@ class HeaderConnectedOptions extends Component {
     };
 
     componentDidMount() {
-        this.setState({
-            notifications_number: this.state.notifications.length
-        });
-        window.addEventListener('mousedown', this.untoggleDropdown, false);
-        window.addEventListener("scroll", this.hideDropdown, false);
+            this.setState({
+                notifications_number: this.state.notifications.length
+            });
+            window.addEventListener('mousedown', this.untoggleDropdown, false);
+            window.addEventListener("scroll", this.hideDropdown, false);
     }
 
     componentWillUnmount() {
-        window.addEventListener('mousedown', this.untoggleDropdown);
+        window.removeEventListener('mousedown', this.untoggleDropdown);
         window.removeEventListener('scroll', this.hideDropdown);
     }
 
     render() {
+        console.log(this.state);
         return (
             <div id={'connected_options_wrapper'}>
                 <Notifications opened={this.state.notification_opened} toggle={this.toggleDropdown}

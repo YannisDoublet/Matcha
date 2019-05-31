@@ -20,7 +20,6 @@ button {
 
 #profile .card {
     grid-area: profile_card;
-    width: 15rem;
     display: flex;
     flex-direction: column;
     margin-top: -8rem;

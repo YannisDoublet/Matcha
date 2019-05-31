@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-import {connect} from 'react-redux';
 import Card from '../../components/Widgets/Card'
 import './home.css'
 
@@ -36,10 +35,4 @@ class HomeContainer extends Component {
     }
 }
 
-function mapStateToProps(state) {
-    return {
-        user: state.user
-    };
-}
-
-export default connect(mapStateToProps)(HomeContainer);
+export default HomeContainer;

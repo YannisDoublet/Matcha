@@ -37,7 +37,7 @@ module.exports = {
                     profile = '/assets/undefined_profile.png'
                 }
                 dbUtils.insertUser(acc_id, profile, banner, email, firstname, lastname, username,
-                    psw, age, gender, sexuality, token, 0);
+                    psw, age, gender, sexuality, 2.50, 'Never connected...',token, 0);
                 mailsUtils.sendEmail(email, token);
             } else {
                 return res.status(200).json({
@@ -54,7 +54,6 @@ module.exports = {
         });
     },
     login: (req, res) => {
-        console.log('IT WORKS');
         let email = req.body.email;
         let psw = req.body.password;
 
@@ -75,6 +74,7 @@ module.exports = {
                     bcrypt.compare(psw, user.password, (err, result) => {
                         if (err) throw err;
                         if (result === false) {
+                            dbUtils.updateConnectionStatus(user.acc_id, 'Connected');
                             return res.status(200).json({
                                 status: true,
                                 type: 'error',
@@ -137,21 +137,21 @@ module.exports = {
 
         if (token) {
             let decoded = jwtUtils.verifyUserToken(token);
-            console.log(decoded);
+            console.log('Je suis le token: ', decoded);
             if (!decoded.id) {
-                module.exports.logoutUser();
+                // module.exports.logoutUser();
             } else {
                 return res.status(200).json(decoded);
             }
         } else {
-            module.exports.logoutUser();
+            // module.exports.logoutUser();
         }
     },
     userInfo: (req, res) => {
         let acc_id = req.body.acc_id;
 
         if (acc_id) {
-            return dbUtils.searchUserByAccountId(acc_id)
+            return dbUtils.getUserPublicInfo(acc_id, '')
                 .then(user => {
                     return res.status(200).json(user);
                 })
@@ -159,17 +159,21 @@ module.exports = {
             return res.status(200).json({'error': 'Invalid id'});
         }
     },
-    fetchUserByUsername: (req, res) => {
+    fetchUserProfileByUsername: (req, res) => {
         let username = req.body.username;
 
+        console.log(req.body);
         if (username) {
-            dbUtils.searchUserByEmailOrUsername('', username)
+            dbUtils.getUserPublicInfo('', username)
                 .then(user => {
+                    console.log(user);
                     return res.status(200).json(user);
                 })
         }
     },
     logoutUser: (req, res) => {
-        console.log('expired');
+        let time = req.body.time;
+
+        dbUtils.updateConnectionStatus()
     },
 };

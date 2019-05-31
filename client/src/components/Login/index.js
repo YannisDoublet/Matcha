@@ -85,7 +85,6 @@ class Login extends Component {
             sign_in: this.state.sign_in ? 'active_button' : '',
             sign_up: this.state.sign_up ? 'active_button' : ''
         };
-        console.log(this.props.location);
         return (
             <div className={'container'}>
                 <Alert alert={this.state.alert} handleAlert={this.handleAlert}/>

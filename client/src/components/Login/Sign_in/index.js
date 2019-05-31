@@ -88,7 +88,6 @@ class SignInForm extends Component {
     }
 
     render() {
-        console.log(this.state);
         return (
             <form className={'sign_in_container'} onSubmit={this.handleSubmit}>
                 {this.state.redirect && <Redirect to={'/'}/>}

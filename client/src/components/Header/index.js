@@ -95,6 +95,8 @@ class Header extends Component {
     render() {
         const nav = this.state.showNav ? '' : 'hide';
         const background = this.state.background ? 'background' : '';
+        const connected = this.state.connected;
+        console.log(connected);
         return (
             <div id={'navbar'} className={`navbar ${nav} ${background}`}>
                 <div className={'blur'}/>
@@ -111,7 +113,7 @@ class Header extends Component {
                     </Link>
                 </div>
                 <div className={'navbar_content_right'}>
-                    {this.state.connected ? <HeaderConnectedOptions id={this.props.user.res.id}/> :
+                    {this.state.connected === true ? <HeaderConnectedOptions id={this.props.user.res.id}/> :
                         this.renderNavbarContent({
                         sign_in: this.state.navbarItems.sign_in
                     })}

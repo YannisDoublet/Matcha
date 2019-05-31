@@ -19,21 +19,29 @@ const displayTags = (tags) => {
     return (filter(userTags));
 };
 
+const getLocation = (min, max) => {
+    return (Math.random() < 0.5 ?
+        ((1 - Math.random()) * (max - min) + min) :
+        (Math.random() * (max - min) + min)).toFixed(5);
+};
+
 const seed_creator = async () => {
     displayTags(tags);
     for (let i = 0; i < 750; i++) {
         await axios.get('https://randomuser.me/api/')
             .then((user) => {
+                let tab = ['Heterosexual', 'Homosexual', 'Bisexual'];
                 let fake = user.data.results[0];
                 let token = rand.generate(50);
                 let acc_id = Math.random().toString(36).substr(2, 9);
                 let psw = bcrypt.hashSync('FakeAccount123', 10);
-                let sexuality = Math.floor(Math.random() * 3) + 1;
+                let sexuality = tab[Math.floor(Math.random() * 3)];
+                let score = (Math.random() * (5.00 - 1.00 + 1.00)).toFixed(2);
                 dbUtils.insertUser(acc_id, fake.picture.large, '/assets/banner.jpg',
                     fake.email, fake.name.first, fake.name.last, fake.login.username, psw,
-                    fake.dob.age, fake.gender, sexuality, token, 1);
-                dbUtils.insertUserLocation(acc_id, fake.location.coordinates.latitude,
-                    fake.location.coordinates.longitude);
+                    fake.dob.age, fake.gender, sexuality, score, 'Never connected...', token, 1);
+                dbUtils.insertUserLocation(acc_id, getLocation(43.62, 50.07),
+                    getLocation(-0.8, 8.27));
                 displayTags(tags).map(tag => {
                     dbUtils.insertTag(acc_id, tag);
                 });

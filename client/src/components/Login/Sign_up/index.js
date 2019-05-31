@@ -99,7 +99,6 @@ class SignUpForm extends Component {
 
     render() {
         const stage = this.state.stage;
-        console.log(this.props);
         return (
             <form onSubmit={this.submitForm}>
                 {stage === 1 ? <SignUpStep1 data={{

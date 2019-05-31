@@ -1,6 +1,7 @@
 const Database = require('../config/db.config').Database;
 const dbCredentials = require('../config/private/db.credentials').dbCredentials;
 const db = new Database(dbCredentials);
+const moment = require('moment');
 db.query('CREATE DATABASE IF NOT EXISTS `Matcha`');
 db.query('USE `Matcha`');
 
@@ -17,6 +18,8 @@ db.query('CREATE TABLE IF NOT EXISTS `users` (' +
     '`age` int NOT NULL,' +
     '`gender` varchar(100) NOT NULL,' +
     '`sexuality` varchar(100) NOT NULL,' +
+    '`score` FLOAT NOT NULL,' +
+    '`connection` varchar NOT NULL,' +
     '`token` varchar(100) NOT NULL,' +
     '`activate` int)');
 
@@ -35,8 +38,7 @@ module.exports = {
     searchUserByEmailOrUsername: (email, username) => {
         return db.query('SELECT * FROM `users` WHERE email=? OR username=?', [email, username])
             .then(data => {
-                console.log(data);
-                 return data[0];
+                return data[0];
             });
     },
     searchUserByToken: (token) => {
@@ -45,17 +47,26 @@ module.exports = {
                 return data[0];
             });
     },
-    searchUserByAccountId: (id) => {
+    getAllUserInfo: (id) => {
         return db.query('SELECT * FROM `users` WHERE acc_id=?', [id])
             .then(data => {
                 return data[0];
             });
     },
-    insertUser: (acc_id, profile_pic, banner_pic, email, firstname, lastname, user, psw, age, gender, sexuality, token, activate) => {
+    getUserPublicInfo: (id, username) => {
+        return db.query('SELECT profile_pic, banner_pic, firstname, lastname, username, age, gender, sexuality, score, connection, latitude, longitude FROM `users`' +
+            'INNER JOIN users_coordinates ON users.acc_id = users_coordinates.acc_id WHERE users.acc_id=? OR users.username=?;', [id, username])
+            .then(data => {
+                // let user = data[0];
+                return data[0];
+            });
+    },
+    insertUser: (acc_id, profile_pic, banner_pic, email, firstname, lastname, user, psw, age, gender, sexuality, score, token, activate) => {
         return db.query("INSERT INTO `users` SET acc_id=?, email=?, profile_pic=?, banner_pic=?, firstname=?," +
-            "lastname=?, username=?, password=?, age=?, gender=?, sexuality=?, token=?, activate=?",
-            [acc_id, email, profile_pic, banner_pic, firstname, lastname, user, psw, age, gender,
-                sexuality, token, activate]);
+            "lastname=?, username=?, password=?, age=?, gender=?, sexuality=?, score=?, token=?, activate=?",
+            [acc_id, email, profile_pic, banner_pic, firstname.charAt(0).toUpperCase() + firstname.slice(1),
+                lastname.charAt(0).toUpperCase() + lastname.slice(1), user, psw, age,
+                gender.charAt(0).toUpperCase() + gender.slice(1), sexuality, score, token, activate]);
     },
     insertUserLocation: (acc_id, latitude, longitude) => {
         return db.query("INSERT INTO `users_coordinates` SET acc_id=?, latitude=?, longitude=?",
@@ -66,5 +77,8 @@ module.exports = {
     },
     validateUser: (token) => {
         return db.query('UPDATE users SET activate=? WHERE token=?', [1, token]);
+    },
+    updateConnectionStatus: (acc_id, time) => {
+        return db.query('UPDATE users SET connection=? WHERE acc_id=?', [time, acc_id]);
     },
 };

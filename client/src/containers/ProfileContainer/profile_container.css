@@ -14,7 +14,7 @@ body {
 
 #profile_content_container {
     display: grid;
-    grid-template-columns: auto 15rem minmax(0, 1000px) auto;
+    grid-template-columns: auto auto minmax(0, 1000px) auto;
     grid-template-areas: 'empty1 profile_card profile_content empty2';
 }
 
