@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import Tags from '../Tags'
+import moment from 'moment'
 import {Link} from 'react-router-dom'
 import {GoogleApiKey} from '../../../config/apiKey'
 import Geocode from 'react-geocode'
@@ -14,13 +15,29 @@ class ProfileCard extends Component {
     getLocation = (lat, lon) => {
         if (lat && lon) {
             Geocode.fromLatLng(lat, lon).then(res => {
-                console.log(res);
-                this.setState({
-                    location: res.plus_code.compound_code.split(' ').slice(1).join(' ')
-                });
+                if (res.plus_code.compound_code) {
+                    this.setState({
+                        location: res.plus_code.compound_code.split(' ').slice(1).join(' ')
+                    });
+                } else {
+                    this.setState({
+                        location: 'France'
+                    })
+                }
             });
         } else {
             return null;
+        }
+    };
+
+    getConnectionStatus = (connection) => {
+        switch(connection) {
+            case 'Connected':
+                return (<p id={'status_online'}>{connection}</p>);
+            case 'Never connected...':
+                return (<p id={'status_offline'}>{connection}</p>);
+            default:
+                return(<p id={'status_offline'}>Disconnected {moment(parseInt(connection)).fromNow()}</p>)
         }
     };
 
@@ -37,6 +54,7 @@ class ProfileCard extends Component {
     }
 
     render () {
+        console.log(this.props.myProfile);
         let user = this.props.user;
         const path = this.props.match ? this.props.match.path : null;
         const research = this.props.research ? this.props.research : null;
@@ -66,16 +84,19 @@ class ProfileCard extends Component {
                     </div>
                 </div>
                 <div id={'connection_status'}>
-                    {user.status === 'Connected' ? <p id={'status_online'}>{user.status}</p>
-                        : <p id={'status_offline'}>{user.status}</p>}
+                    {this.getConnectionStatus(user.connection)}
                 </div>
                 {path === '/match' && <Tags id={'card'} tags={user.tags}/>}
                 <div id={'interactions'}>
-                    {path === '/profile' && this.props.like_status === 0 &&
+                    {path === '/profile/:id' && this.props.like_status === 0 && this.props.myProfile === false &&
                     <button id={'like_button'} onClick={this.props.like}>Like</button>}
-                    {path === '/profile' && this.props.like_status === 1 &&
+                    {path === '/profile/:id' && this.props.like_status === 0 && this.props.myProfile === true &&
+                    <Link to={'/settings'}>
+                        <button id={'settings_button'}>Settings</button>
+                    </Link>}
+                    {path === '/profile/:id' && this.props.like_status === 1 && this.props.myProfile === false &&
                     <button id={'unlike_button'} onClick={this.props.like}>Unlike</button>}
-                    {path === '/profile' &&
+                    {path === '/profile/:id' && this.props.myProfile === false &&
                     <button id={'report'} onClick={this.props.report}>Report</button>}
                     {research &&
                     <Link to={'/profile'}>

@@ -31,7 +31,6 @@ class HeaderConnectedOptions extends Component {
 
     componentWillReceiveProps(nextProps, nextContext) {
         if (nextProps.user.info) {
-            console.log('JE SUIS USER INFO: ', nextProps.user.info);
             let newState = this.state;
             newState.user_img = nextProps.user.info.profile_pic;
             newState.dropdown_content[0].link = `/profile/${nextProps.user.info.username}`;
@@ -103,7 +102,6 @@ class HeaderConnectedOptions extends Component {
     }
 
     render() {
-        console.log(this.state);
         return (
             <div id={'connected_options_wrapper'}>
                 <Notifications opened={this.state.notification_opened} toggle={this.toggleDropdown}

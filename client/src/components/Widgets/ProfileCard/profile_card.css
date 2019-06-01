@@ -155,12 +155,18 @@ button {
 
 #profile #interactions {
     display: flex;
-    justify-content: space-evenly;
+    justify-content: center;
+    margin: 0 1rem;
+}
+
+#profile #interactions button {
     margin: 1rem;
+    font-size: 1.2rem;
+    padding: 0.33rem;
+    width: 7rem;
 }
 
 #profile #like_button {
-    width: 5rem;
     border: solid 2px #9dc5ed;
     background: #FFFFFF;
     cursor: pointer;
@@ -172,8 +178,19 @@ button {
     box-shadow: 1px 1px 10px #9dc5ed;
 }
 
+#profile #settings_button {
+    border: solid 2px #9dc5ed;
+    background: #FFFFFF;
+    cursor: pointer;
+    box-shadow: 1px 1px 10px lightgray;
+    transition: 0.3s;
+}
+
+#profile #settings_button:hover {
+    box-shadow: 1px 1px 10px #9dc5ed;
+}
+
 #profile #unlike_button {
-    width: 5rem;
     border: solid 2px #FFFFFF;
     background: #9dc5ed;
     cursor: pointer;
@@ -187,7 +204,6 @@ button {
 }
 
 #profile #report {
-    width: 5rem;
     color: white;
     background-color: red;
     cursor: pointer;

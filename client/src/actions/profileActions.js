@@ -1,7 +1,7 @@
 import axios from 'axios'
 import {FETCH_USER} from './types'
 
-export const fetchUser = (id) => dispatch => {
+export const fetchUserByUsername = (id) => dispatch => {
     axios.post('/api/account/fetch_user', {username: id})
         .then( res => {
             dispatch({

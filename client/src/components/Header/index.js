@@ -33,10 +33,6 @@ class Header extends Component {
         connected: false
     };
 
-    componentWillMount() {
-        this.props.dispatch(verifyToken(localStorage.getItem('T')));
-    }
-
     componentWillReceiveProps(nextProps, nextContext) {
         if (nextProps.user.res.id) {
             this.setState({
@@ -75,6 +71,7 @@ class Header extends Component {
     };
 
     componentDidMount() {
+        this.props.dispatch(verifyToken(localStorage.getItem('T')));
         window.addEventListener("scroll", this.hideNavbar, false);
         window.addEventListener('scroll', this.toggleBackground, false)
     }
@@ -96,7 +93,6 @@ class Header extends Component {
         const nav = this.state.showNav ? '' : 'hide';
         const background = this.state.background ? 'background' : '';
         const connected = this.state.connected;
-        console.log(connected);
         return (
             <div id={'navbar'} className={`navbar ${nav} ${background}`}>
                 <div className={'blur'}/>
@@ -113,7 +109,7 @@ class Header extends Component {
                     </Link>
                 </div>
                 <div className={'navbar_content_right'}>
-                    {this.state.connected === true ? <HeaderConnectedOptions id={this.props.user.res.id}/> :
+                    {connected === true ? <HeaderConnectedOptions id={this.props.user.res.id}/> :
                         this.renderNavbarContent({
                         sign_in: this.state.navbarItems.sign_in
                     })}

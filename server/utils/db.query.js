@@ -19,7 +19,7 @@ db.query('CREATE TABLE IF NOT EXISTS `users` (' +
     '`gender` varchar(100) NOT NULL,' +
     '`sexuality` varchar(100) NOT NULL,' +
     '`score` FLOAT NOT NULL,' +
-    '`connection` varchar NOT NULL,' +
+    '`connection` varchar(100) NOT NULL,' +
     '`token` varchar(100) NOT NULL,' +
     '`activate` int)');
 
@@ -61,12 +61,12 @@ module.exports = {
                 return data[0];
             });
     },
-    insertUser: (acc_id, profile_pic, banner_pic, email, firstname, lastname, user, psw, age, gender, sexuality, score, token, activate) => {
+    insertUser: (acc_id, profile_pic, banner_pic, email, firstname, lastname, user, psw, age, gender, sexuality, score, connection, token, activate) => {
         return db.query("INSERT INTO `users` SET acc_id=?, email=?, profile_pic=?, banner_pic=?, firstname=?," +
-            "lastname=?, username=?, password=?, age=?, gender=?, sexuality=?, score=?, token=?, activate=?",
+            "lastname=?, username=?, password=?, age=?, gender=?, sexuality=?, score=?, connection=?,token=?, activate=?",
             [acc_id, email, profile_pic, banner_pic, firstname.charAt(0).toUpperCase() + firstname.slice(1),
                 lastname.charAt(0).toUpperCase() + lastname.slice(1), user, psw, age,
-                gender.charAt(0).toUpperCase() + gender.slice(1), sexuality, score, token, activate]);
+                gender.charAt(0).toUpperCase() + gender.slice(1), sexuality, score, connection, token, activate]);
     },
     insertUserLocation: (acc_id, latitude, longitude) => {
         return db.query("INSERT INTO `users_coordinates` SET acc_id=?, latitude=?, longitude=?",

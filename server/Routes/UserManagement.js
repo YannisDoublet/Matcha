@@ -1,4 +1,3 @@
-
 const bcrypt = require('bcrypt');
 const rand = require('rand-token');
 const jwtUtils = require('../utils/jwt.utils');
@@ -37,7 +36,7 @@ module.exports = {
                     profile = '/assets/undefined_profile.png'
                 }
                 dbUtils.insertUser(acc_id, profile, banner, email, firstname, lastname, username,
-                    psw, age, gender, sexuality, 2.50, 'Never connected...',token, 0);
+                    psw, age, gender, sexuality, 2.50, 'Never connected...', token, 0);
                 mailsUtils.sendEmail(email, token);
             } else {
                 return res.status(200).json({
@@ -74,13 +73,13 @@ module.exports = {
                     bcrypt.compare(psw, user.password, (err, result) => {
                         if (err) throw err;
                         if (result === false) {
-                            dbUtils.updateConnectionStatus(user.acc_id, 'Connected');
                             return res.status(200).json({
                                 status: true,
                                 type: 'error',
                                 message: 'Wrong password !'
                             });
                         } else {
+                            dbUtils.updateConnectionStatus(user.acc_id, 'Connected');
                             let token = jwtUtils.generateTokenforUser(user);
                             return res.status(200).json({success: token});
                         }
@@ -173,7 +172,10 @@ module.exports = {
     },
     logoutUser: (req, res) => {
         let time = req.body.time;
+        let id = req.body.id;
 
-        dbUtils.updateConnectionStatus()
+        dbUtils.updateConnectionStatus(id, time).then(() => {
+            return res.status(200).send('OK');
+        });
     },
 };
