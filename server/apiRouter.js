@@ -9,6 +9,7 @@ exports.router = (function () {
     apiRouter.route('/account/validate').get(userManagement.validate);
     apiRouter.route('/account/verify_token').post(userManagement.verifyToken);
     apiRouter.route('/account/user_info').post(userManagement.userInfo);
+    apiRouter.route('/account/delete_picture').post(userManagement.deletePicture);
     apiRouter.route('/account/fetch_user').post(userManagement.fetchUserProfileByUsername);
     apiRouter.route('/account/logout').post(userManagement.logoutUser);
 

@@ -78,6 +78,24 @@ body {
     margin: 0 0.5rem;
 }
 
+#add_picture {
+    align-self: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #E5F3FF;
+    border-radius: 50%;
+    width: 3rem;
+    height: 3rem;
+    border: 2px solid rgb(242, 243, 249);
+    cursor: pointer;
+    margin-left: 0.5rem;
+}
+
+.fa-plus {
+    font-size: 1.2rem;
+}
+
 #tag_container {
     width: 80%;
     display: flex;

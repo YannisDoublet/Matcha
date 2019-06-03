@@ -1,7 +1,9 @@
 const bcrypt = require('bcrypt');
 const rand = require('rand-token');
 const dbUtils = require('../utils/db.query');
+const faker = require('faker');
 const axios = require('axios');
+const { loremIpsum } = require("lorem-ipsum");
 const tags = ['Surf', 'Beach', 'Cocktails', 'Ski', 'Sport', 'Books', 'Video Games', 'Make-up', 'Bicycle', 'Roller',
     'Skateboard', 'Reading', 'Watching TV', 'Eat', 'Sushi', 'Burgers', 'Old Cars', 'Tuning', 'Beer',
     'Bowling', 'Laser Game', 'Game of Thrones', 'Lord of the Rings', 'Harry Potter', 'Star Wars',
@@ -19,6 +21,14 @@ const displayTags = (tags) => {
     return (filter(userTags));
 };
 
+const randomPicture = () => {
+    const pictures = [];
+    for(let i = 0; i < 4; i++) {
+        pictures[i] =  faker.image.avatar();
+    }
+    return pictures;
+};
+
 const getLocation = (min, max) => {
     return (Math.random() < 0.5 ?
         ((1 - Math.random()) * (max - min) + min) :
@@ -26,7 +36,6 @@ const getLocation = (min, max) => {
 };
 
 const seed_creator = async () => {
-    displayTags(tags);
     for (let i = 0; i < 750; i++) {
         await axios.get('https://randomuser.me/api/')
             .then((user) => {
@@ -39,11 +48,14 @@ const seed_creator = async () => {
                 let score = (Math.random() * (5.00 - 1.00 + 1.00)).toFixed(2);
                 dbUtils.insertUser(acc_id, fake.picture.large, '/assets/banner.jpg',
                     fake.email, fake.name.first, fake.name.last, fake.login.username, psw,
-                    fake.dob.age, fake.gender, sexuality, score, 'Never connected...', token, 1);
+                    fake.dob.age, fake.gender, sexuality, score, 'Never connected...', loremIpsum(1), token, 1);
                 dbUtils.insertUserLocation(acc_id, getLocation(43.62, 50.07),
                     getLocation(-0.8, 8.27));
                 displayTags(tags).map(tag => {
                     dbUtils.insertTag(acc_id, tag);
+                });
+                randomPicture().map(img => {
+                    dbUtils.insertPicture(acc_id, img);
                 });
                 console.log(`${i} profile created.`);
             })

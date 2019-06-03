@@ -1,6 +1,6 @@
 import React, {Component, Fragment} from 'react'
 import {connect} from 'react-redux'
-import {fetchUserByUsername} from "../../actions/profileActions";
+import {fetchUserByUsername, deletePicture} from "../../actions/profileActions";
 import {userInfo, verifyToken} from "../../actions/authActions";
 import GoogleMaps from '../../components/GoogleMaps'
 import Alert from '../../components/Widgets/Alert'
@@ -8,6 +8,8 @@ import ReportPopUp from '../../components/Widgets/ReportPopUp'
 import ProfileCard from '../../components/Widgets/ProfileCard'
 import Tags from '../../components/Widgets/Tags'
 import './profile_container.css'
+
+/* ADD PICTURE WIP, INVESTIGATE PROFILE_PIC*/
 
 class ProfileContainer extends Component {
 
@@ -48,10 +50,12 @@ class ProfileContainer extends Component {
     }
 
     checkMyProfile = (logged, user) => {
-        this.setState({
-            myProfileCheck: false,
-            myProfile: logged.username === user.username
-        })
+        if (logged && user) {
+            this.setState({
+                myProfileCheck: false,
+                myProfile: logged.username === user.username
+            })
+        }
     };
 
     componentWillUpdate(nextProps, nextState, nextContext) {
@@ -106,16 +110,30 @@ class ProfileContainer extends Component {
         })
     };
 
-    renderGallery = (pictures) => {
-        return pictures.map((pic, i) => (
-            <div key={i} className={'gallery_picture'} style={{backgroundImage: `url('${pic}')`}}/>
-        ));
+    addPicture = () => {
+
+    };
+
+    deletePicture = (evt, pic) => {
+        this.props.dispatch(deletePicture(this.props.id.id, pic));
+        evt.target.remove();
+    };
+
+    renderGallery = (pictures, myProfile) => {
+        return myProfile ? pictures.map((pic, i) => (
+                <div key={i} className={'gallery_picture'} style={{backgroundImage: `url('${pic}')`, cursor: 'pointer'}}
+                     onClick={(evt) => this.deletePicture(evt, pic)}/>))
+            :
+            pictures.map((pic, i) => (
+                <div key={i} className={'gallery_picture'} style={{backgroundImage: `url('${pic}')`}}/>
+            ));
     };
 
     render() {
         let alert = this.state.alert;
         let popUp = this.state.popUp;
         let user = this.props.profile.res;
+        console.log(this.props);
         return (
             <div id={'profile'}>
                 <Alert alert={alert} handleAlert={this.handleAlert}/>
@@ -132,37 +150,21 @@ class ProfileContainer extends Component {
                         <div id={'profile_content'}>
                             <div id={'bio_container'}>
                                 <p id={'bio_title'}>Biography</p>
-                                <p id={'bio_content'}>Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                                    Quisque elit
-                                    metus, sollicitudin vel nibhas a, imperdiet porta lacus. Ut aliquam scelerisque
-                                    leo
-                                    vitae commodo. Morbi mi libero, semper non dictum sed, bibendum vel lectus. Ut
-                                    scelerisque nisl id bibendum maximus. Pellentesque eleifend ipsum a ipsum
-                                    fermentum
-                                    blandit. Nunc ac ligula in nunc dapibus rhoncus ac quis mauris. Cras feugiat
-                                    consectetur
-                                    libero ut convallis. Pellentesque varius odio sit amet augue ornare, ut varius
-                                    orci
-                                    semper. Donec id placerat diam. Nam pretium nec urna vitae laoreet. Vestibulum
-                                    ante
-                                    ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Mauris
-                                    eu
-                                    ultricies ante. Donec tempor sollicitudin nisi, eget aliquam lacus interdum in.
-                                    Cras
-                                    orci odio, mollis posuere ex ac, mollis tincidunt lectus. Pellentesque sit amet
-                                    nisi at
-                                    est imperdiet pellentesque id sed purus.</p>
+                                <p id={'bio_content'}>{user.bio}</p>
                             </div>
                             <div id={'gallery_container'}>
                                 <p id={'gallery_title'}>Gallery</p>
                                 <div id={'gallery_content'}>
-                                    {this.renderGallery(this.state.gallery)}
+                                    {this.renderGallery(user.pictures, this.state.myProfile)}
+                                    {user.pictures.length < 5 && <div id={'add_picture'} onClick={this.addPicture}>
+                                        <i className="fas fa-plus" />
+                                    </div>}
                                 </div>
                             </div>
-                            {/*<div id={'tag_container'}>*/}
-                            {/*    <p id={'tag_title'}>Tags</p>*/}
-                            {/*    <Tags tags={this.state.user.tags} id={'profile'}/>*/}
-                            {/*</div>*/}
+                            <div id={'tag_container'}>
+                                <p id={'tag_title'}>Tags</p>
+                                <Tags tags={user.tag} id={'profile'} myProfile={this.state.myProfile}/>
+                            </div>
                             <div id={'map_container'}>
                                 <p id={'map_title'}>Maps</p>
                                 <div id={'map_wrapper'}>

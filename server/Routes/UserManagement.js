@@ -4,6 +4,7 @@ const jwtUtils = require('../utils/jwt.utils');
 const dbUtils = require('../utils/db.query');
 const mailsUtils = require('../utils/mails.utils');
 const validationUtils = require('../utils/validation.utils');
+const {loremIpsum} = require('lorem-ipsum');
 const axios = require('axios');
 
 module.exports = {
@@ -36,7 +37,7 @@ module.exports = {
                     profile = '/assets/undefined_profile.png'
                 }
                 dbUtils.insertUser(acc_id, profile, banner, email, firstname, lastname, username,
-                    psw, age, gender, sexuality, 2.50, 'Never connected...', token, 0);
+                    psw, age, gender, sexuality, 2.50, 'Never connected...', loremIpsum(4), token, 0);
                 mailsUtils.sendEmail(email, token);
             } else {
                 return res.status(200).json({
@@ -164,11 +165,19 @@ module.exports = {
         console.log(req.body);
         if (username) {
             dbUtils.getUserPublicInfo('', username)
-                .then(user => {
-                    console.log(user);
-                    return res.status(200).json(user);
+                .then(data => {
+                    return res.status(200).json(data);
                 })
         }
+    },
+    deletePicture: (req, res) => {
+        let acc_id = req.body.acc_id;
+        let pic = req.body.pic;
+
+        dbUtils.deletePicture(acc_id, pic)
+            .then(() => {
+                return res.status(200).send('OK');
+            })
     },
     logoutUser: (req, res) => {
         let time = req.body.time;
