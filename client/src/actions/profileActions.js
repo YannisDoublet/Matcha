@@ -1,5 +1,5 @@
 import axios from 'axios'
-import {FETCH_USER, DELETE_PICTURE} from './types'
+import {FETCH_USER, UPLOAD_PICTURE, DELETE_PICTURE} from './types'
 
 export const fetchUserByUsername = (id) => dispatch => {
     axios.post('/api/account/fetch_user', {username: id})
@@ -12,14 +12,22 @@ export const fetchUserByUsername = (id) => dispatch => {
     return Promise.resolve();
 };
 
-export const deletePicture = (id, pic) => dispatch => {
-    console.log(id, pic);
-    axios.post('/api/account/delete_picture', {acc_id: id, pic: pic})
-        .then( res => {
+export const uploadPicture = (data) => dispatch => {
+    axios.post('/api/account/upload_picture', data)
+        .then(res => {
+            dispatch({
+                type: UPLOAD_PICTURE,
+                payload: res.data
+            })
+        });
+};
+
+export const deletePicture = (acc_id, pic, pic_id) => dispatch => {
+    axios.post('/api/account/delete_picture', {acc_id: acc_id, pic: pic, pic_id: pic_id})
+        .then(res => {
             dispatch({
                 type: DELETE_PICTURE,
                 payload: res.data
             })
         });
-    return Promise.resolve();
 };

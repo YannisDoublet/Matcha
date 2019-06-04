@@ -78,7 +78,7 @@ body {
     margin: 0 0.5rem;
 }
 
-#add_picture {
+.upload {
     align-self: center;
     display: flex;
     justify-content: center;

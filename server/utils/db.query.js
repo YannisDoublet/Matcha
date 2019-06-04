@@ -85,6 +85,7 @@ module.exports = {
                                         }
                                     }
                                      else {
+                                        user.pictures.unshift(user.profile_pic);
                                         return user;
                                     }
                                 })
@@ -108,6 +109,12 @@ module.exports = {
     },
     insertPicture: (acc_id, img) => {
         return db.query("INSERT INTO `users_pictures` SET acc_id=?, picture=?", [acc_id, img]);
+    },
+    checkNumbersOfPicture: (acc_id) => {
+        return db.query('SELECT * FROM `users_pictures` WHERE acc_id=?', [acc_id])
+            .then(data => {
+                return data.length;
+            })
     },
     deletePicture: (acc_id, img) => {
         return db.query("DELETE FROM `users_pictures` WHERE acc_id=? AND picture=?", [acc_id, img]);

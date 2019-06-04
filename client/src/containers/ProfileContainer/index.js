@@ -1,6 +1,6 @@
 import React, {Component, Fragment} from 'react'
 import {connect} from 'react-redux'
-import {fetchUserByUsername, deletePicture} from "../../actions/profileActions";
+import {fetchUserByUsername, uploadPicture, deletePicture} from "../../actions/profileActions";
 import {userInfo, verifyToken} from "../../actions/authActions";
 import GoogleMaps from '../../components/GoogleMaps'
 import Alert from '../../components/Widgets/Alert'
@@ -60,7 +60,7 @@ class ProfileContainer extends Component {
 
     componentWillUpdate(nextProps, nextState, nextContext) {
         if (this.props.profile && this.props.logged && this.state.myProfileCheck) {
-            this.checkMyProfile(this.props.logged, this.props.profile.res);
+            this.checkMyProfile(this.props.logged, this.props.profile);
         }
     }
 
@@ -71,10 +71,19 @@ class ProfileContainer extends Component {
                 myProfileCheck: true
             })
         } else if (nextProps.id && this.state.firstCheck) {
-            this.props.dispatch(userInfo(nextProps.id.id));
+            this.props.dispatch(userInfo(nextProps.id));
             this.setState({
                 firstCheck: false
             })
+        } else if (nextProps.pic_status) {
+            if (nextProps.pic_status.status === 'DELETE') {
+                this.props.profile.pictures.splice(nextProps.pic_status.pic_id, 1);
+                this.handleAlert({status: true, type: 'success', message: 'Picture deleted !'});
+            } else if (nextProps.pic_status.status === 'UPLOAD') {
+                console.log(nextProps.pic_status);
+                this.props.profile.pictures.push(nextProps.pic_status.path);
+                this.handleAlert({status: true, type: 'success', message: 'Picture uploaded !'});
+            }
         }
     }
 
@@ -110,18 +119,23 @@ class ProfileContainer extends Component {
         })
     };
 
-    addPicture = () => {
-
+    addPicture = (e) => {
+        if (this.props.profile.pictures.length < 5) {
+            const data = new FormData();
+            data.append('file', e.target.files[0]);
+            data.append('id', this.props.id);
+            this.props.dispatch(uploadPicture(data));
+        }
     };
 
     deletePicture = (evt, pic) => {
-        this.props.dispatch(deletePicture(this.props.id.id, pic));
-        evt.target.remove();
+        this.props.dispatch(deletePicture(this.props.id, pic, evt.target.id))
     };
 
     renderGallery = (pictures, myProfile) => {
         return myProfile ? pictures.map((pic, i) => (
-                <div key={i} className={'gallery_picture'} style={{backgroundImage: `url('${pic}')`, cursor: 'pointer'}}
+                <div key={i} id={i} className={'gallery_picture'}
+                     style={{backgroundImage: `url('${pic}')`, cursor: 'pointer'}}
                      onClick={(evt) => this.deletePicture(evt, pic)}/>))
             :
             pictures.map((pic, i) => (
@@ -132,7 +146,7 @@ class ProfileContainer extends Component {
     render() {
         let alert = this.state.alert;
         let popUp = this.state.popUp;
-        let user = this.props.profile.res;
+        let user = this.props.profile;
         console.log(this.props);
         return (
             <div id={'profile'}>
@@ -156,9 +170,12 @@ class ProfileContainer extends Component {
                                 <p id={'gallery_title'}>Gallery</p>
                                 <div id={'gallery_content'}>
                                     {this.renderGallery(user.pictures, this.state.myProfile)}
-                                    {user.pictures.length < 5 && <div id={'add_picture'} onClick={this.addPicture}>
-                                        <i className="fas fa-plus" />
-                                    </div>}
+                                    {user.pictures.length < 5 &&
+                                    <label htmlFor={'upload'} className={'upload'}>
+                                        <input id={'upload'} style={{display: 'none'}} type={'file'} accept="image/*"
+                                               onChange={(e) => this.addPicture(e)}/>
+                                        <i className={'fas fa-plus'}/>
+                                    </label>}
                                 </div>
                             </div>
                             <div id={'tag_container'}>
@@ -180,13 +197,15 @@ class ProfileContainer extends Component {
 }
 
 function mapStateToProps(state) {
-    let profile = state.profile;
-    let id = state.user.res;
+    let profile = state.profile.res;
+    let id = state.user.res ? state.user.res.id : null;
     let logged = state.user.info;
+    let pic_status = state.profile.pic;
     return {
         profile,
         id,
-        logged
+        logged,
+        pic_status
     };
 }
 

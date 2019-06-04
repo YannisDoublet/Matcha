@@ -4,8 +4,9 @@ const jwtUtils = require('../utils/jwt.utils');
 const dbUtils = require('../utils/db.query');
 const mailsUtils = require('../utils/mails.utils');
 const validationUtils = require('../utils/validation.utils');
+const { StringDecoder } = require('string_decoder');
 const {loremIpsum} = require('lorem-ipsum');
-const axios = require('axios');
+const decoder = new StringDecoder('utf8');
 
 module.exports = {
     register: (req, res) => {
@@ -170,13 +171,45 @@ module.exports = {
                 })
         }
     },
+    uploadPicture: (req, res) => {
+        let acc_id = req.body.id;
+        let pic = req.files.file;
+        let root = process.env.PWD.replace('/server', '');
+        let filePath = `${root}/client/public/assets/uploads/${Date.now()}.jpg`;
+        let dbPath = filePath.substr(51);
+        validationUtils.validateImage(pic.mimetype, Buffer.from(pic.data, 'hex'));
+
+        // if (Buff) {
+        //     console.log(Buff.data);
+        // }
+         // if ((pic.mimetype === 'image/jpeg' && ) || (pic.mimetype === 'image/png')) {
+         //
+         // }
+
+        // dbUtils.checkNumbersOfPicture(acc_id)
+        //     .then(num => {
+        //         if (num < 4) {
+        //             pic.mv(filePath, (err) => {
+        //                 if (err) throw err;
+        //                 dbUtils.insertPicture(acc_id, dbPath)
+        //                     .then(() => {
+        //                         return res.status(200).json({status: 'UPLOAD', path: dbPath});
+        //                     })
+        //             })
+        //         } else {
+        //             return res.status(200).json({error: 'Too much pictures !'});
+        //         }
+        //     });
+        return res.status(200);
+    },
     deletePicture: (req, res) => {
         let acc_id = req.body.acc_id;
         let pic = req.body.pic;
+        let pic_id = req.body.pic_id;
 
         dbUtils.deletePicture(acc_id, pic)
             .then(() => {
-                return res.status(200).send('OK');
+                return res.status(200).json({status: 'DELETE', pic_id: pic_id});
             })
     },
     logoutUser: (req, res) => {
