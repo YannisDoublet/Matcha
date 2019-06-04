@@ -13,7 +13,6 @@ module.exports = {
         // console.log(magic[0].toString(16));
         switch (type) {
             case 'image/jpeg':
-                console.log('ta daronne');
                 for (let i = 0; i < extractMagic.length; i++) {
                     magic[i] = parseInt(extractMagic[i]).toString(16);
                 }
