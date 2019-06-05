@@ -1,38 +1,37 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import classnames from 'classnames'
+import classnames from 'classnames';
+import {verifyToken} from "../../actions/authActions";
 import ChatNavbar from '../../components/Widgets/ChatNavbar'
 import ChatBox from '../../components/Widgets/ChatBox'
 import './chat.css'
+import {fetchCard} from "../../actions/chatActions";
 
 class Chat extends Component {
 
     state = {
-        users: [
-            {
-                pic: '/assets/zuckywola.jpg', name: 'Mark Zuckerberg', status: 'Online', last_msg_time: '5 mins',
-                last_msg: 'Hello ! Im Mark Zuckerberg !'
-            },
-            {
-                pic: '/assets/zuckywola.jpg', name: 'Mark Zuckerberg', status: 'Online', last_msg_time: '5 mins',
-                last_msg: 'Hello ! Im Mark Zuckerberg !'
-            },
-            {
-                pic: '/assets/zuckywola.jpg', name: 'Mark Zuckerberg', status: 'Online', last_msg_time: '5 mins',
-                last_msg: 'Hello ! Im Mark Zuckerberg !'
-            },
-            {
-                pic: '/assets/zuckywola.jpg', name: 'Mark Zuckerberg', status: 'Online', last_msg_time: '5 mins',
-                last_msg: 'Hello ! Im Mark Zuckerberg !'
-            },
-            {
-                pic: '/assets/zuckywola.jpg', name: 'Mark Zuckerberg', status: 'Online', last_msg_time: '5 mins',
-                last_msg: 'Hello ! Im Mark Zuckerberg !'
-            },
-        ],
+        users: [],
         active: 0,
+        fetch: false,
         sidebar: true
     };
+
+    componentWillMount() {
+        this.props.dispatch(verifyToken(localStorage.getItem('T')));
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.token && !this.state.fetch) {
+            this.props.dispatch(fetchCard(nextProps.token.id));
+            this.setState({
+                fetch: true
+            })
+        } else if (nextProps.card) {
+            this.setState({
+                users: nextProps.card
+            })
+        }
+    }
 
     toggleSidebar = (evt) => {
         this.setState({
@@ -65,7 +64,12 @@ class Chat extends Component {
 }
 
 function mapStateToProps(state) {
-    return {};
+    let token = state.user ? state.user.res : null;
+    let card = state.chat ? state.chat.res : null;
+    return {
+        token,
+        card
+    };
 }
 
 export default connect(mapStateToProps)(Chat);
