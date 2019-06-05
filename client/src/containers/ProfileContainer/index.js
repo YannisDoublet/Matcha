@@ -81,8 +81,12 @@ class ProfileContainer extends Component {
                 this.handleAlert({status: true, type: 'success', message: 'Picture deleted !'});
             } else if (nextProps.pic_status.status === 'UPLOAD') {
                 console.log(nextProps.pic_status);
-                this.props.profile.pictures.push(nextProps.pic_status.path);
-                this.handleAlert({status: true, type: 'success', message: 'Picture uploaded !'});
+                if (nextProps.pic_status.error) {
+                    this.handleAlert({status: true, type: 'error', message: nextProps.pic_status.error})
+                } else {
+                    this.props.profile.pictures.push({picture: nextProps.pic_status.path, type: 'pic'});
+                    this.handleAlert({status: true, type: 'success', message: 'Picture uploaded !'});
+                }
             }
         }
     }
@@ -120,7 +124,7 @@ class ProfileContainer extends Component {
     };
 
     addPicture = (e) => {
-        if (this.props.profile.pictures.length < 5) {
+        if (this.props.profile.pictures.length < 6) {
             const data = new FormData();
             data.append('file', e.target.files[0]);
             data.append('id', this.props.id);
@@ -134,12 +138,15 @@ class ProfileContainer extends Component {
 
     renderGallery = (pictures, myProfile) => {
         return myProfile ? pictures.map((pic, i) => (
-                <div key={i} id={i} className={'gallery_picture'}
-                     style={{backgroundImage: `url('${pic}')`, cursor: 'pointer'}}
-                     onClick={(evt) => this.deletePicture(evt, pic)}/>))
+            pic.type !== 'banner_pic' ? <div key={i} id={i} className={'gallery_picture'}
+                     style={{backgroundImage: `url('${pic.picture}')`, cursor: pic.type === 'pic' ? 'pointer': 'default'}}
+                                             onClick={pic.type === 'pic' ? (evt) => this.deletePicture(evt, pic.picture) : (evt) => this.updateProfilePicture(evt)}>
+                {pic.type === 'pic' && <i className="fas fa-times"/>}
+            </div> : null))
             :
             pictures.map((pic, i) => (
-                <div key={i} className={'gallery_picture'} style={{backgroundImage: `url('${pic}')`}}/>
+                pic.type !== 'banner_pic' ? <div key={i} className={'gallery_picture'}
+                                                 style={{backgroundImage: `url('${pic.picture}')`}}/> : null
             ));
     };
 
@@ -147,7 +154,7 @@ class ProfileContainer extends Component {
         let alert = this.state.alert;
         let popUp = this.state.popUp;
         let user = this.props.profile;
-        console.log(this.props);
+        console.log(user);
         return (
             <div id={'profile'}>
                 <Alert alert={alert} handleAlert={this.handleAlert}/>
@@ -156,7 +163,7 @@ class ProfileContainer extends Component {
                     : null}
                 {user &&
                 <Fragment>
-                    <div id={'banner_pic_container'} style={{backgroundImage: `url(${user.banner_pic})`}}/>
+                    <div id={'banner_pic_container'} style={{backgroundImage: `url(${user.pictures[1].picture})`}}/>
                     <div id={'profile_content_container'}>
                         <ProfileCard {...this.props} like={this.like} like_status={this.state.like}
                                      report={this.showReport} popUp_status={this.state.popUp}
@@ -170,7 +177,7 @@ class ProfileContainer extends Component {
                                 <p id={'gallery_title'}>Gallery</p>
                                 <div id={'gallery_content'}>
                                     {this.renderGallery(user.pictures, this.state.myProfile)}
-                                    {user.pictures.length < 5 &&
+                                    {user.pictures.length < 6 &&
                                     <label htmlFor={'upload'} className={'upload'}>
                                         <input id={'upload'} style={{display: 'none'}} type={'file'} accept="image/*"
                                                onChange={(e) => this.addPicture(e)}/>

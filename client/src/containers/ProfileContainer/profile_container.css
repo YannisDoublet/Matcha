@@ -96,6 +96,21 @@ body {
     font-size: 1.2rem;
 }
 
+#gallery_content .fa-times {
+    float: right;
+    margin: 0.25rem;
+    font-size: 1.5rem;
+    opacity: 0.5;
+    color: #FF1744;
+}
+
+#profile .fa-pen {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
+
+
 #tag_container {
     width: 80%;
     display: flex;

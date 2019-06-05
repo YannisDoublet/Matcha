@@ -26,6 +26,7 @@ button {
 }
 
 #profile #profile_pic {
+    position: relative;
     width: 10rem;
     height: 10rem;
     border-radius: 50%;
@@ -35,6 +36,7 @@ button {
     background-repeat: no-repeat;
     background-size: cover;
 }
+
 #profile #name {
     text-align: center;
     font-size: 1.33rem;

@@ -21,9 +21,11 @@ const displayTags = (tags) => {
     return (filter(userTags));
 };
 
-const randomPicture = () => {
+const randomPicture = (profile, banner) => {
     const pictures = [];
-    for(let i = 0; i < 4; i++) {
+    pictures[0] = profile;
+    pictures[1] = banner;
+    for(let i = 2; i < 6; i++) {
         pictures[i] =  faker.image.avatar();
     }
     return pictures;
@@ -46,16 +48,21 @@ const seed_creator = async () => {
                 let psw = bcrypt.hashSync('FakeAccount123', 10);
                 let sexuality = tab[Math.floor(Math.random() * 3)];
                 let score = (Math.random() * (5.00 - 1.00 + 1.00)).toFixed(2);
-                dbUtils.insertUser(acc_id, fake.picture.large, '/assets/banner.jpg',
-                    fake.email, fake.name.first, fake.name.last, fake.login.username, psw,
+                dbUtils.insertUser(acc_id, fake.email, fake.name.first, fake.name.last, fake.login.username, psw,
                     fake.dob.age, fake.gender, sexuality, score, 'Never connected...', loremIpsum(1), token, 1);
                 dbUtils.insertUserLocation(acc_id, getLocation(43.62, 50.07),
                     getLocation(-0.8, 8.27));
                 displayTags(tags).map(tag => {
                     dbUtils.insertTag(acc_id, tag);
                 });
-                randomPicture().map(img => {
-                    dbUtils.insertPicture(acc_id, img);
+                randomPicture(fake.picture.large, '/assets/banner.jpg').map((img, i) => {
+                    let type = 'pic';
+                    if (i === 0) {
+                        type = 'profile_pic';
+                    } else if (i === 1) {
+                        type = 'banner_pic'
+                    }
+                    dbUtils.insertPicture(acc_id, img, type);
                 });
                 console.log(`${i} profile created.`);
             })

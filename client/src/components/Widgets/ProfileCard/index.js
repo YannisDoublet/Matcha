@@ -60,7 +60,7 @@ class ProfileCard extends Component {
         const research = this.props.research ? this.props.research : null;
         return (
             <div id={'card'} className={'card'}>
-                <div id={'profile_pic'} style={{backgroundImage: `url(${user.profile_pic})`}}/>
+                <div id={'profile_pic'} style={{backgroundImage: `url(${user.pictures[0].picture})`}} />
                 <p id={'name'}>{user.firstname} {user.lastname}, {user.age}</p>
                 <p id={'username'}>{user.username}</p>
                 <div id={'gender_container'}>

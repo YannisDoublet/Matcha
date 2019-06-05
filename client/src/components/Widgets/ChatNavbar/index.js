@@ -19,7 +19,6 @@ class ChatNavbar extends Component {
     }
 
     sortMatch = (value) => {
-        console.log(value);
         let card = this.state.card;
         if (card.length > 0) {
             const filteredSuggestions = card.filter(user =>

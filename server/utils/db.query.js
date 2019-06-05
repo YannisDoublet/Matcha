@@ -8,8 +8,6 @@ db.query('CREATE TABLE IF NOT EXISTS `users` (' +
     '`id` int PRIMARY KEY NOT NULL AUTO_INCREMENT,' +
     '`acc_id` varchar(10) NOT NULL,' +
     '`email` varchar(100) NOT NULL,' +
-    '`profile_pic` varchar(100) NOT NULL,' +
-    '`banner_pic` varchar(100) NOT NULL,' +
     '`firstname` varchar(100) NOT NULL,' +
     '`lastname` varchar(50) DEFAULT NULL,' +
     '`username` varchar(50) DEFAULT NULL,' +
@@ -37,7 +35,8 @@ db.query('CREATE TABLE IF NOT EXISTS `tags` (' +
 db.query('CREATE TABLE IF NOT EXISTS `users_pictures` (' +
     '`id` int PRIMARY KEY NOT NULL AUTO_INCREMENT,' +
     '`acc_id` varchar(10) NOT NULL,' +
-    '`picture` varchar(300) NOT NULL)');
+    '`picture` varchar(300) NOT NULL,' +
+    '`type` varchar(20) NOT NULL)');
 
 module.exports = {
     searchUserByEmailOrUsername: (email, username) => {
@@ -59,7 +58,7 @@ module.exports = {
             });
     },
     getUserPublicInfo: (id, username) => {
-        return db.query('SELECT users.acc_id, profile_pic, banner_pic, firstname, lastname, username, age, gender, sexuality, score, connection, bio, latitude, longitude FROM `users`' +
+        return db.query('SELECT users.acc_id, firstname, lastname, username, age, gender, sexuality, score, connection, bio, latitude, longitude FROM `users`' +
             'INNER JOIN users_coordinates ON users.acc_id = users_coordinates.acc_id WHERE users.acc_id=? OR users.username=?;', [id, username])
             .then(data => {
                 let acc_id = data[0].acc_id;
@@ -77,9 +76,8 @@ module.exports = {
                                 .then(res => {
                                     if (res.length) {
                                         for (let i = 0; i < res.length; i++) {
-                                            user.pictures = [...user.pictures, res[i].picture];
+                                            user.pictures = [...user.pictures, {picture: res[i].picture, type: res[i].type}];
                                             if (i === res.length - 1 && user) {
-                                                user.pictures.unshift(user.profile_pic);
                                                 return user;
                                             }
                                         }
@@ -93,10 +91,10 @@ module.exports = {
                     });
             });
     },
-    insertUser: (acc_id, profile_pic, banner_pic, email, firstname, lastname, user, psw, age, gender, sexuality, score, connection, bio, token, activate) => {
-        return db.query("INSERT INTO `users` SET acc_id=?, email=?, profile_pic=?, banner_pic=?, firstname=?," +
+    insertUser: (acc_id, email, firstname, lastname, user, psw, age, gender, sexuality, score, connection, bio, token, activate) => {
+        return db.query("INSERT INTO `users` SET acc_id=?, email=?, firstname=?," +
             "lastname=?, username=?, password=?, age=?, gender=?, sexuality=?, score=?, connection=?, bio=?,token=?, activate=?",
-            [acc_id, email, profile_pic, banner_pic, firstname.charAt(0).toUpperCase() + firstname.slice(1),
+            [acc_id, email, firstname.charAt(0).toUpperCase() + firstname.slice(1),
                 lastname.charAt(0).toUpperCase() + lastname.slice(1), user, psw, age,
                 gender.charAt(0).toUpperCase() + gender.slice(1), sexuality, score, connection, bio, token, activate]);
     },
@@ -107,8 +105,8 @@ module.exports = {
     insertTag: (acc_id, tag) => {
         return db.query("INSERT INTO `tags` SET acc_id=?, tag=?", [acc_id, tag]);
     },
-    insertPicture: (acc_id, img) => {
-        return db.query("INSERT INTO `users_pictures` SET acc_id=?, picture=?", [acc_id, img]);
+    insertPicture: (acc_id, img, type) => {
+        return db.query("INSERT INTO `users_pictures` SET acc_id=?, picture=?, type=?", [acc_id, img, type]);
     },
     checkNumbersOfPicture: (acc_id) => {
         return db.query('SELECT * FROM `users_pictures` WHERE acc_id=?', [acc_id])
@@ -124,5 +122,5 @@ module.exports = {
     },
     updateConnectionStatus: (acc_id, time) => {
         return db.query('UPDATE users SET connection=? WHERE acc_id=?', [time, acc_id]);
-    },
+    }
 };

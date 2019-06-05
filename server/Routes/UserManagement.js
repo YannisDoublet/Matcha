@@ -4,7 +4,7 @@ const jwtUtils = require('../utils/jwt.utils');
 const dbUtils = require('../utils/db.query');
 const mailsUtils = require('../utils/mails.utils');
 const validationUtils = require('../utils/validation.utils');
-const { StringDecoder } = require('string_decoder');
+const {StringDecoder} = require('string_decoder');
 const {loremIpsum} = require('lorem-ipsum');
 const decoder = new StringDecoder('utf8');
 
@@ -138,14 +138,13 @@ module.exports = {
 
         if (token) {
             let decoded = jwtUtils.verifyUserToken(token);
-            console.log('Je suis le token: ', decoded);
             if (!decoded.id) {
-                // module.exports.logoutUser();
+                return res.status(200).json({message: 'Token expired !'});
             } else {
                 return res.status(200).json(decoded);
             }
         } else {
-            // module.exports.logoutUser();
+            return res.status({message: 'No token provided !'});
         }
     },
     userInfo: (req, res) => {
@@ -177,30 +176,29 @@ module.exports = {
         let root = process.env.PWD.replace('/server', '');
         let filePath = `${root}/client/public/assets/uploads/${Date.now()}.jpg`;
         let dbPath = filePath.substr(51);
-        validationUtils.validateImage(pic.mimetype, Buffer.from(pic.data, 'hex'));
-
-        // if (Buff) {
-        //     console.log(Buff.data);
-        // }
-         // if ((pic.mimetype === 'image/jpeg' && ) || (pic.mimetype === 'image/png')) {
-         //
-         // }
-
-        // dbUtils.checkNumbersOfPicture(acc_id)
-        //     .then(num => {
-        //         if (num < 4) {
-        //             pic.mv(filePath, (err) => {
-        //                 if (err) throw err;
-        //                 dbUtils.insertPicture(acc_id, dbPath)
-        //                     .then(() => {
-        //                         return res.status(200).json({status: 'UPLOAD', path: dbPath});
-        //                     })
-        //             })
-        //         } else {
-        //             return res.status(200).json({error: 'Too much pictures !'});
-        //         }
-        //     });
-        return res.status(200);
+        if ((pic.mimetype === 'image/jpeg') || (pic.mimetype === 'image/png')) {
+            if (validationUtils.validateImage(pic.mimetype, Buffer.from(pic.data, 'hex')) === true) {
+                console.log('hey');
+                dbUtils.checkNumbersOfPicture(acc_id)
+                    .then(num => {
+                        if (num < 6) {
+                            pic.mv(filePath, (err) => {
+                                if (err) throw err;
+                                dbUtils.insertPicture(acc_id, dbPath, 'pic')
+                                    .then(() => {
+                                        return res.status(200).json({status: 'UPLOAD', path: dbPath});
+                                    })
+                            })
+                        } else {
+                            return res.status(200).json({status: 'UPLOAD', error: 'Too much pictures !'});
+                        }
+                    });
+            } else {
+                return res.status(200).json({status: 'UPLOAD', error: 'Invalid image !'});
+            }
+        } else {
+            return res.status(200).json({status: 'UPLOAD', error: 'Invalid image !'});
+        }
     },
     deletePicture: (req, res) => {
         let acc_id = req.body.acc_id;
