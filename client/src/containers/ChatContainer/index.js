@@ -56,7 +56,7 @@ class Chat extends Component {
                     <ChatNavbar users={users} active={this.updateActive}/>
                 </div>
                 <div id={'chat_box_container'}>
-                    <ChatBox conversation={users[active]} toggle={this.toggleSidebar}/>
+                    <ChatBox conversation={users[active]} id={this.props.token ? this.props.token : null} toggle={this.toggleSidebar}/>
                 </div>
             </div>
         );

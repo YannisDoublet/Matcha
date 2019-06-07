@@ -21,7 +21,8 @@ exports.router = (function () {
     /* CHAT */
 
     apiRouter.route('/chat/fetch_card').post(chatManagement.fetchCard);
-
+    apiRouter.route('/chat/fetch_messages').post(chatManagement.fetchMsg);
+    apiRouter.route('/chat/send_message').post(chatManagement.sendMsg);
 
     return apiRouter;
 })();

@@ -2,6 +2,8 @@
     position: relative;
     width: 100%;
     background: white;
+    height: 4.5%;
+    max-height: 4.5%;
 }
 
 #chat_input {

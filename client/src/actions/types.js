@@ -14,3 +14,5 @@ export const DELETE_PICTURE = 'DELETE_PICTURE';
 /* CHAT TYPES */
 
 export const HAS_MATCHED = 'HAS_MATCHED';
+export const FETCH_MESSAGES = 'FETCH_MESSAGES';
+export const SEND_MESSAGE = 'SEND_MESSAGE';

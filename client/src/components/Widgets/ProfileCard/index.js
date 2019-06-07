@@ -54,7 +54,6 @@ class ProfileCard extends Component {
     }
 
     render () {
-        console.log(this.props.myProfile);
         let user = this.props.user;
         const path = this.props.match ? this.props.match.path : null;
         const research = this.props.research ? this.props.research : null;

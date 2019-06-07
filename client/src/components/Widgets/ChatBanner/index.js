@@ -10,8 +10,8 @@ const ChatBanner = (props) => {
             <div className={'chat_banner_container'}>
                 <i className={"fas fa-bars"} onClick={(evt) => props.toggle(evt)}/>
                 <p className={classnames('', {
-                    'chat_banner_user_status_online': status === 'Online',
-                    'chat_banner_user_status_offline': status !== 'Online',
+                    'chat_banner_user_status_online': status === 'Connected',
+                    'chat_banner_user_status_offline': status !== 'Connected',
                 })}>{user.firstname + ' ' + user.lastname}</p>
             </div>
         );

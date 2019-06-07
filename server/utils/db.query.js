@@ -42,7 +42,9 @@ db.query('CREATE TABLE IF NOT EXISTS `chat` (' +
     '`id` int PRIMARY KEY NOT NULL AUTO_INCREMENT,' +
     '`conv_id` varchar(10) NOT NULL,' +
     '`person1` varchar(10) NOT NULL,' +
-    '`person2` varchar(10) NOT NULL)');
+    '`person2` varchar(10) NOT NULL,' +
+    '`last_message` varchar(5000) NOT NULL,' +
+    '`date` varchar(100) NOT NULL)');
 
 db.query('CREATE TABLE IF NOT EXISTS `chat_messages` (' +
     '`id` int PRIMARY KEY NOT NULL AUTO_INCREMENT,' +
@@ -57,6 +59,7 @@ db.query('CREATE TABLE IF NOT EXISTS `matcher` (' +
     '`person2` varchar(10) NOT NULL,' +
     '`like1` boolean,' +
     '`like2` boolean,' +
+    '`conv_id` varchar(10) NOT NULL,' +
     '`match` boolean)');
 
 module.exports = {
@@ -147,7 +150,7 @@ module.exports = {
         return db.query('UPDATE users SET connection=? WHERE acc_id=?', [time, acc_id]);
     },
     fetchCard: (id) => {
-        return db.query('SELECT person1, person2 FROM `matcher` WHERE person1=? OR person2=? AND `match`=?', [id, id, 1])
+        return db.query('SELECT person1, person2, conv_id FROM `matcher` WHERE person1=? OR person2=? AND `match`=?', [id, id, 1])
             .then(async data => {
                 let card = [];
                 for (let i = 0; i < data.length; i++) {
@@ -155,10 +158,21 @@ module.exports = {
                     card[i] = await db.query('SELECT firstname, lastname, connection, picture FROM `users` ' +
                         'INNER JOIN users_pictures ON users.acc_id = users_pictures.acc_id WHERE users.acc_id=? ' +
                         'AND users_pictures.type=?', [other, 'profile_pic']).then(res => {return res[0]});
+                    let msg = await db.query('SELECT conv_id, last_message, date FROM `chat` WHERE conv_id=?', [data[i].conv_id]).then(res => {return res[0]});
+                    card[i] = {...card[i], msg};
                     if (i === data.length - 1 && card) {
                         return card;
                     }
                 }
             })
+    },
+    fetchMsg: (conv_id) => {
+        return db.query('SELECT `sender_id`, `message`, `date` FROM `chat_messages` WHERE `conv_id`=? ORDER BY `date` ASC', [conv_id]);
+    },
+    sendMsg: (conv_id, sender, message) => {
+        return db.query('INSERT INTO `chat_messages` SET `conv_id`=?, `sender_id`=?, `message`=?, `date`=?', [conv_id, sender, message, Date.now()])
+            .then(() => {
+                return db.query('UPDATE `chat` SET `last_message`=?, `date`=?', [message, Date.now()])
+            });
     }
 };
