@@ -12,10 +12,12 @@ class ChatNavbar extends Component {
         value: ''
     };
 
-    componentWillMount() {
-        this.setState({
-            card: this.props.users
-        });
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.users) {
+            this.setState({
+                card: nextProps.users
+            });
+        }
     }
 
     sortMatch = (value) => {
@@ -42,12 +44,14 @@ class ChatNavbar extends Component {
     };
 
     render() {
+        console.log('s: ', this.state)
         let filter = this.state.value.length > 0 ? this.state.filter : this.state.card;
         return (
             <Fragment>
                 <ChatSearchbar sort={this.sortMatch}/>
                 <div id={'chat_card_wrapper'}>
-                    {filter.length ? this.renderChatCard(filter) : <p id={'chat_searchbar_excuse_msg'}>No conversation found...</p>}
+                    {filter.length ? this.renderChatCard(filter) :
+                        <p id={'chat_searchbar_excuse_msg'}>No conversation found...</p>}
                 </div>
             </Fragment>
         );

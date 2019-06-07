@@ -1,8 +1,12 @@
 const express = require('express');
 const userManagement = require('./Routes/UserManagement');
+const chatManagement = require('./Routes/chatManagement');
+
 
 exports.router = (function () {
     const apiRouter = express.Router();
+
+    /* ACCOUNT */
 
     apiRouter.route('/account/register').post(userManagement.register);
     apiRouter.route('/account/login').post(userManagement.login);
@@ -13,6 +17,12 @@ exports.router = (function () {
     apiRouter.route('/account/delete_picture').post(userManagement.deletePicture);
     apiRouter.route('/account/fetch_user').post(userManagement.fetchUserProfileByUsername);
     apiRouter.route('/account/logout').post(userManagement.logoutUser);
+
+    /* CHAT */
+
+    apiRouter.route('/chat/fetch_card').post(chatManagement.fetchCard);
+    apiRouter.route('/chat/fetch_messages').post(chatManagement.fetchMsg);
+    apiRouter.route('/chat/send_message').post(chatManagement.sendMsg);
 
     return apiRouter;
 })();

@@ -34,7 +34,6 @@ export const verifyToken = (token) => dispatch => {
 export const userInfo = (acc_id) => dispatch => {
     axios.post('/api/account/user_info', {acc_id: acc_id})
         .then(res => {
-            console.log(res.data);
             dispatch({
                 type: USER_INFO,
                 payload: res.data

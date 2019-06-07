@@ -80,7 +80,6 @@ class ProfileContainer extends Component {
                 this.props.profile.pictures.splice(nextProps.pic_status.pic_id, 1);
                 this.handleAlert({status: true, type: 'success', message: 'Picture deleted !'});
             } else if (nextProps.pic_status.status === 'UPLOAD') {
-                console.log(nextProps.pic_status);
                 if (nextProps.pic_status.error) {
                     this.handleAlert({status: true, type: 'error', message: nextProps.pic_status.error})
                 } else {
