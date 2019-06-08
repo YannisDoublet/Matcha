@@ -75,7 +75,8 @@ class ProfileCard extends Component {
                 <div id={'infos'}>
                     <div id={'location'}>
                         <i className="fas fa-map-marker-alt"/>
-                        <p id={'city'}>{this.state.location}</p>
+                        {path === '/profile:id' ? <p id={'city'}>{this.state.location}</p> :
+                            <p id={'city'}>{parseInt(user.dist)} km</p>}
                     </div>
                     <div id={'popularity'}>
                         <i className="fas fa-star"/>
@@ -85,7 +86,7 @@ class ProfileCard extends Component {
                 <div id={'connection_status'}>
                     {this.getConnectionStatus(user.connection)}
                 </div>
-                {path === '/match' && <Tags id={'card'} tags={user.tags}/>}
+                {path === '/match' && <Tags id={'card'} tags={user.tag}/>}
                 <div id={'interactions'}>
                     {path === '/profile/:id' && this.props.like_status === 0 && this.props.myProfile === false &&
                     <button id={'like_button'} onClick={this.props.like}>Like</button>}

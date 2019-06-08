@@ -230,8 +230,8 @@ button {
 }
 
 #matchlist_container #profile_pic {
-    width: 12rem;
-    height: 12rem;
+    width: 10rem;
+    height: 11rem;
     border-radius: 50%;
     align-self: center;
     margin: 1rem 0;

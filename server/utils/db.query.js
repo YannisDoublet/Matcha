@@ -1,6 +1,7 @@
 const Database = require('../config/db.config').Database;
 const dbCredentials = require('../config/private/db.credentials').dbCredentials;
 const db = new Database(dbCredentials);
+const geolib = require('geolib');
 db.query('CREATE DATABASE IF NOT EXISTS `Matcha`');
 db.query('USE `Matcha`');
 
@@ -157,8 +158,12 @@ module.exports = {
                     let other = data[i].person1 === id ? data[i].person2 : data[i].person1;
                     card[i] = await db.query('SELECT firstname, lastname, connection, picture FROM `users` ' +
                         'INNER JOIN users_pictures ON users.acc_id = users_pictures.acc_id WHERE users.acc_id=? ' +
-                        'AND users_pictures.type=?', [other, 'profile_pic']).then(res => {return res[0]});
-                    let msg = await db.query('SELECT conv_id, last_message, date FROM `chat` WHERE conv_id=?', [data[i].conv_id]).then(res => {return res[0]});
+                        'AND users_pictures.type=?', [other, 'profile_pic']).then(res => {
+                        return res[0]
+                    });
+                    let msg = await db.query('SELECT conv_id, last_message, date FROM `chat` WHERE conv_id=?', [data[i].conv_id]).then(res => {
+                        return res[0]
+                    });
                     card[i] = {...card[i], msg};
                     if (i === data.length - 1 && card) {
                         return card;
@@ -174,5 +179,47 @@ module.exports = {
             .then(() => {
                 return db.query('UPDATE `chat` SET `last_message`=?, `date`=?', [message, Date.now()])
             });
+    },
+    matchSuggestion: (sexuality, searchG, searchS, logged_ltg, logged_lng, count, logged_tags) => {
+        if (sexuality !== 'Bisexual') {
+            return db.query('SELECT `acc_id` FROM `users` WHERE gender=? AND sexuality=? OR gender=? AND sexuality=? LIMIT ?, 10', [searchG[0], searchS[0], searchG[0], searchS[1], count])
+                .then(async data => {
+                        let user = [];
+                        for (let i = 0; i < data.length; i++) {
+                            let m = 0;
+                            user[i] = await module.exports.getUserPublicInfo(data[i].acc_id);
+                            user[i].dist = await geolib.getPreciseDistance({latitude: logged_ltg, longitude: logged_lng},
+                                {latitude: user[i].latitude, longitude: user[i].longitude}) / 1000;
+                            logged_tags.forEach(match_tag => {
+                                user[i].tag.forEach(tag => {
+                                    if (match_tag === tag) {
+                                        m++;
+                                    }
+                                });
+                                user[i].match_tag = m;
+                            });
+                            if (i === data.length - 1 && user) {
+                                return user;
+                            }
+                        }
+                    }
+                )
+        } else {
+            return db.query('SELECT `acc_id` FROM `users` WHERE gender=? AND sexuality=? OR gender=? AND sexuality=? ' +
+                'OR gender=? AND sexuality=? OR gender=? AND sexuality=? LIMIT ?, 10',
+                [searchG[0], searchS[0], searchG[1], searchS[1], searchG[2], searchS[2], searchG[3], searchS[3], count])
+                .then(async data => {
+                        let user = [];
+                        for (let i = 0; i < data.length; i++) {
+                            user[i] = await module.exports.getUserPublicInfo(data[i].acc_id);
+                            user[i].dist = await geolib.getPreciseDistance({latitude: logged_ltg, longitude: logged_lng},
+                                {latitude: user[i].latitude, longitude: user[i].longitude}) / 1000;
+                            if (i === data.length - 1 && user) {
+                                return user;
+                            }
+                        }
+                    }
+                )
+        }
     }
 };

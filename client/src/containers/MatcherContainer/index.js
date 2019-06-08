@@ -8,55 +8,39 @@ import SettingsBar from '../../components/Widgets/SettingsBar'
 import AdvancedResearch from '../../components/Widgets/AdvancedResearch'
 import MatchList from '../../components/MatchList'
 import ResearchList from '../../containers/ResearchListContainer'
+import {userInfo, verifyToken} from "../../actions/authActions";
+import {matchSuggestion} from "../../actions/matchActions";
 
 class MatcherContainer extends Component {
 
     state = {
-        users: [
-            {
-                firstname: 'Mark', lastname: 'Zuckerberg', username: 'Zucky42', age: '34',
-                gender: 'Man', sexuality: 'Heterosexual', location: 'San Francisco, USA',
-                popularity: '4.5', status: 'Connected', tags: ['Funny', 'Shana', 'Arnaud', 'WOW']
-            },
-            {
-                firstname: 'Mark', lastname: 'Zuckerberg', username: 'Zucky42', age: '34',
-                gender: 'Man', sexuality: 'Heterosexual', location: 'San Francisco, USA',
-                popularity: '4.5', status: 'Connected', tags: ['Funny', 'Shana', 'Arnaud', 'WOW']
-            },
-            {
-                firstname: 'Mark', lastname: 'Zuckerberg', username: 'Zucky42', age: '34',
-                gender: 'Man', sexuality: 'Heterosexual', location: 'San Francisco, USA',
-                popularity: '4.5', status: 'Connected', tags: ['Funny', 'Shana', 'Arnaud', 'WOW']
-            },
-            {
-                firstname: 'Mark', lastname: 'Zuckerberg', username: 'Zucky42', age: '34',
-                gender: 'Man', sexuality: 'Heterosexual', location: 'San Francisco, USA',
-                popularity: '4.5', status: 'Connected', tags: ['Funny', 'Shana', 'Arnaud', 'WOW']
-            },
-            {
-                firstname: 'Mark', lastname: 'Zuckerberg', username: 'Zucky42', age: '34',
-                gender: 'Man', sexuality: 'Heterosexual', location: 'San Francisco, USA',
-                popularity: '4.5', status: 'Connected', tags: ['Funny', 'Shana', 'Arnaud', 'WOW']
-            },
-            {
-                firstname: 'Mark', lastname: 'Zuckerberg', username: 'Zucky42', age: '34',
-                gender: 'Man', sexuality: 'Heterosexual', location: 'San Francisco, USA',
-                popularity: '4.5', status: 'Connected', tags: ['Funny', 'Shana', 'Arnaud', 'WOW']
-            }
-        ],
-        tags: [],
-        dist: [],
-        age: [],
-        popularity: [],
+        users: [],
         sort: '',
         order: '',
         adv_geo: [],
         adv_search: '',
+        count: 0,
         advanced_opened: false
     };
 
     componentDidMount() {
         setTimeout(this.requestDispatcher, 1);
+        this.props.dispatch(verifyToken(localStorage.getItem('T')));
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.token && nextProps.token !== this.props.token) {
+            this.props.dispatch(userInfo(nextProps.token.id))
+        } else if (nextProps.logged && nextProps.logged !== this.props.logged) {
+            this.props.dispatch(matchSuggestion(nextProps.logged, this.state.count));
+            this.setState({
+                count: this.state.count + 10
+            })
+        } else if (nextProps.users && nextProps.users !== this.props.users) {
+            this.setState({
+                users: nextProps.users
+            })
+        }
     }
 
     updateComponentValue = (id, value) => {
@@ -149,34 +133,42 @@ class MatcherContainer extends Component {
     };
 
     render() {
-        console.log(this.state);
         const advanced = this.state.advanced_opened;
+        console.log(this.state.users);
         return (
-            <div id={'matcher_wrapper'}>
-                <div id={'matcher_container'}>
-                    <div id={'searchbar_container'}>
-                        <InputTag {...this.props} updateValue={this.updateComponentValue}
-                                  deleteValue={this.deleteComponentValue}/>
+            this.state.users.length > 0 ?
+                <div id={'matcher_wrapper'}>
+                    <div id={'matcher_container'}>
+                        <div id={'searchbar_container'}>
+                            <InputTag {...this.props} updateValue={this.updateComponentValue}
+                                      deleteValue={this.deleteComponentValue}/>
+                        </div>
+                        <div id={'content_container'}>
+                            <form id={'settings_container'} onSubmit={this.requestDispatcher}>
+                                <SettingsBar advanced={advanced} updateValue={this.updateComponentValue}
+                                             submit={this.requestDispatcher}/>
+                                <AdvancedResearch advanced={advanced} open={this.toggleResearch}
+                                                  updateValue={this.updateComponentValue}
+                                                  submit={this.requestDispatcher}/>
+                            </form>
+                            {!advanced ? <MatchList {...this.props} users={this.state.users}/>
+                                : <ResearchList users={this.state.users}/>}
+                        </div>
                     </div>
-                    <div id={'content_container'}>
-                        <form id={'settings_container'} onSubmit={this.requestDispatcher}>
-                            <SettingsBar advanced={advanced} updateValue={this.updateComponentValue}
-                                         submit={this.requestDispatcher}/>
-                            <AdvancedResearch advanced={advanced} open={this.toggleResearch}
-                                              updateValue={this.updateComponentValue}
-                                              submit={this.requestDispatcher}/>
-                        </form>
-                        {!advanced ? <MatchList {...this.props} users={this.state.users}/>
-                            : <ResearchList users={this.state.users}/>}
-                    </div>
-                </div>
-            </div>
+                </div> : null
         );
     }
 }
 
 function mapStateToProps(state) {
-    return {};
+    let token = state.user.res;
+    let logged = state.user.info;
+    let users = state.match.users;
+    return {
+        token,
+        logged,
+        users
+    };
 }
 
 export default connect(mapStateToProps)(MatcherContainer);

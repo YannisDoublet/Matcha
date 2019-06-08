@@ -10,9 +10,10 @@
 
 .match_card_container {
     position: absolute;
+    width: 25rem;
     display: flex;
     justify-content: center;
-    box-shadow: 1px 1px 40px -5px rgba(0, 0, 0, 0.1);
+    box-shadow: 1px 1px 15px -5px rgba(0, 0, 0, 0.1);
     border-bottom: solid 2px rgb(242, 243, 249);
     border-radius: 10px;
     transition: 0.5s;

@@ -17,9 +17,11 @@
 
 #matcher_container #form_container {
     position: relative;
+    width: 85%;
 }
 
 #matcher_container #input_tag {
+    width: 100%;
     outline: none;
     text-decoration: none;
     background: transparent;

@@ -1,6 +1,7 @@
 const express = require('express');
 const userManagement = require('./Routes/UserManagement');
 const chatManagement = require('./Routes/chatManagement');
+const matcherManagement = require('./Routes/matcherManagement');
 
 
 exports.router = (function () {
@@ -23,6 +24,10 @@ exports.router = (function () {
     apiRouter.route('/chat/fetch_card').post(chatManagement.fetchCard);
     apiRouter.route('/chat/fetch_messages').post(chatManagement.fetchMsg);
     apiRouter.route('/chat/send_message').post(chatManagement.sendMsg);
+
+    /* MATCH */
+
+    apiRouter.route('/matcher/match_suggestion').post(matcherManagement.matchSuggestion);
 
     return apiRouter;
 })();

@@ -69,11 +69,13 @@
 /* MATCH CARD CSS */
 
 #card #tags_container {
+    min-height: 85px;
     margin-top: 0.5rem;
+    width: 25rem;
     display: flex;
     flex-direction: row;
     justify-content: center;
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
     overflow-y: scroll;
 }
 
@@ -84,7 +86,7 @@
 
 #card .tag {
     padding: 0.5rem;
-    margin: 0.5rem;
+    margin: 0.2rem;
     color: white;
     background: rgb(70, 95, 196);
     border-radius: 25px;
