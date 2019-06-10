@@ -27,17 +27,10 @@ module.exports = {
             return res.status(400).json({status: true, type: 'error', message: 'Invalid inputs !'});
         return dbUtils.searchUserByEmailOrUsername(email, username).then(user => {
             if (!user) {
-                let profile;
-                let banner = '/assets/banner.jpg';
                 psw = bcrypt.hashSync(psw, 10);
                 let token = rand.generate(50);
                 let acc_id = Math.random().toString(36).substr(2, 9);
-                if (gender === 'Man' || gender === 'Woman') {
-                    profile = gender === 'Man' ? '/assets/profile_man.jpg' : '/assets/profile_woman.jgp'
-                } else {
-                    profile = '/assets/undefined_profile.png'
-                }
-                dbUtils.insertUser(acc_id, profile, banner, email, firstname, lastname, username,
+                dbUtils.insertUser(acc_id, email, firstname, lastname, username,
                     psw, age, gender, sexuality, 2.50, 'Never connected...', loremIpsum(4), token, 0);
                 mailsUtils.sendEmail(email, token);
             } else {

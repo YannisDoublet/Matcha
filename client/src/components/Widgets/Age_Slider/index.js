@@ -43,7 +43,6 @@ class Age extends Component {
                 density: 3
             }
         });
-        this.updateValue();
     }
 
     render() {

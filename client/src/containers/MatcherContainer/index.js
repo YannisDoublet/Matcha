@@ -1,8 +1,5 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-
-import './matcher_container.css'
-
 import InputTag from '../../components/Widgets/InputTag'
 import SettingsBar from '../../components/Widgets/SettingsBar'
 import AdvancedResearch from '../../components/Widgets/AdvancedResearch'
@@ -10,31 +7,41 @@ import MatchList from '../../components/MatchList'
 import ResearchList from '../../containers/ResearchListContainer'
 import {userInfo, verifyToken} from "../../actions/authActions";
 import {matchSuggestion} from "../../actions/matchActions";
+import './matcher_container.css'
+
+/* REGLER ERREUR UNMOUNTED COMPONENT STATE UPDATE REACT IN PROFILE CARD */
+/* ADVANCED MATCHLIST */
 
 class MatcherContainer extends Component {
 
     state = {
         users: [],
-        sort: '',
-        order: '',
-        adv_geo: [],
-        adv_search: '',
+        filter: [],
+        tags: {value: [], touched: false},
+        dist: {value: [], touched: false},
+        age: {value: [], touched: false},
+        pop: {value: [], touched: false},
+        sort: {value: '', touched: false},
+        order: {value: '', touched: false},
+        adv_geo: {value: [], touched: false},
+        adv_search: {value: '', touched: false},
         count: 0,
+        fetchMatch: true,
         advanced_opened: false
     };
 
-    componentDidMount() {
-        setTimeout(this.requestDispatcher, 1);
+    componentWillMount() {
         this.props.dispatch(verifyToken(localStorage.getItem('T')));
     }
 
     componentWillReceiveProps(nextProps) {
         if (nextProps.token && nextProps.token !== this.props.token) {
-            this.props.dispatch(userInfo(nextProps.token.id))
-        } else if (nextProps.logged && nextProps.logged !== this.props.logged) {
+            this.props.dispatch(userInfo(nextProps.token.id));
+        } else if (this.state.fetchMatch) {
             this.props.dispatch(matchSuggestion(nextProps.logged, this.state.count));
             this.setState({
-                count: this.state.count + 10
+                count: this.state.count + 10,
+                fetchMatch: false
             })
         } else if (nextProps.users && nextProps.users !== this.props.users) {
             this.setState({
@@ -43,46 +50,179 @@ class MatcherContainer extends Component {
         }
     }
 
+    filterUsers = (e) => {
+        e.preventDefault();
+        this.setState({
+            filter: []
+        }, () => {
+            let {tags, dist, age, pop, sort, order} = this.state;
+            let filter = [];
+            if (tags.touched && tags.value.length > 0) {
+                let tab = this.state.users;
+                let valid = [];
+                tab.map(user => {
+                    let checkTags = [];
+                    user.tag.forEach(tag => {
+                        tags.value.filter(val => val.indexOf(tag) === 0 ? checkTags.push(tag) : checkTags);
+                    });
+                    if (checkTags.length === tags.value.length) {
+                        valid.push(user);
+                    }
+                });
+                filter = valid;
+            }
+            if (dist.touched) {
+                let tab = filter.length > 0 ? filter : this.state.users;
+                let checkDist = [];
+                tab.forEach(user => {
+                    parseInt(user.dist) >= dist.value[0] && parseInt(user.dist) <= dist.value[1] && checkDist.push(user);
+                });
+                filter = checkDist;
+            }
+            if (age.touched) {
+                let tab = filter.length > 0 ? filter : this.state.users;
+                let checkAge = [];
+                tab.forEach(user => {
+                    parseInt(user.age) >= age.value[0] && parseInt(user.age) <= age.value[1] && checkAge.push(user);
+                });
+                filter = checkAge;
+            }
+            if (pop.touched) {
+                let tab = filter.length > 0 ? filter : this.state.users;
+                let checkPop = [];
+                tab.forEach(user => {
+                    user.score >= pop.value[0] && user.score <= pop.value[1] && checkPop.push(user);
+                });
+                filter = checkPop;
+            }
+            if (order.touched && !sort.touched) {
+
+            }
+            console.log(filter);
+            if (sort.touched) {
+                let tab = filter.length > 0 ? filter : this.state.users;
+                let ord = order.touched ? order.value : 'Ascending';
+
+                switch (sort.value) {
+                    case 'Tags':
+                        if (ord === 'Ascending') {
+                            tab.sort((a, b) => (a.match_tag > b.match_tag) ? -1 :
+                                ((b.match_tag > a.match_tag) ? 1 : 0));
+                        } else {
+                            tab.sort((a, b) => (a.match_tag > b.match_tag) ? 1 :
+                                ((b.match_tag > a.match_tag) ? -1 : 0));
+                        }
+                        filter = tab;
+                        break;
+                    case 'Location':
+                        if (ord === 'Ascending') {
+                            tab.sort((a, b) => (parseInt(a.dist) > parseInt(b.dist)) ? -1 :
+                                ((parseInt(b.dist) > parseInt(a.dist)) ? 1 : 0));
+                        } else {
+                            tab.sort((a, b) => (parseInt(a.dist) > parseInt(b.dist)) ? 1 :
+                                ((parseInt(b.dist) > parseInt(a.dist)) ? -1 : 0));
+                        }
+                        filter = tab;
+                        break;
+                    case 'Age':
+                        if (ord === 'Ascending') {
+                            tab.sort((a, b) => (parseInt(a.age) > parseInt(b.age)) ? -1 :
+                                ((parseInt(b.age) > parseInt(a.age)) ? 1 : 0));
+                        } else {
+                            tab.sort((a, b) => (parseInt(a.age) > parseInt(b.age)) ? 1 :
+                                ((parseInt(b.age) > parseInt(a.age)) ? -1 : 0));
+                        }
+                        filter = tab;
+                        break;
+                    case 'Popularity':
+                        if (ord === 'Ascending') {
+                            tab.sort((a, b) => (a.score > b.score) ? -1 :
+                                (b.score > a.score) ? 1 : 0);
+                        } else {
+                            tab.sort((a, b) => (a.score > b.score) ? 1 :
+                                (b.score > a.score) ? -1 : 0);
+                        }
+                        filter = tab;
+                        break;
+                }
+            }
+            this.setState({
+                filter: filter
+            })
+        })
+    };
+
+    fetchMatch = () => {
+        this.props.dispatch(matchSuggestion(this.props.logged, this.state.count));
+        this.setState({
+            count: this.state.count + 10,
+        })
+    };
+
     updateComponentValue = (id, value) => {
         switch (id) {
             case('Tags'):
                 this.setState({
-                    tags: value
+                    tags: {
+                        value: value,
+                        touched: true
+                    }
                 });
                 break;
             case('Geo'):
                 this.setState({
-                    dist: value
+                    dist: {
+                        value: value,
+                        touched: true
+                    }
                 });
                 break;
             case('Age'):
                 this.setState({
-                    age: value
+                    age: {
+                        value: value,
+                        touched: true
+                    }
                 });
                 break;
             case('Popularity'):
                 this.setState({
-                    popularity: value
+                    pop: {
+                        value: value,
+                        touched: true
+                    }
                 });
                 break;
             case('Sort'):
                 this.setState({
-                    sort: value
+                    sort: {
+                        value: value,
+                        touched: true
+                    }
                 });
                 break;
             case('Order'):
                 this.setState({
-                    order: value
+                    order: {
+                        value: value,
+                        touched: true
+                    }
                 });
                 break;
             case('Advanced_geo'):
                 this.setState({
-                    adv_geo: value
+                    adv_geo: {
+                        value: value,
+                        touched: true
+                    }
                 });
                 break;
             case('Advanced_search'):
                 this.setState({
-                    adv_search: value
+                    adv_search: {
+                        value: value,
+                        touched: true
+                    }
                 });
                 break;
             default:
@@ -93,7 +233,10 @@ class MatcherContainer extends Component {
     deleteComponentValue = (id, value) => {
         if (id === 'Tags') {
             this.setState({
-                tags: value
+                tags: {
+                    ...this.state.tags,
+                    value: value
+                }
             })
         }
     };
@@ -104,39 +247,12 @@ class MatcherContainer extends Component {
         })
     };
 
-    requestDispatcher = (evt) => {
-        const state = this.state;
-        const advanced = state.advanced_opened;
-        evt && evt.preventDefault();
-        let data = {
-            tags: state.tags,
-            dist: state.dist,
-            age: state.age,
-            pop: state.popularity,
-            sort: state.sort,
-            order: state.order
-        };
-        if (advanced) {
-            data = {
-                ...data,
-                adv_geo: state.adv_geo,
-                adv_search: state.adv_search
-            };
-            this.Vision(data, advanced);
-        } else {
-
-        }
-    };
-
-    Vision = (data, advanced) => {
-        console.log(data, advanced);
-    };
-
     render() {
         const advanced = this.state.advanced_opened;
-        console.log(this.state.users);
+        let list = this.state.filter.length > 0 ? this.state.filter : this.state.users;
+        console.log(list);
         return (
-            this.state.users.length > 0 ?
+            list ?
                 <div id={'matcher_wrapper'}>
                     <div id={'matcher_container'}>
                         <div id={'searchbar_container'}>
@@ -144,15 +260,16 @@ class MatcherContainer extends Component {
                                       deleteValue={this.deleteComponentValue}/>
                         </div>
                         <div id={'content_container'}>
-                            <form id={'settings_container'} onSubmit={this.requestDispatcher}>
+                            <form id={'settings_container'} onSubmit={this.filterUsers}>
                                 <SettingsBar advanced={advanced} updateValue={this.updateComponentValue}
-                                             submit={this.requestDispatcher}/>
+                                             submit={this.filterUsers}/>
                                 <AdvancedResearch advanced={advanced} open={this.toggleResearch}
                                                   updateValue={this.updateComponentValue}
-                                                  submit={this.requestDispatcher}/>
+                                                  submit={this.filterUsers}/>
                             </form>
-                            {!advanced ? <MatchList {...this.props} users={this.state.users}/>
-                                : <ResearchList users={this.state.users}/>}
+                            {!advanced ?
+                                <MatchList {...this.props} users={list} fetchMatch={this.fetchMatch}/>
+                                : <ResearchList users={list}/>}
                         </div>
                     </div>
                 </div> : null

@@ -10,6 +10,15 @@ class MatchList extends Component {
         count: 0
     };
 
+    componentWillUpdate(nextProps, nextState, nextContext) {
+        if (nextState.count === 10) {
+            this.props.fetchMatch();
+            this.setState({
+                count: 0
+            })
+        }
+    }
+
     likeUser = (id, username) => {
         let card = document.getElementById(`card ${id}`);
         card.classList.add('isLiked');

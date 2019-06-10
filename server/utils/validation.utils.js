@@ -28,5 +28,17 @@ module.exports = {
             default:
                 return false;
         }
+    },
+    matcherSort: (match) => {
+        for (let i = match.length - 1; i >= 0; i--) {
+            for (let j = 1; j <= i; j++) {
+                if (match[j - 1].matchScore > match[j].matchScore) {
+                    let temp = match[j - 1];
+                    match[j - 1] = match[j];
+                    match[j] = temp;
+                }
+            }
+        }
+        return match;
     }
 };

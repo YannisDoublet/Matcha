@@ -75,7 +75,7 @@ class ProfileCard extends Component {
                 <div id={'infos'}>
                     <div id={'location'}>
                         <i className="fas fa-map-marker-alt"/>
-                        {path === '/profile:id' ? <p id={'city'}>{this.state.location}</p> :
+                        {path === '/profile/:id' ? <p id={'city'}>{this.state.location}</p> :
                             <p id={'city'}>{parseInt(user.dist)} km</p>}
                     </div>
                     <div id={'popularity'}>

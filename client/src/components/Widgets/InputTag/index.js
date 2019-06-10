@@ -9,8 +9,9 @@ class InputTag extends Component {
         tags: [],
         input_value: '',
         suggestions: [
-            'Funny',
-            'Fun',
+            'Lord of the Rings',
+            'Reading',
+            'Burgers',
             'Romantic',
             'Weird',
             'React',

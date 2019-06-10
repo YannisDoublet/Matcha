@@ -1,4 +1,5 @@
 const dbUtils = require('../utils/db.query');
+const validationUtils = require('../utils/validation.utils');
 
 module.exports = {
     matchSuggestion: async (req, res) => {
@@ -46,11 +47,10 @@ module.exports = {
         }
         return dbUtils.matchSuggestion(user.sexuality, searchG, searchS, user.latitude,
             user.longitude, count, user.tag).then(users => {
-                users.sort((a, b) => {
-                    console.log(a.username + ' vs ' + b.username);
-                    return (a.dist / 100  - (a.score * 75 + a.match_tag * 100)) + (b.dist / 100 - (b.score * 75 + b.match_tag * 100));
+                users.forEach(user => {
+                    user.matchScore = (user.score * 50 + user.match_tag * 150) - user.dist / 25;
                 });
-                res.status(200).send(users.sort(users.dist));
+                res.status(200).send(validationUtils.matcherSort(users));
         })
     }
 };
