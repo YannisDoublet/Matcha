@@ -71,7 +71,6 @@
 #card #tags_container {
     min-height: 85px;
     margin-top: 0.5rem;
-    width: 25rem;
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -91,4 +90,31 @@
     background: rgb(70, 95, 196);
     border-radius: 25px;
     align-self: center;
+}
+
+/* RESEARCH LIST CONTAINER */
+
+#research_list_container #tags_container {
+    min-height: 30px;
+    margin-top: 0.5rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    flex-wrap: wrap;
+    overflow-y: scroll;
+}
+
+#research_list_container .tag::before {
+    content: '#';
+    color: #FFFFFF;
+}
+
+#research_list_container .tag {
+    padding: 0.5rem;
+    margin: 0.2rem;
+    color: white;
+    background: rgb(70, 95, 196);
+    border-radius: 25px;
+    align-self: center;
+    font-size: 0.8rem;
 }

@@ -99,7 +99,7 @@ class ProfileCard extends Component {
                     {path === '/profile/:id' && this.props.myProfile === false &&
                     <button id={'report'} onClick={this.props.report}>Report</button>}
                     {research &&
-                    <Link to={'/profile'}>
+                    <Link to={`/profile/${user.username}`}>
                         <button id={'profile_button'}>Profile</button>
                     </Link>}
                 </div>

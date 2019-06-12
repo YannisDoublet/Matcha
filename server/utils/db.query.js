@@ -82,6 +82,19 @@ module.exports = {
                 return data[0];
             });
     },
+    fetchTags: () => {
+        return db.query('SELECT `tag` from tags')
+            .then(data => {
+                let removeDuplicates = (data, comp) => {
+                    const unique = data
+                        .map(e => e[comp])
+                        .map((e, i, final) => final.indexOf(e) === i && i)
+                        .filter(e => data[e]).map(e => data[e]);
+                    return unique;
+                };
+                return (removeDuplicates(data, 'tag'));
+            })
+    },
     getUserPublicInfo: (id, username) => {
         return db.query('SELECT users.acc_id, firstname, lastname, username, age, gender, sexuality, score, connection, bio, latitude, longitude FROM `users`' +
             'INNER JOIN users_coordinates ON users.acc_id = users_coordinates.acc_id WHERE users.acc_id=? OR users.username=?;', [id, username])

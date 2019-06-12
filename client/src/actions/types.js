@@ -20,3 +20,4 @@ export const SEND_MESSAGE = 'SEND_MESSAGE';
 /* MATCH TYPES */
 
 export const MATCH_SUGGESTION = 'MATCH_SUGGESTION';
+export const FETCH_TAGS = 'FETCH_TAGS';

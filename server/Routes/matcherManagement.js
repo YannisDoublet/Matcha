@@ -52,5 +52,15 @@ module.exports = {
                 });
                 res.status(200).send(validationUtils.matcherSort(users));
         })
-    }
+    },
+    fetchTags: (req, res) => {
+        return dbUtils.fetchTags()
+            .then(data => {
+                let tags = [];
+                tags = Object.keys(data).map(key => {
+                    return [...tags, data[key].tag];
+                });
+                return res.status(200).send(tags.toString().split(','));
+            })
+    },
 };

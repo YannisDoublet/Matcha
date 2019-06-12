@@ -4,6 +4,7 @@ import GeolocationSlider from '../Geolocation';
 import AgeSlider from '../Age_Slider';
 import PopularitySlider from '../Popularity_Slider';
 import SubmitButton from './submit_button'
+import ResetButton from '../ResetButton'
 import './settings_bar.css'
 
 const SettingsBar = (props) => {
@@ -15,7 +16,11 @@ const SettingsBar = (props) => {
             <GeolocationSlider updateValue={props.updateValue}/>
             <AgeSlider updateValue={props.updateValue}/>
             <PopularitySlider updateValue={props.updateValue}/>
-            {!props.advanced && <SubmitButton submit={props.submit}/>}
+            {!props.advanced &&
+            <div id={'settings_bar_button_container'}>
+                <SubmitButton submit={props.submit}/>
+                <ResetButton reset={props.reset}/>
+            </div>}
         </div>
     );
 };

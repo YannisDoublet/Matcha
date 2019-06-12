@@ -6,7 +6,7 @@ const ResearchList = (props) => {
     const renderResearch = (users) => {
         return (
             users.map((user, i) => (
-                <ProfileCard users={user} key={i} research={true}/>
+                <ProfileCard user={user} key={i} research={true} match={props.match}/>
             ))
         )
     };
@@ -16,6 +16,6 @@ const ResearchList = (props) => {
             {users.length > 0 ? renderResearch(users) : <p>Search</p>}
         </div>
     );
-}
+};
 
 export default ResearchList;

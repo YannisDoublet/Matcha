@@ -55,7 +55,7 @@ class MatchList extends Component {
                     <div id={'pulse'}>
                         <i id='marker' className="fas fa-map-marker-alt"/>
                     </div>
-                    <p id={'message'}>No more users in your zone...</p>
+                    <p id={'message'}>No more users in your criteria...</p>
                 </div>
             </div>
         );

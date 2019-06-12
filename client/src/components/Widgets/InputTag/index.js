@@ -1,38 +1,32 @@
-import React, {Component, Fragment} from 'react';
-import './inputTag.css'
-
+import React, {Component, Fragment} from 'react'
+import {connect} from 'react-redux'
+import {fetchTags} from '../../../actions/matchActions'
 import Tags from '../Tags'
+import './inputTag.css'
 
 class InputTag extends Component {
 
     state = {
         tags: [],
         input_value: '',
-        suggestions: [
-            'Lord of the Rings',
-            'Reading',
-            'Burgers',
-            'Romantic',
-            'Weird',
-            'React',
-            'Arnaud',
-            'Tanguy',
-            'Shana',
-            'Yannis',
-            '42'
-        ],
+        suggestions: [],
         filtered: [],
         activeSuggestion: 0,
         showSuggestion: false,
         erase_check: false
     };
 
+
+    componentDidMount() {
+        this.props.dispatch(fetchTags());
+    }
+
     handleInput = (evt) => {
         this.setState({
             input_value: evt.target.value,
             erase_check: false
         }, () => {
-            this.handleAutoComplete(this.state.input_value, this.state.suggestions);
+            this.handleAutoComplete(this.state.input_value, this.props.tags);
         });
     };
 
@@ -146,4 +140,11 @@ class InputTag extends Component {
     }
 }
 
-export default InputTag;
+function mapStateToProps(state) {
+    let tags = state.match.tags;
+    return {
+        tags
+    };
+}
+
+export default connect(mapStateToProps)(InputTag);

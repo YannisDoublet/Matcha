@@ -10,6 +10,7 @@ import {matchSuggestion} from "../../actions/matchActions";
 import './matcher_container.css'
 
 /* REGLER ERREUR UNMOUNTED COMPONENT STATE UPDATE REACT IN PROFILE CARD */
+
 /* ADVANCED MATCHLIST */
 
 class MatcherContainer extends Component {
@@ -52,103 +53,99 @@ class MatcherContainer extends Component {
 
     filterUsers = (e) => {
         e.preventDefault();
-        this.setState({
-            filter: []
-        }, () => {
-            let {tags, dist, age, pop, sort, order} = this.state;
-            let filter = [];
-            if (tags.touched && tags.value.length > 0) {
-                let tab = this.state.users;
-                let valid = [];
-                tab.map(user => {
-                    let checkTags = [];
-                    user.tag.forEach(tag => {
-                        tags.value.filter(val => val.indexOf(tag) === 0 ? checkTags.push(tag) : checkTags);
-                    });
-                    if (checkTags.length === tags.value.length) {
-                        valid.push(user);
-                    }
+        let {tags, dist, age, pop, sort, order} = this.state;
+        let filter = [];
+        if (tags.touched && tags.value.length > 0) {
+            let tab = this.state.users;
+            let valid = [];
+            tab.map(user => {
+                let checkTags = [];
+                user.tag.forEach(tag => {
+                    tags.value.filter(val => val.indexOf(tag) === 0 ? checkTags.push(tag) : checkTags);
                 });
-                filter = valid;
-            }
-            if (dist.touched) {
-                let tab = filter.length > 0 ? filter : this.state.users;
-                let checkDist = [];
-                tab.forEach(user => {
-                    parseInt(user.dist) >= dist.value[0] && parseInt(user.dist) <= dist.value[1] && checkDist.push(user);
-                });
-                filter = checkDist;
-            }
-            if (age.touched) {
-                let tab = filter.length > 0 ? filter : this.state.users;
-                let checkAge = [];
-                tab.forEach(user => {
-                    parseInt(user.age) >= age.value[0] && parseInt(user.age) <= age.value[1] && checkAge.push(user);
-                });
-                filter = checkAge;
-            }
-            if (pop.touched) {
-                let tab = filter.length > 0 ? filter : this.state.users;
-                let checkPop = [];
-                tab.forEach(user => {
-                    user.score >= pop.value[0] && user.score <= pop.value[1] && checkPop.push(user);
-                });
-                filter = checkPop;
-            }
-            if (order.touched && !sort.touched) {
-
-            }
-            console.log(filter);
-            if (sort.touched) {
-                let tab = filter.length > 0 ? filter : this.state.users;
-                let ord = order.touched ? order.value : 'Ascending';
-
-                switch (sort.value) {
-                    case 'Tags':
-                        if (ord === 'Ascending') {
-                            tab.sort((a, b) => (a.match_tag > b.match_tag) ? -1 :
-                                ((b.match_tag > a.match_tag) ? 1 : 0));
-                        } else {
-                            tab.sort((a, b) => (a.match_tag > b.match_tag) ? 1 :
-                                ((b.match_tag > a.match_tag) ? -1 : 0));
-                        }
-                        filter = tab;
-                        break;
-                    case 'Location':
-                        if (ord === 'Ascending') {
-                            tab.sort((a, b) => (parseInt(a.dist) > parseInt(b.dist)) ? -1 :
-                                ((parseInt(b.dist) > parseInt(a.dist)) ? 1 : 0));
-                        } else {
-                            tab.sort((a, b) => (parseInt(a.dist) > parseInt(b.dist)) ? 1 :
-                                ((parseInt(b.dist) > parseInt(a.dist)) ? -1 : 0));
-                        }
-                        filter = tab;
-                        break;
-                    case 'Age':
-                        if (ord === 'Ascending') {
-                            tab.sort((a, b) => (parseInt(a.age) > parseInt(b.age)) ? -1 :
-                                ((parseInt(b.age) > parseInt(a.age)) ? 1 : 0));
-                        } else {
-                            tab.sort((a, b) => (parseInt(a.age) > parseInt(b.age)) ? 1 :
-                                ((parseInt(b.age) > parseInt(a.age)) ? -1 : 0));
-                        }
-                        filter = tab;
-                        break;
-                    case 'Popularity':
-                        if (ord === 'Ascending') {
-                            tab.sort((a, b) => (a.score > b.score) ? -1 :
-                                (b.score > a.score) ? 1 : 0);
-                        } else {
-                            tab.sort((a, b) => (a.score > b.score) ? 1 :
-                                (b.score > a.score) ? -1 : 0);
-                        }
-                        filter = tab;
-                        break;
+                if (checkTags.length === tags.value.length) {
+                    valid.push(user);
                 }
+            });
+            filter = valid;
+        }
+        if (dist.touched) {
+            let tab = filter.length > 0 ? filter : this.state.users;
+            let checkDist = [];
+            tab.forEach(user => {
+                parseInt(user.dist) >= dist.value[0] && parseInt(user.dist) <= dist.value[1] && checkDist.push(user);
+            });
+            filter = checkDist;
+        }
+        if (age.touched) {
+            let tab = filter.length > 0 ? filter : this.state.users;
+            let checkAge = [];
+            tab.forEach(user => {
+                parseInt(user.age) >= age.value[0] && parseInt(user.age) <= age.value[1] && checkAge.push(user);
+            });
+            filter = checkAge;
+        }
+        if (pop.touched) {
+            let tab = filter.length > 0 ? filter : this.state.users;
+            let checkPop = [];
+            tab.forEach(user => {
+                user.score >= pop.value[0] && user.score <= pop.value[1] && checkPop.push(user);
+            });
+            filter = checkPop;
+        }
+        if (order.touched && !sort.touched) {
+
+        }
+        console.log(filter);
+        if (sort.touched) {
+            let tab = filter.length > 0 ? filter : this.state.users;
+            let ord = order.touched ? order.value : 'Ascending';
+
+            switch (sort.value) {
+                case 'Tags':
+                    if (ord === 'Ascending') {
+                        tab.sort((a, b) => (a.match_tag > b.match_tag) ? -1 :
+                            ((b.match_tag > a.match_tag) ? 1 : 0));
+                    } else {
+                        tab.sort((a, b) => (a.match_tag > b.match_tag) ? 1 :
+                            ((b.match_tag > a.match_tag) ? -1 : 0));
+                    }
+                    filter = tab;
+                    break;
+                case 'Location':
+                    if (ord === 'Ascending') {
+                        tab.sort((a, b) => (parseInt(a.dist) > parseInt(b.dist)) ? -1 :
+                            ((parseInt(b.dist) > parseInt(a.dist)) ? 1 : 0));
+                    } else {
+                        tab.sort((a, b) => (parseInt(a.dist) > parseInt(b.dist)) ? 1 :
+                            ((parseInt(b.dist) > parseInt(a.dist)) ? -1 : 0));
+                    }
+                    filter = tab;
+                    break;
+                case 'Age':
+                    if (ord === 'Ascending') {
+                        tab.sort((a, b) => (parseInt(a.age) > parseInt(b.age)) ? -1 :
+                            ((parseInt(b.age) > parseInt(a.age)) ? 1 : 0));
+                    } else {
+                        tab.sort((a, b) => (parseInt(a.age) > parseInt(b.age)) ? 1 :
+                            ((parseInt(b.age) > parseInt(a.age)) ? -1 : 0));
+                    }
+                    filter = tab;
+                    break;
+                case 'Popularity':
+                    if (ord === 'Ascending') {
+                        tab.sort((a, b) => (a.score > b.score) ? -1 :
+                            (b.score > a.score) ? 1 : 0);
+                    } else {
+                        tab.sort((a, b) => (a.score > b.score) ? 1 :
+                            (b.score > a.score) ? -1 : 0);
+                    }
+                    filter = tab;
+                    break;
             }
-            this.setState({
-                filter: filter
-            })
+        }
+        this.setState({
+            filter: filter
         })
     };
 
@@ -156,6 +153,24 @@ class MatcherContainer extends Component {
         this.props.dispatch(matchSuggestion(this.props.logged, this.state.count));
         this.setState({
             count: this.state.count + 10,
+        })
+    };
+
+    resetValue = (e) => {
+        e.preventDefault();
+        document.getElementById('slider').noUiSlider.reset();
+        document.getElementById('age_slider').noUiSlider.reset();
+        document.getElementById('popularity_slider').noUiSlider.reset();
+        this.setState({
+            tags: {value: [], touched: false},
+            dist: {value: [], touched: false},
+            age: {value: [], touched: false},
+            pop: {value: [], touched: false},
+            sort: {value: '', touched: false},
+            order: {value: '', touched: false},
+            adv_geo: {value: [], touched: false},
+            adv_search: {value: '', touched: false},
+            filter: []
         })
     };
 
@@ -260,16 +275,16 @@ class MatcherContainer extends Component {
                                       deleteValue={this.deleteComponentValue}/>
                         </div>
                         <div id={'content_container'}>
-                            <form id={'settings_container'} onSubmit={this.filterUsers}>
+                            <div id={'settings_container'} onSubmit={this.filterUsers}>
                                 <SettingsBar advanced={advanced} updateValue={this.updateComponentValue}
-                                             submit={this.filterUsers}/>
+                                             submit={this.filterUsers} reset={this.resetValue}/>
                                 <AdvancedResearch advanced={advanced} open={this.toggleResearch}
                                                   updateValue={this.updateComponentValue}
                                                   submit={this.filterUsers}/>
-                            </form>
+                            </div>
                             {!advanced ?
                                 <MatchList {...this.props} users={list} fetchMatch={this.fetchMatch}/>
-                                : <ResearchList users={list}/>}
+                                : <ResearchList users={list} match={this.props.match}/>}
                         </div>
                     </div>
                 </div> : null
