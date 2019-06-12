@@ -37,6 +37,12 @@
     transition: height ease-in 0.3s;
 }
 
+#advanced_research_button_container {
+    width: 100%;
+    display: flex;
+    justify-content: space-evenly;
+}
+
 .active_dropdown {
     height: 165px !important;
 }

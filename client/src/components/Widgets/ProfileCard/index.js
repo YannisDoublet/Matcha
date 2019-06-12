@@ -56,7 +56,7 @@ class ProfileCard extends Component {
     render () {
         let user = this.props.user;
         const path = this.props.match ? this.props.match.path : null;
-        const research = this.props.research ? this.props.research : null;
+        let research = this.props.research ? this.props.research : null;
         return (
             <div id={'card'} className={'card'}>
                 <div id={'profile_pic'} style={{backgroundImage: `url(${user.pictures[0].picture})`}} />

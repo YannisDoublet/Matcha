@@ -29,6 +29,7 @@ exports.router = (function () {
 
     apiRouter.route('/matcher/match_suggestion').post(matcherManagement.matchSuggestion);
     apiRouter.route('/matcher/fetch_tags').get(matcherManagement.fetchTags);
+    apiRouter.route('/matcher/research_users').post(matcherManagement.researchUsers);
 
     return apiRouter;
 })();

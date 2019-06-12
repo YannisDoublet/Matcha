@@ -76,10 +76,19 @@ module.exports = {
                 return data[0];
             });
     },
-    getAllUserInfo: (id) => {
-        return db.query('SELECT * FROM `users` WHERE acc_id=?', [id])
-            .then(data => {
-                return data[0];
+    fetchAllUsers: (acc_id, lat, lng) => {
+        return db.query('SELECT `acc_id` FROM `users` WHERE acc_id<>?', [acc_id])
+            .then(async data => {
+                let user = [];
+                for (let i = 0; i <= data.length; i++) {
+                    if (i === data.length - 1 && user) {
+                        return user;
+                    }
+                    user[i] = await module.exports.getUserPublicInfo(data[i].acc_id, '');
+                    // console.log(lat ,lng , user[i].latitude, user[i].longitude);
+                    user[i].dist = await geolib.getPreciseDistance({latitude: lat, longitude: lng},
+                        {latitude: user[i].latitude, longitude: user[i].longitude}) / 1000;
+                }
             });
     },
     fetchTags: () => {

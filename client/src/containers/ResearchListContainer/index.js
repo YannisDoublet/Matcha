@@ -1,6 +1,6 @@
 import React from 'react'
 import './research_list.css'
-import ProfileCard from '../../components/Widgets/ProfileCard';
+import ProfileCard from '../../components/Widgets/ProfileCard'
 
 const ResearchList = (props) => {
     const renderResearch = (users) => {

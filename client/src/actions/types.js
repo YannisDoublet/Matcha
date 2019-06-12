@@ -20,4 +20,5 @@ export const SEND_MESSAGE = 'SEND_MESSAGE';
 /* MATCH TYPES */
 
 export const MATCH_SUGGESTION = 'MATCH_SUGGESTION';
+export const RESEARCH_USERS = 'RESEARCH_USERS';
 export const FETCH_TAGS = 'FETCH_TAGS';

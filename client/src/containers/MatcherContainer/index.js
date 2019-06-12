@@ -6,10 +6,8 @@ import AdvancedResearch from '../../components/Widgets/AdvancedResearch'
 import MatchList from '../../components/MatchList'
 import ResearchList from '../../containers/ResearchListContainer'
 import {userInfo, verifyToken} from "../../actions/authActions";
-import {matchSuggestion} from "../../actions/matchActions";
+import {matchSuggestion, researchUsers} from "../../actions/matchActions";
 import './matcher_container.css'
-
-/* REGLER ERREUR UNMOUNTED COMPONENT STATE UPDATE REACT IN PROFILE CARD */
 
 /* ADVANCED MATCHLIST */
 
@@ -17,6 +15,7 @@ class MatcherContainer extends Component {
 
     state = {
         users: [],
+        research: [],
         filter: [],
         tags: {value: [], touched: false},
         dist: {value: [], touched: false},
@@ -48,15 +47,20 @@ class MatcherContainer extends Component {
             this.setState({
                 users: nextProps.users
             })
+        } else if (nextProps.research && nextProps.research !== this.props.research) {
+            this.setState({
+                research: nextProps.research
+            }, () => {
+                this.filterUsers('research')
+            })
         }
     }
 
-    filterUsers = (e) => {
-        e.preventDefault();
-        let {tags, dist, age, pop, sort, order} = this.state;
+    filterUsers = (field) => {
+        let {tags, dist, age, pop, sort, order, adv_geo} = this.state;
         let filter = [];
         if (tags.touched && tags.value.length > 0) {
-            let tab = this.state.users;
+            let tab = field === 'matcher' ? this.state.users : this.state.research;
             let valid = [];
             tab.map(user => {
                 let checkTags = [];
@@ -70,7 +74,7 @@ class MatcherContainer extends Component {
             filter = valid;
         }
         if (dist.touched) {
-            let tab = filter.length > 0 ? filter : this.state.users;
+            let tab = filter.length > 0 ? filter : field === 'matcher' ? this.state.users : this.state.research;
             let checkDist = [];
             tab.forEach(user => {
                 parseInt(user.dist) >= dist.value[0] && parseInt(user.dist) <= dist.value[1] && checkDist.push(user);
@@ -78,7 +82,7 @@ class MatcherContainer extends Component {
             filter = checkDist;
         }
         if (age.touched) {
-            let tab = filter.length > 0 ? filter : this.state.users;
+            let tab = filter.length > 0 ? filter : field === 'matcher' ? this.state.users : this.state.research;
             let checkAge = [];
             tab.forEach(user => {
                 parseInt(user.age) >= age.value[0] && parseInt(user.age) <= age.value[1] && checkAge.push(user);
@@ -86,7 +90,7 @@ class MatcherContainer extends Component {
             filter = checkAge;
         }
         if (pop.touched) {
-            let tab = filter.length > 0 ? filter : this.state.users;
+            let tab = filter.length > 0 ? filter : field === 'matcher' ? this.state.users : this.state.research;
             let checkPop = [];
             tab.forEach(user => {
                 user.score >= pop.value[0] && user.score <= pop.value[1] && checkPop.push(user);
@@ -96,9 +100,9 @@ class MatcherContainer extends Component {
         if (order.touched && !sort.touched) {
 
         }
-        console.log(filter);
+        console.log('Yo c oim dans la fonction ta vu : ', filter);
         if (sort.touched) {
-            let tab = filter.length > 0 ? filter : this.state.users;
+            let tab = filter.length > 0 ? filter : field === 'matcher' ? this.state.users : this.state.research;
             let ord = order.touched ? order.value : 'Ascending';
 
             switch (sort.value) {
@@ -147,6 +151,12 @@ class MatcherContainer extends Component {
         this.setState({
             filter: filter
         })
+    };
+
+    researchUsers = (e) => {
+        let lat = this.state.adv_geo.touched ? this.state.adv_geo.value.lat : this.props.logged.latitude;
+        let lng = this.state.adv_geo.touched ? this.state.adv_geo.value.lng : this.props.logged.longitude;
+        this.props.dispatch(researchUsers(this.props.token.id, lat, lng));
     };
 
     fetchMatch = () => {
@@ -256,16 +266,16 @@ class MatcherContainer extends Component {
         }
     };
 
-    toggleResearch = () => {
+    toggleResearch = (e) => {
         this.setState({
             advanced_opened: !this.state.advanced_opened
-        })
+        });
+        this.resetValue(e)
     };
 
     render() {
         const advanced = this.state.advanced_opened;
         let list = this.state.filter.length > 0 ? this.state.filter : this.state.users;
-        console.log(list);
         return (
             list ?
                 <div id={'matcher_wrapper'}>
@@ -277,14 +287,15 @@ class MatcherContainer extends Component {
                         <div id={'content_container'}>
                             <div id={'settings_container'} onSubmit={this.filterUsers}>
                                 <SettingsBar advanced={advanced} updateValue={this.updateComponentValue}
-                                             submit={this.filterUsers} reset={this.resetValue}/>
+                                             submit={(e) => this.filterUsers('matcher')} reset={this.resetValue}/>
                                 <AdvancedResearch advanced={advanced} open={this.toggleResearch}
                                                   updateValue={this.updateComponentValue}
-                                                  submit={this.filterUsers}/>
+                                                  submit={this.researchUsers} reset={this.resetValue}/>
                             </div>
                             {!advanced ?
                                 <MatchList {...this.props} users={list} fetchMatch={this.fetchMatch}/>
-                                : <ResearchList users={list} match={this.props.match}/>}
+                                : <ResearchList match={this.props.match} users={this.state.filter}
+                                                filter={(e) => this.filterUsers('research')}/>}
                         </div>
                     </div>
                 </div> : null
@@ -296,10 +307,12 @@ function mapStateToProps(state) {
     let token = state.user.res;
     let logged = state.user.info;
     let users = state.match.users;
+    let research = state.match.research;
     return {
         token,
         logged,
-        users
+        users,
+        research
     };
 }
 

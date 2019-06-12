@@ -53,6 +53,14 @@ module.exports = {
                 res.status(200).send(validationUtils.matcherSort(users));
         })
     },
+    researchUsers: (req, res) => {
+        let {acc_id, lat, lng} = req.body;
+        // console.log(lat, lng);
+        return dbUtils.fetchAllUsers(acc_id, lat, lng)
+            .then(data => {
+                return res.status(200).send(data);
+            })
+    },
     fetchTags: (req, res) => {
         return dbUtils.fetchTags()
             .then(data => {
@@ -63,4 +71,5 @@ module.exports = {
                 return res.status(200).send(tags.toString().split(','));
             })
     },
+
 };
