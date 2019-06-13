@@ -30,7 +30,9 @@ class HeaderConnectedOptions extends Component {
     }
 
     componentWillReceiveProps(nextProps, nextContext) {
+        console.log(nextProps);
         if (nextProps.user.info) {
+            console.log(nextProps.user.info);
             let newState = this.state;
             newState.user_img = nextProps.user.info.pictures[0].picture;
             newState.dropdown_content[0].link = `/profile/${nextProps.user.info.username}`;

@@ -61,6 +61,15 @@ module.exports = {
                 return res.status(200).send(data);
             })
     },
+    researchPreciseUser: (req, res) => {
+        let {user} = req.body;
+
+        dbUtils.fetchPreciseUser(user)
+            .then(res => {
+                console.log(res);
+                return res;
+            })
+    },
     fetchTags: (req, res) => {
         return dbUtils.fetchTags()
             .then(data => {

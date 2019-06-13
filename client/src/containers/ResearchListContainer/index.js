@@ -13,7 +13,13 @@ const ResearchList = (props) => {
     const users = props.users;
     return (
         <div id={'research_list_container'}>
-            {users.length > 0 ? renderResearch(users) : <p>Search</p>}
+            {users.length > 0 ? renderResearch(users) :
+                <div id={'excuse_message'}>
+                    <div id={'pulse'}>
+                        <i id='marker' className="fas fa-map-marker-alt"/>
+                    </div>
+                    <p id={'message'}>No users in your criteria...</p>
+                </div>}
         </div>
     );
 };

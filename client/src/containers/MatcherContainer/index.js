@@ -1,5 +1,6 @@
-import React, {Component} from 'react';
-import {connect} from 'react-redux';
+import React, {Component} from 'react'
+import {connect} from 'react-redux'
+import {Redirect} from 'react-router-dom'
 import InputTag from '../../components/Widgets/InputTag'
 import SettingsBar from '../../components/Widgets/SettingsBar'
 import AdvancedResearch from '../../components/Widgets/AdvancedResearch'
@@ -9,14 +10,13 @@ import {userInfo, verifyToken} from "../../actions/authActions";
 import {matchSuggestion, researchUsers} from "../../actions/matchActions";
 import './matcher_container.css'
 
-/* ADVANCED MATCHLIST */
-
 class MatcherContainer extends Component {
 
     state = {
         users: [],
         research: [],
         filter: [],
+        redirect: false,
         tags: {value: [], touched: false},
         dist: {value: [], touched: false},
         age: {value: [], touched: false},
@@ -36,7 +36,13 @@ class MatcherContainer extends Component {
 
     componentWillReceiveProps(nextProps) {
         if (nextProps.token && nextProps.token !== this.props.token) {
-            this.props.dispatch(userInfo(nextProps.token.id));
+            if (!nextProps.token.id) {
+               this.setState({
+                   redirect: true
+               })
+            } else {
+                this.props.dispatch(userInfo(nextProps.token.id));
+            }
         } else if (this.state.fetchMatch) {
             this.props.dispatch(matchSuggestion(nextProps.logged, this.state.count));
             this.setState({
@@ -53,14 +59,29 @@ class MatcherContainer extends Component {
             }, () => {
                 this.filterUsers('research')
             })
+        } else if (nextProps.precise && nextProps.precise !== this.props.precise) {
+            this.setState({
+                filter: nextProps.precise
+            })
         }
     }
 
     filterUsers = (field) => {
-        let {tags, dist, age, pop, sort, order, adv_geo} = this.state;
+        let {tags, dist, age, pop, sort, order, research, adv_search} = this.state;
         let filter = [];
+        if (adv_search.touched && adv_search.value.length > 0) {
+            let search = adv_search.value.split(' ').join('').toLowerCase();
+            research.map((user, i) => {
+                let name = user.firstname.toLowerCase() + user.lastname.toLowerCase();
+                if (name.indexOf(search) !== -1) {
+                    return filter[i] = user;
+                } else {
+                    return null;
+                }
+            });
+        }
         if (tags.touched && tags.value.length > 0) {
-            let tab = field === 'matcher' ? this.state.users : this.state.research;
+            let tab = filter.length > 0 ? filter : field === 'matcher' ? this.state.users : this.state.research;
             let valid = [];
             tab.map(user => {
                 let checkTags = [];
@@ -68,7 +89,9 @@ class MatcherContainer extends Component {
                     tags.value.filter(val => val.indexOf(tag) === 0 ? checkTags.push(tag) : checkTags);
                 });
                 if (checkTags.length === tags.value.length) {
-                    valid.push(user);
+                   return valid.push(user);
+                } else {
+                    return null;
                 }
             });
             filter = valid;
@@ -100,7 +123,6 @@ class MatcherContainer extends Component {
         if (order.touched && !sort.touched) {
 
         }
-        console.log('Yo c oim dans la fonction ta vu : ', filter);
         if (sort.touched) {
             let tab = filter.length > 0 ? filter : field === 'matcher' ? this.state.users : this.state.research;
             let ord = order.touched ? order.value : 'Ascending';
@@ -146,6 +168,8 @@ class MatcherContainer extends Component {
                     }
                     filter = tab;
                     break;
+                default:
+                    break;
             }
         }
         this.setState({
@@ -153,9 +177,11 @@ class MatcherContainer extends Component {
         })
     };
 
-    researchUsers = (e) => {
-        let lat = this.state.adv_geo.touched ? this.state.adv_geo.value.lat : this.props.logged.latitude;
-        let lng = this.state.adv_geo.touched ? this.state.adv_geo.value.lng : this.props.logged.longitude;
+    researchUsers = () => {
+        let lat = this.state.adv_geo.touched && this.state.adv_geo.value.lat ?
+            this.state.adv_geo.value.lat : this.props.logged.latitude;
+        let lng = this.state.adv_geo.touched && this.state.adv_geo.value.lng ?
+            this.state.adv_geo.value.lng : this.props.logged.longitude;
         this.props.dispatch(researchUsers(this.props.token.id, lat, lng));
     };
 
@@ -275,9 +301,10 @@ class MatcherContainer extends Component {
 
     render() {
         const advanced = this.state.advanced_opened;
+        let redirect = this.state.redirect;
         let list = this.state.filter.length > 0 ? this.state.filter : this.state.users;
         return (
-            list ?
+             !redirect ?
                 <div id={'matcher_wrapper'}>
                     <div id={'matcher_container'}>
                         <div id={'searchbar_container'}>
@@ -292,13 +319,13 @@ class MatcherContainer extends Component {
                                                   updateValue={this.updateComponentValue}
                                                   submit={this.researchUsers} reset={this.resetValue}/>
                             </div>
-                            {!advanced ?
+                            {!advanced && list.length ?
                                 <MatchList {...this.props} users={list} fetchMatch={this.fetchMatch}/>
                                 : <ResearchList match={this.props.match} users={this.state.filter}
                                                 filter={(e) => this.filterUsers('research')}/>}
                         </div>
                     </div>
-                </div> : null
+                </div> : <Redirect to={'/register'}/>
         );
     }
 }

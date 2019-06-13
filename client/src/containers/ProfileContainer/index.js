@@ -1,5 +1,6 @@
 import React, {Component, Fragment} from 'react'
 import {connect} from 'react-redux'
+import {Redirect} from 'react-router-dom'
 import {fetchUserByUsername, uploadPicture, deletePicture} from "../../actions/profileActions";
 import {userInfo, verifyToken} from "../../actions/authActions";
 import GoogleMaps from '../../components/GoogleMaps'
@@ -14,6 +15,7 @@ import './profile_container.css'
 class ProfileContainer extends Component {
 
     state = {
+        redirect: false,
         myProfile: false,
         myProfileCheck: true,
         firstCheck: true,
@@ -65,6 +67,11 @@ class ProfileContainer extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
+        if (!nextProps.id) {
+            this.setState({
+                redirect: true
+            })
+        }
         if (nextProps.match.params.id !== this.props.match.params.id) {
             this.props.dispatch(fetchUserByUsername(nextProps.match.params.id));
             this.setState({
@@ -136,12 +143,16 @@ class ProfileContainer extends Component {
     };
 
     renderGallery = (pictures, myProfile) => {
+        console.log(pictures);
         return myProfile ? pictures.map((pic, i) => (
-            pic.type !== 'banner_pic' ? <div key={i} id={i} className={'gallery_picture'}
-                     style={{backgroundImage: `url('${pic.picture}')`, cursor: pic.type === 'pic' ? 'pointer': 'default'}}
-                                             onClick={pic.type === 'pic' ? (evt) => this.deletePicture(evt, pic.picture) : (evt) => this.updateProfilePicture(evt)}>
-                {pic.type === 'pic' && <i className="fas fa-times"/>}
-            </div> : null))
+                pic.type !== 'banner_pic' ? <div key={i} id={i} className={'gallery_picture'}
+                                                 style={{
+                                                     backgroundImage: `url('${pic.picture}')`,
+                                                     cursor: pic.type === 'pic' ? 'pointer' : 'default'
+                                                 }}
+                                                 onClick={(evt) => this.deletePicture(evt, pic.picture)}>
+                    {pic.type === 'pic' && <i className="fas fa-times"/>}
+                </div> : null))
             :
             pictures.map((pic, i) => (
                 pic.type !== 'banner_pic' ? <div key={i} className={'gallery_picture'}
@@ -150,54 +161,54 @@ class ProfileContainer extends Component {
     };
 
     render() {
-        let alert = this.state.alert;
-        let popUp = this.state.popUp;
+        let {redirect, alert, popUp} = this.state;
         let user = this.props.profile;
-        console.log(user);
         return (
-            <div id={'profile'}>
-                <Alert alert={alert} handleAlert={this.handleAlert}/>
-                {popUp ? <ReportPopUp popUp={this.showReport} alert={alert}
-                                      handleAlert={this.handleAlert} closePopUp={this.closePopUp}/>
-                    : null}
-                {user &&
-                <Fragment>
-                    <div id={'banner_pic_container'} style={{backgroundImage: `url(${user.pictures[1].picture})`}}/>
-                    <div id={'profile_content_container'}>
-                        <ProfileCard {...this.props} like={this.like} like_status={this.state.like}
-                                     report={this.showReport} popUp_status={this.state.popUp}
-                                     user={user} myProfile={this.state.myProfile}/>
-                        <div id={'profile_content'}>
-                            <div id={'bio_container'}>
-                                <p id={'bio_title'}>Biography</p>
-                                <p id={'bio_content'}>{user.bio}</p>
-                            </div>
-                            <div id={'gallery_container'}>
-                                <p id={'gallery_title'}>Gallery</p>
-                                <div id={'gallery_content'}>
-                                    {this.renderGallery(user.pictures, this.state.myProfile)}
-                                    {user.pictures.length < 6 &&
-                                    <label htmlFor={'upload'} className={'upload'}>
-                                        <input id={'upload'} style={{display: 'none'}} type={'file'} accept="image/*"
-                                               onChange={(e) => this.addPicture(e)}/>
-                                        <i className={'fas fa-plus'}/>
-                                    </label>}
+            !redirect ?
+                <div id={'profile'}>
+                    <Alert alert={alert} handleAlert={this.handleAlert}/>
+                    {popUp ? <ReportPopUp popUp={this.showReport} alert={alert}
+                                          handleAlert={this.handleAlert} closePopUp={this.closePopUp}/>
+                        : null}
+                    {user &&
+                    <Fragment>
+                        <div id={'banner_pic_container'} style={{backgroundImage: `url(${user.pictures[1].picture})`}}/>
+                        <div id={'profile_content_container'}>
+                            <ProfileCard {...this.props} like={this.like} like_status={this.state.like}
+                                         report={this.showReport} popUp_status={popUp}
+                                         user={user} myProfile={this.state.myProfile}/>
+                            <div id={'profile_content'}>
+                                <div id={'bio_container'}>
+                                    <p id={'bio_title'}>Biography</p>
+                                    <p id={'bio_content'}>{user.bio}</p>
                                 </div>
-                            </div>
-                            <div id={'tag_container'}>
-                                <p id={'tag_title'}>Tags</p>
-                                <Tags tags={user.tag} id={'profile'} myProfile={this.state.myProfile}/>
-                            </div>
-                            <div id={'map_container'}>
-                                <p id={'map_title'}>Maps</p>
-                                <div id={'map_wrapper'}>
-                                    <GoogleMaps lat={user.latitude} lon={user.longitude}/>
+                                <div id={'gallery_container'}>
+                                    <p id={'gallery_title'}>Gallery</p>
+                                    <div id={'gallery_content'}>
+                                        {this.renderGallery(user.pictures, this.state.myProfile)}
+                                        {user.pictures.length < 6 &&
+                                        <label htmlFor={'upload'} className={'upload'}>
+                                            <input id={'upload'} style={{display: 'none'}} type={'file'}
+                                                   accept="image/*"
+                                                   onChange={(e) => this.addPicture(e)}/>
+                                            <i className={'fas fa-plus'}/>
+                                        </label>}
+                                    </div>
+                                </div>
+                                <div id={'tag_container'}>
+                                    <p id={'tag_title'}>Tags</p>
+                                    <Tags tags={user.tag} id={'profile'} myProfile={this.state.myProfile}/>
+                                </div>
+                                <div id={'map_container'}>
+                                    <p id={'map_title'}>Maps</p>
+                                    <div id={'map_wrapper'}>
+                                        <GoogleMaps lat={user.latitude} lon={user.longitude}/>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </Fragment>}
-            </div>
+                    </Fragment>}
+                </div> : <Redirect to={'/register'}/>
         );
     }
 }

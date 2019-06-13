@@ -5,6 +5,8 @@ const geolib = require('geolib');
 db.query('CREATE DATABASE IF NOT EXISTS `Matcha`');
 db.query('USE `Matcha`');
 
+/* GEOLOCALISER LA PERSONNE DE FORCE DANS LE BACK */
+
 db.query('CREATE TABLE IF NOT EXISTS `users` (' +
     '`id` int PRIMARY KEY NOT NULL AUTO_INCREMENT,' +
     '`acc_id` varchar(10) NOT NULL,' +
@@ -92,7 +94,7 @@ module.exports = {
             });
     },
     fetchTags: () => {
-        return db.query('SELECT `tag` from tags')
+        return db.query('SELECT `tag` FROM tags')
             .then(data => {
                 let removeDuplicates = (data, comp) => {
                     const unique = data
@@ -108,6 +110,7 @@ module.exports = {
         return db.query('SELECT users.acc_id, firstname, lastname, username, age, gender, sexuality, score, connection, bio, latitude, longitude FROM `users`' +
             'INNER JOIN users_coordinates ON users.acc_id = users_coordinates.acc_id WHERE users.acc_id=? OR users.username=?;', [id, username])
             .then(data => {
+                console.log(data);
                 let acc_id = data[0].acc_id;
                 delete data[0].acc_id;
                 let user = data[0];
@@ -155,7 +158,7 @@ module.exports = {
         return db.query("INSERT INTO `tags` SET acc_id=?, tag=?", [acc_id, tag]);
     },
     insertPicture: (acc_id, img, type) => {
-        return db.query("INSERT INTO `users_pictures` SET acc_id=?, picture=?, type=?", [acc_id, img, type]);
+        return db.query("INSERT INTO `users_pictures` SET acc_id=?, picture=?, type=?", [acc_id, `/assets/uploads/${img}`, type]);
     },
     checkNumbersOfPicture: (acc_id) => {
         return db.query('SELECT * FROM `users_pictures` WHERE acc_id=?', [acc_id])
@@ -164,7 +167,17 @@ module.exports = {
             })
     },
     deletePicture: (acc_id, img) => {
-        return db.query("DELETE FROM `users_pictures` WHERE acc_id=? AND picture=?", [acc_id, img]);
+        return db.query('SELECT type FROM `users_pictures` WHERE acc_id=? AND picture=?', [acc_id, img])
+            .then(res => {
+                return db.query("DELETE FROM `users_pictures` WHERE acc_id=? AND picture=?", [acc_id, img])
+                    .then(() => {
+                        if (res[0].type === 'profile_pic') {
+                            return module.exports.insertPicture(acc_id, '/assets/tulips.jpg', 'profile_pic');
+                        } else {
+                            return null;
+                        }
+                    })
+            });
     },
     validateUser: (token) => {
         return db.query('UPDATE users SET activate=? WHERE token=?', [1, token]);

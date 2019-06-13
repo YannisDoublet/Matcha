@@ -1,4 +1,4 @@
-import React, {Component} from 'react'
+import React, {Component, Fragment} from 'react'
 import axios from 'axios'
 import {Redirect} from 'react-router-dom'
 
@@ -10,24 +10,27 @@ class Logout extends Component {
         redirect: false
     };
 
-    logout = () => {
-        axios.post('/api/account/verify_token', {token: localStorage.getItem('T')})
+    componentDidMount() {
+        let token = localStorage.getItem('T');
+        this.logout(token);
+        localStorage.removeItem('T');
+        this.setState({
+            redirect: true
+        })
+    }
+
+    logout = (token) => {
+        axios.post('/api/account/verify_token', {token: token})
             .then(res =>
                 axios.post('/api/account/logout', {time: Date.now(), id: res.data.id})
-                    .then(res => {
-                        localStorage.removeItem('T');
-                        this.setState({
-                            redirect: true
-                        })
-                    })
             )
     };
 
     render() {
-        let redirect = this.state.redirect;
-        this.logout();
         return (
-            redirect && <Redirect to={'/'}/>
+            <Fragment>
+                {this.state.redirect && <Redirect to={'/'}/>}
+            </Fragment>
         )
     }
 }

@@ -1,3 +1,5 @@
+const fs = require('fs');
+const path = require('path');
 const bcrypt = require('bcrypt');
 const rand = require('rand-token');
 const jwtUtils = require('../utils/jwt.utils');
@@ -33,6 +35,8 @@ module.exports = {
                 dbUtils.insertUser(acc_id, email, firstname, lastname, username,
                     psw, age, gender, sexuality, 2.50, 'Never connected...', loremIpsum(4), token, 0);
                 mailsUtils.sendEmail(email, token);
+                dbUtils.insertPicture(acc_id, 'tulips.jpg', 'profile_pic');
+                dbUtils.insertPicture(acc_id, 'banner.png', 'banner_pic');
             } else {
                 return res.status(200).json({
                     status: true,
@@ -128,7 +132,6 @@ module.exports = {
     },
     verifyToken: (req, res) => {
         let token = req.body.token;
-
         if (token) {
             let decoded = jwtUtils.verifyUserToken(token);
             if (!decoded.id) {
@@ -137,7 +140,7 @@ module.exports = {
                 return res.status(200).json(decoded);
             }
         } else {
-            return res.status({message: 'No token provided !'});
+            return res.status(200).json({message: 'No token provided !'});
         }
     },
     userInfo: (req, res) => {
@@ -155,7 +158,6 @@ module.exports = {
     fetchUserProfileByUsername: (req, res) => {
         let username = req.body.username;
 
-        console.log(req.body);
         if (username) {
             dbUtils.getUserPublicInfo('', username)
                 .then(data => {
@@ -168,10 +170,9 @@ module.exports = {
         let pic = req.files.file;
         let root = process.env.PWD.replace('/server', '');
         let filePath = `${root}/client/public/assets/uploads/${Date.now()}.jpg`;
-        let dbPath = filePath.substr(51);
+        let dbPath = filePath.split('/').slice(-1)[0];
         if ((pic.mimetype === 'image/jpeg') || (pic.mimetype === 'image/png')) {
             if (validationUtils.validateImage(pic.mimetype, Buffer.from(pic.data, 'hex')) === true) {
-                console.log('hey');
                 dbUtils.checkNumbersOfPicture(acc_id)
                     .then(num => {
                         if (num < 6) {
@@ -179,7 +180,7 @@ module.exports = {
                                 if (err) throw err;
                                 dbUtils.insertPicture(acc_id, dbPath, 'pic')
                                     .then(() => {
-                                        return res.status(200).json({status: 'UPLOAD', path: dbPath});
+                                        return res.status(200).json({status: 'UPLOAD', path: `/assets/uploads/${dbPath}`});
                                     })
                             })
                         } else {
@@ -194,9 +195,8 @@ module.exports = {
         }
     },
     deletePicture: (req, res) => {
-        let acc_id = req.body.acc_id;
-        let pic = req.body.pic;
-        let pic_id = req.body.pic_id;
+        let {acc_id, pic, pic_id} = req.body;
+        let host = req.headers.host;
 
         dbUtils.deletePicture(acc_id, pic)
             .then(() => {

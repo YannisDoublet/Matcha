@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
+import {Redirect} from 'react-router-dom'
 import classnames from 'classnames';
 import {verifyToken} from "../../actions/authActions";
 import ChatNavbar from '../../components/Widgets/ChatNavbar'
@@ -11,6 +12,7 @@ class Chat extends Component {
 
     state = {
         users: [],
+        redirect: false,
         active: 0,
         fetch: false,
         sidebar: true
@@ -22,10 +24,16 @@ class Chat extends Component {
 
     componentWillReceiveProps(nextProps) {
         if (nextProps.token && !this.state.fetch) {
-            this.props.dispatch(fetchCard(nextProps.token.id));
-            this.setState({
-                fetch: true
-            })
+            if (!nextProps.token.id) {
+                this.setState({
+                    redirect: true
+                })
+            } else {
+                this.props.dispatch(fetchCard(nextProps.token.id));
+                this.setState({
+                    fetch: true
+                })
+            }
         } else if (nextProps.card) {
             this.setState({
                 users: nextProps.card
@@ -47,18 +55,18 @@ class Chat extends Component {
     };
 
     render() {
-        let users = this.state.users;
-        let active = this.state.active;
-        let sidebar = this.state.sidebar;
+        let {redirect, users, active, sidebar} = this.state;
         return (
-            <div id={'chat_wrapper'}>
-                <div className={classnames('chat_navbar_container', {'hidden': !sidebar})}>
-                    <ChatNavbar users={users} active={this.updateActive}/>
-                </div>
-                <div id={'chat_box_container'}>
-                    <ChatBox conversation={users[active]} id={this.props.token ? this.props.token : null} toggle={this.toggleSidebar}/>
-                </div>
-            </div>
+            !redirect ?
+                <div id={'chat_wrapper'}>
+                    <div className={classnames('chat_navbar_container', {'hidden': !sidebar})}>
+                        <ChatNavbar users={users} active={this.updateActive}/>
+                    </div>
+                    <div id={'chat_box_container'}>
+                        <ChatBox conversation={users[active]} id={this.props.token ? this.props.token : null}
+                                 toggle={this.toggleSidebar}/>
+                    </div>
+                </div> : <Redirect to={'/register'}/>
         );
     }
 }
