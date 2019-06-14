@@ -309,7 +309,7 @@ class MatcherContainer extends Component {
                     <div id={'matcher_container'}>
                         <div id={'searchbar_container'}>
                             <InputTag {...this.props} updateValue={this.updateComponentValue}
-                                      deleteValue={this.deleteComponentValue}/>
+                                      deleteValue={this.deleteComponentValue} id={'searchbar'}/>
                         </div>
                         <div id={'content_container'}>
                             <div id={'settings_container'} onSubmit={this.filterUsers}>

@@ -158,6 +158,12 @@ module.exports = {
     insertTag: (acc_id, tag) => {
         return db.query("INSERT INTO `tags` SET acc_id=?, tag=?", [acc_id, tag]);
     },
+    deleteTag: (acc_id, tag) => {
+        return db.query("DELETE FROM `tags` WHERE acc_id=? AND tag=?", [acc_id, tag]);
+    },
+    insertBio: (acc_id, bio) => {
+        return db.query("UPDATE `users` SET bio=? WHERE acc_id=?", [bio, acc_id]);
+    },
     insertPictureAccountCreation: (acc_id, img, type) => {
         return db.query("INSERT INTO `users_pictures` SET acc_id=?, picture=?, type=?", [acc_id, img, type]);
     },

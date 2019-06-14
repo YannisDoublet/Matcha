@@ -114,7 +114,6 @@ class HeaderConnectedOptions extends Component {
     render() {
         this.checkId();
         let profile_pic = this.props.checkProfile ? this.props.checkProfile.pictures[0].picture : this.state.user_img;
-        console.log(profile_pic);
         return (
             <div id={'connected_options_wrapper'}>
                 <Notifications opened={this.state.notification_opened} toggle={this.toggleDropdown}

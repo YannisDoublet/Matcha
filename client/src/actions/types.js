@@ -8,6 +8,9 @@ export const USER_INFO = 'USER_INFO';
 /* PROFILE TYPES */
 
 export const FETCH_USER = 'FETCH_USER';
+export const ADD_TAG = 'ADD_TAG';
+export const DELETE_TAG = 'DELETE_TAG';
+export const MANAGE_BIO = 'MANAGE_BIO';
 export const UPLOAD_PICTURE = 'UPLOAD_PICTURE';
 export const UPDATE_PROFILE_PICTURE = 'UPDATE_PROFILE_PICTURE';
 export const DELETE_PICTURE = 'DELETE_PICTURE';

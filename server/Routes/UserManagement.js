@@ -170,6 +170,30 @@ module.exports = {
                 })
         }
     },
+    addTag: (req, res) => {
+        let {acc_id, tag} = req.body;
+
+        dbUtils.insertTag(acc_id, tag)
+            .then(() => {
+                return res.status(200).json({type: 'ADD', value: tag});
+            })
+    },
+    deleteTag: (req, res) => {
+        let {acc_id, tag} = req.body;
+
+        dbUtils.deleteTag(acc_id, tag)
+            .then(() => {
+                return res.status(200).json({type: 'DELETE', value: tag});
+            })
+    },
+    manageBio: (req, res) => {
+        let {acc_id, bio} = req.body;
+
+        dbUtils.insertBio(acc_id, bio)
+            .then(() => {
+                return res.status(200).json({type: 'MANAGE', value: bio});
+            })
+    },
     uploadPicture: (req, res) => {
         let acc_id = req.body.id;
         let pic = req.files.file;

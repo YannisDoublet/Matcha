@@ -1,13 +1,15 @@
 import React, {Component, Fragment} from 'react'
 import {connect} from 'react-redux'
 import {Redirect} from 'react-router-dom'
-import {fetchUserByUsername, uploadPicture, updateProfilePicture, deletePicture} from "../../actions/profileActions";
+import {fetchUserByUsername, addTag, deleteTag, manageBio, uploadPicture,
+    updateProfilePicture, deletePicture} from "../../actions/profileActions";
 import {userInfo, verifyToken} from "../../actions/authActions";
 import GoogleMaps from '../../components/GoogleMaps'
 import Alert from '../../components/Widgets/Alert'
 import ReportPopUp from '../../components/Widgets/ReportPopUp'
 import ProfileCard from '../../components/Widgets/ProfileCard'
 import Tags from '../../components/Widgets/Tags'
+import InputTag from "../../components/Widgets/InputTag";
 import './profile_container.css'
 
 /* ADD PICTURE WIP, INVESTIGATE PROFILE_PIC*/
@@ -19,6 +21,9 @@ class ProfileContainer extends Component {
         myProfile: false,
         myProfileCheck: true,
         firstCheck: true,
+        inputTag: false,
+        inputBio: false,
+        inputValue: '',
         alert: {
             status: false,
             type: '',
@@ -55,7 +60,9 @@ class ProfileContainer extends Component {
         if (logged && user) {
             this.setState({
                 myProfileCheck: false,
-                myProfile: logged.username === user.username
+                myProfile: logged.username === user.username,
+                inputTag: false,
+                inputBio: false
             })
         }
     };
@@ -101,6 +108,15 @@ class ProfileContainer extends Component {
                 this.props.dispatch(fetchUserByUsername(nextProps.match.params.id));
                 this.handleAlert({status: true, type: 'success', message: 'Profile picture updated !'});
             }
+        } else if (nextProps.tag !== this.props.tag) {
+            this.props.dispatch(fetchUserByUsername(nextProps.match.params.id));
+            if (this.state.inputTag) {
+                this.setState({
+                    inputTag: !this.state.inputTag
+                })
+            }
+        } else if (nextProps.bio !== this.props.bio) {
+            this.props.dispatch(fetchUserByUsername(nextProps.match.params.id));
         }
     }
 
@@ -120,6 +136,12 @@ class ProfileContainer extends Component {
         })
     };
 
+    handleChange = (e) => {
+        this.setState({
+            inputValue: e.target.value
+        })
+    };
+
     like = () => {
         this.state.like ? this.setState({
             like: 0
@@ -133,6 +155,35 @@ class ProfileContainer extends Component {
             popUp: 0
         }) : this.setState({
             popUp: 1
+        })
+    };
+
+    editInfo = (e) => {
+        if (e.target.id === 'tag_edit') {
+            this.setState({
+                inputTag: !this.state.inputTag
+            })
+        } else if (e.target.id === 'bio_edit') {
+            this.setState({
+                inputBio: !this.state.inputBio
+            })
+        }
+    };
+
+    addTag = (newTag) => {
+      this.props.dispatch(addTag(this.props.id, newTag));
+    };
+
+    deleteTag = (e) => {
+        this.props.dispatch(deleteTag(this.props.id, e.target.childNodes[0].data));
+    };
+
+    manageBio = (e) => {
+        e.preventDefault();
+        this.props.dispatch(manageBio(this.props.id, this.state.inputValue));
+        this.setState({
+            inputValue: '',
+            inputBio: false
         })
     };
 
@@ -154,7 +205,6 @@ class ProfileContainer extends Component {
     };
 
     renderGallery = (pictures, myProfile) => {
-        console.log(pictures);
         return myProfile ? pictures.map((pic, i) => (
                 pic.type !== 'banner_pic' ? <div key={i} id={i} className={'gallery_picture'}
                                                  style={{backgroundImage: `url('${pic.picture}')`}}>
@@ -190,8 +240,21 @@ class ProfileContainer extends Component {
                                          user={user} myProfile={this.state.myProfile}/>
                             <div id={'profile_content'}>
                                 <div id={'bio_container'}>
-                                    <p id={'bio_title'}>Biography</p>
-                                    <p id={'bio_content'}>{user.bio}</p>
+                                    <div id={'bio_title_container'}>
+                                        <p id={'bio_title'}>Bio</p>
+                                        {this.state.myProfile ?
+                                            <i id={'bio_edit'} className="far fa-edit"
+                                               onClick={(e) => this.editInfo(e)}/>
+                                            : null}
+                                    </div>
+                                    {!this.state.inputBio ? <p id={'bio_content'}>{user.bio.length ? user.bio
+                                        :
+                                        'Write a bio to introduce you to others !'}</p>
+                                        :
+                                        <form id={'bio_form'} onSubmit={this.manageBio}>
+                                            <input id={'bio_input'} type={'text'} onChange={(e) => this.handleChange(e)}
+                                                   value={this.state.inputValue} placeholder={'Don\'t be shy !'} autoFocus={true}/>
+                                        </form>}
                                 </div>
                                 <div id={'gallery_container'}>
                                     <p id={'gallery_title'}>Gallery</p>
@@ -207,12 +270,19 @@ class ProfileContainer extends Component {
                                     </div>
                                 </div>
                                 <div id={'tag_container'}>
-                                    <p id={'tag_title'}>Tags</p>
-                                    {user.tag.length > 0 ?
-                                        <Tags tags={user.tag} id={'profile'} myProfile={this.state.myProfile}/>
+                                    <div id={'tag_title_container'}>
+                                        <p id={'tag_title'}>Tags</p>
+                                        {this.state.myProfile &&
+                                        <i id={'tag_edit'} className="far fa-edit" onClick={(e) => this.editInfo(e)}/>}
+                                    </div>
+                                    {!this.state.inputTag ? user.tag.length > 0 ?
+                                        <Tags tags={user.tag} myProfile={this.state.myProfile}
+                                              id={this.state.myProfile ? 'myTags' : 'tags'} delete={this.deleteTag}/>
                                         :
-                                        <p id={'tags_empty_message'}>No tags entered... Please show your interests to other !</p>
-                                    }
+                                        <p id={'tags_empty_message'}>No tags entered... Please show your interests to
+                                            other !</p>
+                                        : <InputTag {...this.props} id={this.state.myProfile ? 'myProfile' : 'others'}
+                                                    mytags={user.tag} addTag={this.addTag}/>}
                                 </div>
                                 <div id={'map_container'}>
                                     <p id={'map_title'}>Maps</p>
@@ -233,11 +303,15 @@ function mapStateToProps(state) {
     let id = state.user.res ? state.user.res.id : null;
     let logged = state.user.info;
     let pic_status = state.profile.pic;
+    let tag = state.profile.tag;
+    let bio = state.profile.bio;
     return {
         profile,
         id,
         logged,
-        pic_status
+        pic_status,
+        tag,
+        bio
     };
 }
 
