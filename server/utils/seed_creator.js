@@ -62,7 +62,7 @@ const seed_creator = async () => {
                     } else if (i === 1) {
                         type = 'banner_pic'
                     }
-                    dbUtils.insertPicture(acc_id, img, type);
+                    dbUtils.insertPictureAccountCreation(acc_id, img, type);
                 });
                 console.log(`${i} profile created.`);
             })

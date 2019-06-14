@@ -4,6 +4,7 @@ import {MATCH_SUGGESTION, RESEARCH_USERS, FETCH_TAGS} from './types'
 export const matchSuggestion = (user, count) => dispatch => {
     axios.post('/api/matcher/match_suggestion',{user: user, count: count})
         .then(res => {
+            console.log(res.data);
             dispatch({
                 type: MATCH_SUGGESTION,
                 payload: res.data

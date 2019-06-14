@@ -40,8 +40,8 @@ class SignUpStep1 extends Component {
                 type: 'select',
                 name: 'gender',
                 options: [
-                    'Man',
-                    'Woman',
+                    'Male',
+                    'Female',
                     'Undefined'
                 ],
             },

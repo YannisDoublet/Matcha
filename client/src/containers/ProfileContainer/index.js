@@ -1,7 +1,7 @@
 import React, {Component, Fragment} from 'react'
 import {connect} from 'react-redux'
 import {Redirect} from 'react-router-dom'
-import {fetchUserByUsername, uploadPicture, deletePicture} from "../../actions/profileActions";
+import {fetchUserByUsername, uploadPicture, updateProfilePicture, deletePicture} from "../../actions/profileActions";
 import {userInfo, verifyToken} from "../../actions/authActions";
 import GoogleMaps from '../../components/GoogleMaps'
 import Alert from '../../components/Widgets/Alert'
@@ -82,9 +82,13 @@ class ProfileContainer extends Component {
             this.setState({
                 firstCheck: false
             })
-        } else if (nextProps.pic_status) {
+        } else if (nextProps.pic_status !== this.props.pic_status) {
             if (nextProps.pic_status.status === 'DELETE') {
-                this.props.profile.pictures.splice(nextProps.pic_status.pic_id, 1);
+                if (nextProps.pic_status.type !== 'profile_pic') {
+                    this.props.profile.pictures.splice(nextProps.pic_status.pic_id, 1);
+                } else {
+                    this.props.dispatch(fetchUserByUsername(nextProps.match.params.id));
+                }
                 this.handleAlert({status: true, type: 'success', message: 'Picture deleted !'});
             } else if (nextProps.pic_status.status === 'UPLOAD') {
                 if (nextProps.pic_status.error) {
@@ -93,6 +97,9 @@ class ProfileContainer extends Component {
                     this.props.profile.pictures.push({picture: nextProps.pic_status.path, type: 'pic'});
                     this.handleAlert({status: true, type: 'success', message: 'Picture uploaded !'});
                 }
+            } else if (nextProps.pic_status.status === 'UPDATE') {
+                this.props.dispatch(fetchUserByUsername(nextProps.match.params.id));
+                this.handleAlert({status: true, type: 'success', message: 'Profile picture updated !'});
             }
         }
     }
@@ -138,20 +145,24 @@ class ProfileContainer extends Component {
         }
     };
 
+    updateProfilePicture = (evt, pic) => {
+        this.props.dispatch(updateProfilePicture(this.props.id, pic, evt.target.id));
+    };
+
     deletePicture = (evt, pic) => {
-        this.props.dispatch(deletePicture(this.props.id, pic, evt.target.id))
+        this.props.dispatch(deletePicture(this.props.id, pic, evt.target.id));
     };
 
     renderGallery = (pictures, myProfile) => {
         console.log(pictures);
         return myProfile ? pictures.map((pic, i) => (
                 pic.type !== 'banner_pic' ? <div key={i} id={i} className={'gallery_picture'}
-                                                 style={{
-                                                     backgroundImage: `url('${pic.picture}')`,
-                                                     cursor: pic.type === 'pic' ? 'pointer' : 'default'
-                                                 }}
-                                                 onClick={(evt) => this.deletePicture(evt, pic.picture)}>
-                    {pic.type === 'pic' && <i className="fas fa-times"/>}
+                                                 style={{backgroundImage: `url('${pic.picture}')`}}>
+                    <Fragment>
+                        <i id={i} className="fas fa-times" onClick={(evt) => this.deletePicture(evt, pic.picture)}/>
+                        {pic.type === 'pic' && <i id={i} className="fas fa-pen"
+                                                  onClick={(evt) => this.updateProfilePicture(evt, pic.picture)}/>}
+                    </Fragment>
                 </div> : null))
             :
             pictures.map((pic, i) => (

@@ -26,17 +26,22 @@ module.exports = {
             !firstname.length || !lastname.length || !psw.length || !psw1.length ||
             age < 18 && age > 99 || !gender.length || validationUtils.validateGender(gender) === false
             || !sexuality.length || validationUtils.validateSexuality(sexuality) === false || psw !== psw1)
-            return res.status(400).json({status: true, type: 'error', message: 'Invalid inputs !'});
+            return res.status(200).json({status: true, type: 'error', message: 'Invalid inputs !'});
         return dbUtils.searchUserByEmailOrUsername(email, username).then(user => {
             if (!user) {
-                psw = bcrypt.hashSync(psw, 10);
-                let token = rand.generate(50);
-                let acc_id = Math.random().toString(36).substr(2, 9);
-                dbUtils.insertUser(acc_id, email, firstname, lastname, username,
-                    psw, age, gender, sexuality, 2.50, 'Never connected...', loremIpsum(4), token, 0);
-                mailsUtils.sendEmail(email, token);
-                dbUtils.insertPicture(acc_id, 'tulips.jpg', 'profile_pic');
-                dbUtils.insertPicture(acc_id, 'banner.png', 'banner_pic');
+                validationUtils.getUserLocationByIp()
+                    .then(data => {
+                        psw = bcrypt.hashSync(psw, 10);
+                        let token = rand.generate(50);
+                        let acc_id = Math.random().toString(36).substr(2, 9);
+                        dbUtils.insertUser(acc_id, email, firstname, lastname, username,
+                            psw, age, gender, sexuality, 2.50, 'Never connected...', loremIpsum(4), token, 0);
+                        dbUtils.insertPictureAccountCreation(acc_id, '/assets/tulips.jpg', 'profile_pic');
+                        dbUtils.insertPictureAccountCreation(acc_id, '/assets/banner.png', 'banner_pic');
+                        dbUtils.insertUserLocation(acc_id, data.lat, data.lon).then(() => {
+                            mailsUtils.sendEmail(email, token);
+                        });
+                    });
             } else {
                 return res.status(200).json({
                     status: true,
@@ -180,7 +185,10 @@ module.exports = {
                                 if (err) throw err;
                                 dbUtils.insertPicture(acc_id, dbPath, 'pic')
                                     .then(() => {
-                                        return res.status(200).json({status: 'UPLOAD', path: `/assets/uploads/${dbPath}`});
+                                        return res.status(200).json({
+                                            status: 'UPLOAD',
+                                            path: `/assets/uploads/${dbPath}`
+                                        });
                                     })
                             })
                         } else {
@@ -194,13 +202,20 @@ module.exports = {
             return res.status(200).json({status: 'UPLOAD', error: 'Invalid image !'});
         }
     },
+    updateProfilePicture: (req, res) => {
+        let {acc_id, pic, pic_id} = req.body;
+
+        dbUtils.updateProfilePicture(acc_id, pic, pic_id)
+            .then(() => {
+               return res.status(200).send({status: 'UPDATE'})
+            });
+    },
     deletePicture: (req, res) => {
         let {acc_id, pic, pic_id} = req.body;
-        let host = req.headers.host;
 
         dbUtils.deletePicture(acc_id, pic)
-            .then(() => {
-                return res.status(200).json({status: 'DELETE', pic_id: pic_id});
+            .then(data => {
+                return res.status(200).json({status: 'DELETE', pic_id: pic_id, type: data});
             })
     },
     logoutUser: (req, res) => {

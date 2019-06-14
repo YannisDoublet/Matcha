@@ -110,7 +110,6 @@ module.exports = {
         return db.query('SELECT users.acc_id, firstname, lastname, username, age, gender, sexuality, score, connection, bio, latitude, longitude FROM `users`' +
             'INNER JOIN users_coordinates ON users.acc_id = users_coordinates.acc_id WHERE users.acc_id=? OR users.username=?;', [id, username])
             .then(data => {
-                console.log(data);
                 let acc_id = data[0].acc_id;
                 delete data[0].acc_id;
                 let user = data[0];
@@ -122,24 +121,26 @@ module.exports = {
                             for (let i = 0; i < res.length; i++) {
                                 user.tag = [...user.tag, res[i].tag];
                             }
-                            return db.query('SELECT * FROM users_pictures WHERE acc_id=?', [acc_id])
-                                .then(res => {
-                                    if (res.length) {
-                                        for (let i = 0; i < res.length; i++) {
-                                            user.pictures = [...user.pictures, {
-                                                picture: res[i].picture,
-                                                type: res[i].type
-                                            }];
-                                            if (i === res.length - 1 && user) {
-                                                return user;
-                                            }
-                                        }
-                                    } else {
-                                        user.pictures.unshift(user.profile_pic);
-                                        return user;
-                                    }
-                                })
                         }
+                        return db.query('SELECT * FROM users_pictures WHERE acc_id=?', [acc_id])
+                            .then(res => {
+                                if (res.length) {
+                                    for (let i = 0; i < res.length; i++) {
+                                        user.pictures = [...user.pictures, {
+                                            picture: res[i].picture,
+                                            type: res[i].type
+                                        }];
+                                        if (user.pictures[i].type === 'profile_pic' && i !== 0) {
+                                            user.pictures.unshift(user.pictures[i]);
+                                            user.pictures.pop();
+                                        } if (i === res.length - 1 && user) {
+                                            return user;
+                                        }
+                                    }
+                                } else {
+                                    return user;
+                                }
+                            })
                     });
             });
     },
@@ -157,6 +158,9 @@ module.exports = {
     insertTag: (acc_id, tag) => {
         return db.query("INSERT INTO `tags` SET acc_id=?, tag=?", [acc_id, tag]);
     },
+    insertPictureAccountCreation: (acc_id, img, type) => {
+        return db.query("INSERT INTO `users_pictures` SET acc_id=?, picture=?, type=?", [acc_id, img, type]);
+    },
     insertPicture: (acc_id, img, type) => {
         return db.query("INSERT INTO `users_pictures` SET acc_id=?, picture=?, type=?", [acc_id, `/assets/uploads/${img}`, type]);
     },
@@ -166,15 +170,24 @@ module.exports = {
                 return data.length;
             })
     },
+    updateProfilePicture: (acc_id, pic) => {
+        return db.query('UPDATE users_pictures SET type=? WHERE type=? AND acc_id=?', ['pic', 'profile_pic', acc_id])
+            .then(() => {
+                return db.query('UPDATE users_pictures SET type=? WHERE picture=? AND acc_id=?', ['profile_pic', pic, acc_id]);
+            })
+    },
     deletePicture: (acc_id, img) => {
         return db.query('SELECT type FROM `users_pictures` WHERE acc_id=? AND picture=?', [acc_id, img])
             .then(res => {
                 return db.query("DELETE FROM `users_pictures` WHERE acc_id=? AND picture=?", [acc_id, img])
                     .then(() => {
                         if (res[0].type === 'profile_pic') {
-                            return module.exports.insertPicture(acc_id, '/assets/tulips.jpg', 'profile_pic');
+                            return module.exports.insertPictureAccountCreation(acc_id, '/assets/tulips.jpg', 'profile_pic')
+                                .then(() => {
+                                    return res[0].type;
+                                })
                         } else {
-                            return null;
+                            return res[0].type;
                         }
                     })
             });
@@ -231,8 +244,8 @@ module.exports = {
                                         m++;
                                     }
                                 });
-                                user[i].match_tag = m;
                             });
+                            user[i].match_tag = m;
                             if (i === data.length - 1 && user) {
                                 return user;
                             }

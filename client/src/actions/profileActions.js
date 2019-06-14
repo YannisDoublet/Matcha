@@ -1,5 +1,5 @@
 import axios from 'axios'
-import {FETCH_USER, UPLOAD_PICTURE, DELETE_PICTURE} from './types'
+import {FETCH_USER, UPLOAD_PICTURE, UPDATE_PROFILE_PICTURE, DELETE_PICTURE} from './types'
 
 export const fetchUserByUsername = (id) => dispatch => {
     axios.post('/api/account/fetch_user', {username: id})
@@ -17,6 +17,17 @@ export const uploadPicture = (data) => dispatch => {
         .then(res => {
             dispatch({
                 type: UPLOAD_PICTURE,
+                payload: res.data
+            })
+        });
+};
+
+export const updateProfilePicture = (acc_id, pic, pic_id) => dispatch => {
+    axios.post('/api/account/update_profile_picture', {acc_id: acc_id, pic: pic, pic_id: pic_id})
+        .then(res => {
+            console.log(res);
+            dispatch({
+                type: UPDATE_PROFILE_PICTURE,
                 payload: res.data
             })
         });
