@@ -26,7 +26,7 @@ class ProfileTag extends Component {
         const opened = this.props.opened;
         return (
             <div id={'profile_tag_wrapper'} onClick={(evt) => this.props.toggle(evt)}>
-                <img id={'profile_tag_img'} src={user_img} alt={'user_img'}/>
+                <div id={'profile_tag_img'} style={{backgroundImage: `url(${user_img})`}}/>
                 <div id={'profile_tag_container'}>
                     <p id={'profile_tag_greetings'}>Profile</p>
                     <img id={'profile_tag_arrow-down'} src={'/assets/down-arrow.svg'} alt={'arrow-down'}/>

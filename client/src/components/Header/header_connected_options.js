@@ -7,6 +7,8 @@ import './header_connected_options.css'
 
 class HeaderConnectedOptions extends Component {
     state = {
+        id: '',
+        user_img: '',
         notifications: [
             {type: 'like', img: '/assets/heart.svg', msg: 'Someone like your profile !'},
             {type: 'visit', img: '/assets/mask.svg', msg: 'Someone visit your profile !'},
@@ -14,7 +16,6 @@ class HeaderConnectedOptions extends Component {
             {type: 'match', img: '/assets/match.svg', msg: 'Congratulation ! It\'s a match !'},
             {type: 'dislike', img: '/assets/broken-heart.svg', msg: 'Someone dislike your profile !'}
         ],
-        user_img: '',
         dropdown_content: [
             {img: '/assets/resume.svg', msg: 'My profile page', link: ''},
             {img: '/assets/settings-gears.svg', msg: 'Settings', link: '/settings'},
@@ -27,12 +28,13 @@ class HeaderConnectedOptions extends Component {
 
     componentWillMount() {
         this.props.dispatch(userInfo(this.props.id));
+        this.setState({
+            id: this.props.id
+        })
     }
 
     componentWillReceiveProps(nextProps, nextContext) {
-        console.log(nextProps);
         if (nextProps.user.info) {
-            console.log(nextProps.user.info);
             let newState = this.state;
             newState.user_img = nextProps.user.info.pictures[0].picture;
             newState.dropdown_content[0].link = `/profile/${nextProps.user.info.username}`;
@@ -90,12 +92,18 @@ class HeaderConnectedOptions extends Component {
         }
     };
 
+    checkId = () => {
+        if (this.props.id !== this.state.id) {
+            this.props.dispatch(userInfo(this.props.id))
+        }
+    };
+
     componentDidMount() {
-            this.setState({
-                notifications_number: this.state.notifications.length
-            });
-            window.addEventListener('mousedown', this.untoggleDropdown, false);
-            window.addEventListener("scroll", this.hideDropdown, false);
+        this.setState({
+            notifications_number: this.state.notifications.length
+        });
+        window.addEventListener('mousedown', this.untoggleDropdown, false);
+        window.addEventListener("scroll", this.hideDropdown, false);
     }
 
     componentWillUnmount() {
@@ -104,11 +112,15 @@ class HeaderConnectedOptions extends Component {
     }
 
     render() {
+        this.checkId();
+        let profile_pic = this.props.checkProfile ? this.props.checkProfile.pictures[0].picture : this.state.user_img;
+        console.log(profile_pic);
         return (
             <div id={'connected_options_wrapper'}>
                 <Notifications opened={this.state.notification_opened} toggle={this.toggleDropdown}
                                notifications={this.state.notifications} number={this.state.notifications_number}/>
-                <ProfileTag opened={this.state.profile_tag_opened} user_img={this.state.user_img}
+                <ProfileTag opened={this.state.profile_tag_opened}
+                            user_img={profile_pic}
                             options={this.state.dropdown_content} toggle={this.toggleDropdown}/>
             </div>
         );
@@ -117,8 +129,10 @@ class HeaderConnectedOptions extends Component {
 
 function mapStateToProps(state) {
     const user = state.user;
+    const checkProfile = state.profile.res;
     return {
-        user
+        user,
+        checkProfile
     };
 }
 

@@ -129,6 +129,12 @@ body {
     margin: 1rem 0 0 1rem;
 }
 
+#tags_empty_message {
+    margin: 1rem;
+    font-style: italic;
+    color: #888888;
+}
+
 #map_container {
     width: 80%;
     display: flex;

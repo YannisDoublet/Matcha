@@ -208,7 +208,11 @@ class ProfileContainer extends Component {
                                 </div>
                                 <div id={'tag_container'}>
                                     <p id={'tag_title'}>Tags</p>
-                                    <Tags tags={user.tag} id={'profile'} myProfile={this.state.myProfile}/>
+                                    {user.tag.length > 0 ?
+                                        <Tags tags={user.tag} id={'profile'} myProfile={this.state.myProfile}/>
+                                        :
+                                        <p id={'tags_empty_message'}>No tags entered... Please show your interests to other !</p>
+                                    }
                                 </div>
                                 <div id={'map_container'}>
                                     <p id={'map_title'}>Maps</p>
