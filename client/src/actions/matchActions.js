@@ -22,9 +22,9 @@ export const fetchTags = () => dispatch => {
         });
 };
 
-export const researchUsers = (acc_id, lat, lng) => dispatch => {
-    console.log(lat, lng);
-    axios.post('/api/matcher/research_users', {acc_id: acc_id, lat: lat, lng: lng})
+export const researchUsers = (acc_id, name, lat, lng) => dispatch => {
+    console.log(name, lat, lng);
+    axios.post('/api/matcher/research_users', {acc_id: acc_id, name: name, lat: lat, lng: lng})
         .then(res => {
             dispatch({
                 type: RESEARCH_USERS,

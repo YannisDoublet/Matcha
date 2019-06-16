@@ -30,23 +30,7 @@ class ProfileContainer extends Component {
             message: ''
         },
         like: 0,
-        popUp: 0,
-        tags: [
-            'Funny',
-            'Facebook',
-            'Start-up',
-            'Sylicon Valley',
-            'Funny',
-            'Facebook',
-            'Start-up'
-        ],
-        gallery: [
-            '/assets/zuckywola.jpg',
-            '/assets/zuckywola.jpg',
-            '/assets/zuckywola.jpg',
-            '/assets/zuckywola.jpg',
-            '/assets/zuckywola.jpg'
-        ]
+        popUp: 0
     };
 
     componentWillMount() {

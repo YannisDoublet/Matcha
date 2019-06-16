@@ -6,8 +6,9 @@ import SettingsBar from '../../components/Widgets/SettingsBar'
 import AdvancedResearch from '../../components/Widgets/AdvancedResearch'
 import MatchList from '../../components/MatchList'
 import ResearchList from '../../containers/ResearchListContainer'
-import {userInfo, verifyToken} from "../../actions/authActions";
-import {matchSuggestion, researchUsers} from "../../actions/matchActions";
+import {userInfo, verifyToken} from '../../actions/authActions'
+import filterUtils from '../../components/Widgets/FiltersUtils/filterUtils'
+import {matchSuggestion, researchUsers} from '../../actions/matchActions'
 import './matcher_container.css'
 
 class MatcherContainer extends Component {
@@ -37,9 +38,9 @@ class MatcherContainer extends Component {
     componentWillReceiveProps(nextProps) {
         if (nextProps.token && nextProps.token !== this.props.token) {
             if (!nextProps.token.id) {
-               this.setState({
-                   redirect: true
-               })
+                this.setState({
+                    redirect: true
+                })
             } else {
                 this.props.dispatch(userInfo(nextProps.token.id));
             }
@@ -59,121 +60,30 @@ class MatcherContainer extends Component {
             }, () => {
                 this.filterUsers('research')
             })
-        } else if (nextProps.precise && nextProps.precise !== this.props.precise) {
-            this.setState({
-                filter: nextProps.precise
-            })
         }
     }
 
-    filterUsers = (field) => {
-        let {tags, dist, age, pop, sort, order, research, adv_search} = this.state;
-        let filter = [];
-        if (adv_search.touched && adv_search.value.length > 0) {
-            let search = adv_search.value.split(' ').join('').toLowerCase();
-            research.map((user, i) => {
-                let name = user.firstname.toLowerCase() + user.lastname.toLowerCase();
-                if (name.indexOf(search) !== -1) {
-                    return filter[i] = user;
-                } else {
-                    return null;
-                }
-            });
-        }
-        if (tags.touched && tags.value.length > 0) {
-            let tab = filter.length > 0 ? filter : field === 'matcher' ? this.state.users : this.state.research;
-            let valid = [];
-            tab.map(user => {
-                let checkTags = [];
-                user.tag.forEach(tag => {
-                    tags.value.filter(val => val.indexOf(tag) === 0 ? checkTags.push(tag) : checkTags);
-                });
-                if (checkTags.length === tags.value.length) {
-                   return valid.push(user);
-                } else {
-                    return null;
-                }
-            });
-            filter = valid;
-        }
-        if (dist.touched) {
-            let tab = filter.length > 0 ? filter : field === 'matcher' ? this.state.users : this.state.research;
-            let checkDist = [];
-            tab.forEach(user => {
-                parseInt(user.dist) >= dist.value[0] && parseInt(user.dist) <= dist.value[1] && checkDist.push(user);
-            });
-            filter = checkDist;
-        }
-        if (age.touched) {
-            let tab = filter.length > 0 ? filter : field === 'matcher' ? this.state.users : this.state.research;
-            let checkAge = [];
-            tab.forEach(user => {
-                parseInt(user.age) >= age.value[0] && parseInt(user.age) <= age.value[1] && checkAge.push(user);
-            });
-            filter = checkAge;
-        }
-        if (pop.touched) {
-            let tab = filter.length > 0 ? filter : field === 'matcher' ? this.state.users : this.state.research;
-            let checkPop = [];
-            tab.forEach(user => {
-                user.score >= pop.value[0] && user.score <= pop.value[1] && checkPop.push(user);
-            });
-            filter = checkPop;
-        }
-        if (order.touched && !sort.touched) {
+    filterUsers = () => {
+        let {users, tags, dist, age, pop, sort, order, research} = this.state;
+        let filter;
 
-        }
-        if (sort.touched) {
-            let tab = filter.length > 0 ? filter : field === 'matcher' ? this.state.users : this.state.research;
-            let ord = order.touched ? order.value : 'Ascending';
-
-            switch (sort.value) {
-                case 'Tags':
-                    if (ord === 'Ascending') {
-                        tab.sort((a, b) => (a.match_tag > b.match_tag) ? -1 :
-                            ((b.match_tag > a.match_tag) ? 1 : 0));
-                    } else {
-                        tab.sort((a, b) => (a.match_tag > b.match_tag) ? 1 :
-                            ((b.match_tag > a.match_tag) ? -1 : 0));
-                    }
-                    filter = tab;
-                    break;
-                case 'Location':
-                    if (ord === 'Ascending') {
-                        tab.sort((a, b) => (parseInt(a.dist) > parseInt(b.dist)) ? -1 :
-                            ((parseInt(b.dist) > parseInt(a.dist)) ? 1 : 0));
-                    } else {
-                        tab.sort((a, b) => (parseInt(a.dist) > parseInt(b.dist)) ? 1 :
-                            ((parseInt(b.dist) > parseInt(a.dist)) ? -1 : 0));
-                    }
-                    filter = tab;
-                    break;
-                case 'Age':
-                    if (ord === 'Ascending') {
-                        tab.sort((a, b) => (parseInt(a.age) > parseInt(b.age)) ? -1 :
-                            ((parseInt(b.age) > parseInt(a.age)) ? 1 : 0));
-                    } else {
-                        tab.sort((a, b) => (parseInt(a.age) > parseInt(b.age)) ? 1 :
-                            ((parseInt(b.age) > parseInt(a.age)) ? -1 : 0));
-                    }
-                    filter = tab;
-                    break;
-                case 'Popularity':
-                    if (ord === 'Ascending') {
-                        tab.sort((a, b) => (a.score > b.score) ? -1 :
-                            (b.score > a.score) ? 1 : 0);
-                    } else {
-                        tab.sort((a, b) => (a.score > b.score) ? 1 :
-                            (b.score > a.score) ? -1 : 0);
-                    }
-                    filter = tab;
-                    break;
-                default:
-                    break;
-            }
-        }
-        this.setState({
-            filter: filter
+        filter = this.state.advanced_opened ? research : users;
+        new Promise((resolve, reject) => {
+            resolve(filter)
+        }).then(filter => {
+            return filterUtils.filterTags(filter, tags)
+        }).then(filter => {
+            return filterUtils.filterDist(filter, dist)
+        }).then(filter => {
+            return filterUtils.filterAge(filter, age)
+        }).then(filter => {
+            return filterUtils.filterPopularity(filter, pop)
+        }).then(filter => {
+            return filterUtils.filterOrderSort(filter, order, sort)
+        }).then(filter => {
+            this.setState({
+                filter: filter
+            })
         })
     };
 
@@ -182,7 +92,8 @@ class MatcherContainer extends Component {
             this.state.adv_geo.value.lat : this.props.logged.latitude;
         let lng = this.state.adv_geo.touched && this.state.adv_geo.value.lng ?
             this.state.adv_geo.value.lng : this.props.logged.longitude;
-        this.props.dispatch(researchUsers(this.props.token.id, lat, lng));
+        let name = this.state.adv_search.touched && this.state.adv_search.value ? this.state.adv_search.value : null;
+        this.props.dispatch(researchUsers(this.props.token.id, name, lat, lng));
     };
 
     fetchMatch = () => {
@@ -304,7 +215,7 @@ class MatcherContainer extends Component {
         let redirect = this.state.redirect;
         let list = this.state.filter.length > 0 ? this.state.filter : this.state.users;
         return (
-             !redirect ?
+            !redirect ?
                 <div id={'matcher_wrapper'}>
                     <div id={'matcher_container'}>
                         <div id={'searchbar_container'}>
@@ -320,9 +231,10 @@ class MatcherContainer extends Component {
                                                   submit={this.researchUsers} reset={this.resetValue}/>
                             </div>
                             {!advanced && list.length ?
-                                <MatchList {...this.props} users={list} fetchMatch={this.fetchMatch}/>
+                                <MatchList {...this.props} users={list} fetchMatch={this.fetchMatch}
+                                           research={this.state.advanced_opened}/>
                                 : <ResearchList match={this.props.match} users={this.state.filter}
-                                                filter={(e) => this.filterUsers('research')}/>}
+                                                filter={this.filterUsers} research={this.state.advanced_opened}/>}
                         </div>
                     </div>
                 </div> : <Redirect to={'/register'}/>

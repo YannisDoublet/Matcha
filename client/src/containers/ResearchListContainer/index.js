@@ -6,7 +6,7 @@ const ResearchList = (props) => {
     const renderResearch = (users) => {
         return (
             users.map((user, i) => (
-                <ProfileCard user={user} key={i} research={true} match={props.match}/>
+                <ProfileCard user={user} key={i} research={props.research} match={props.match}/>
             ))
         )
     };

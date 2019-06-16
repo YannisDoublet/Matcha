@@ -42,8 +42,10 @@ class ProfileCard extends Component {
     };
 
     componentDidMount() {
-        Geocode.setApiKey(GoogleApiKey);
-        this.getLocation(this.props.user.latitude, this.props.user.longitude);
+        if (!this.props.research) {
+            Geocode.setApiKey(GoogleApiKey);
+            this.getLocation(this.props.user.latitude, this.props.user.longitude);
+        }
     }
 
     componentWillReceiveProps(nextProps, nextContext) {
@@ -91,7 +93,7 @@ class ProfileCard extends Component {
                     {path === '/profile/:id' && this.props.like_status === 0 && this.props.myProfile === false &&
                     <button id={'like_button'} onClick={this.props.like}>Like</button>}
                     {path === '/profile/:id' && this.props.like_status === 0 && this.props.myProfile === true &&
-                    <Link to={'/settings'}>
+                    <Link to={`/settings/${user.username}`}>
                         <button id={'settings_button'}>Settings</button>
                     </Link>}
                     {path === '/profile/:id' && this.props.like_status === 1 && this.props.myProfile === false &&

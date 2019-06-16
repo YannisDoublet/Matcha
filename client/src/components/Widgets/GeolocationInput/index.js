@@ -20,7 +20,6 @@ class GeolocationInput extends Component {
         })
     };
 
-
     onPlaceSelected = (place) => {
         if (place.address_components) {
             this.setState({

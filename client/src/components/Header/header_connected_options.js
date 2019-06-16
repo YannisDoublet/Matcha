@@ -18,7 +18,7 @@ class HeaderConnectedOptions extends Component {
         ],
         dropdown_content: [
             {img: '/assets/resume.svg', msg: 'My profile page', link: ''},
-            {img: '/assets/settings-gears.svg', msg: 'Settings', link: '/settings'},
+            {img: '/assets/settings-gears.svg', msg: 'Settings', link: ''},
             {img: '/assets/logout.svg', msg: 'Logout', link: '/logout'},
         ],
         notifications_number: 0,
@@ -38,6 +38,7 @@ class HeaderConnectedOptions extends Component {
             let newState = this.state;
             newState.user_img = nextProps.user.info.pictures[0].picture;
             newState.dropdown_content[0].link = `/profile/${nextProps.user.info.username}`;
+            newState.dropdown_content[1].link = `/settings/${nextProps.user.info.username}`;
             this.setState({
                 ...newState
             });
@@ -113,7 +114,7 @@ class HeaderConnectedOptions extends Component {
 
     render() {
         this.checkId();
-        let profile_pic = this.props.checkProfile ? this.props.checkProfile.pictures[0].picture : this.state.user_img;
+        let profile_pic = this.state.user_img;
         return (
             <div id={'connected_options_wrapper'}>
                 <Notifications opened={this.state.notification_opened} toggle={this.toggleDropdown}

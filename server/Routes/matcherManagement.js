@@ -10,54 +10,68 @@ module.exports = {
             default:
             case 'Heterosexual':
                 if (user.gender === 'Female') {
-                    searchG[0] = ['Male'];
+                    searchG[0] = 'Male';
                     searchS = ['Heterosexual', 'Bisexual'];
                 } else if (user.gender === 'Male') {
-                    searchG[0] = ['Female'];
+                    searchG[0] = 'Female';
                     searchS = ['Heterosexual', 'Bisexual'];
                 } else {
-                    searchG[0] = ['Undefined'];
+                    searchG[0] = 'Undefined';
                     searchS = ['Heterosexual'];
                 }
                 break;
             case 'Homosexual':
                 if (user.gender === 'Female') {
-                    searchG[0] = ['Female'];
+                    searchG[0] = 'Female';
                     searchS = ['Homosexual', 'Bisexual'];
                 } else if (user.gender === 'Male') {
-                    searchG[0] = ['Male'];
+                    searchG[0] = 'Male';
                     searchS = ['Homosexual', 'Bisexual'];
                 } else {
-                    searchG[0] = ['Undefined'];
+                    searchG[0] = 'Undefined';
                     searchS = ['Homosexual'];
                 }
                 break;
             case 'Bisexual':
                 if (user.gender === 'Female') {
-                    searchG[0] = ['Male', 'Male', 'Female', 'Female'];
+                    searchG = ['Male', 'Male', 'Female', 'Female'];
                     searchS = ['Heterosexual', 'Bisexual', 'Homosexual', 'Bisexual'];
                 } else if (user.gender === 'Male') {
-                    searchG[0] = ['Female', 'Female', 'Male', 'Male'];
+                    searchG = ['Female', 'Female', 'Male', 'Male'];
                     searchS = ['Heterosexual', 'Bisexual', 'Homosexual', 'Bisexual'];
                 } else {
-                    searchG[0] = ['Female', 'Undefined', 'Male', ''];
+                    searchG = ['Female', 'Undefined', 'Male', ''];
                     searchS = ['Bisexual', 'Bisexual', 'Bisexual', ''];
                 }
                 break;
         }
         return dbUtils.matchSuggestion(user.sexuality, searchG, searchS, user.latitude,
             user.longitude, count, user.tag).then(users => {
-                users.forEach(user => {
-                    user.matchScore = (user.score * 50 + user.match_tag * 150) - user.dist / 25;
-                });
-                res.status(200).send(validationUtils.matcherSort(users));
+            users.forEach(user => {
+                user.matchScore = (user.score * 50 + user.match_tag * 150) - user.dist / 25;
+            });
+            res.status(200).send(validationUtils.matcherSort(users));
         })
     },
     researchUsers: (req, res) => {
-        let {acc_id, lat, lng} = req.body;
+        let {acc_id, name, lat, lng} = req.body;
         return dbUtils.fetchAllUsers(acc_id, lat, lng)
             .then(data => {
-                return res.status(200).send(data);
+                if (name) {
+                    let user;
+                    let search = name.split(' ').join('').toLowerCase();
+                    let filter = [];
+                    for (let i = 0; i < data.length; i++) {
+                        user = data[i].firstname.toLowerCase() + data[i].lastname.toLowerCase();
+                        if (user.indexOf(search) !== -1) {
+                            filter.push(data[i]);
+                        } if (i === data.length - 1) {
+                            return res.status(200).send(filter);
+                        }
+                    }
+                } else {
+                    return res.status(200).send(data);
+                }
             })
     },
     researchPreciseUser: (req, res) => {

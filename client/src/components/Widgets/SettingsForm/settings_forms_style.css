@@ -1,0 +1,30 @@
+#settings_forms_container {
+    position: relative;
+    display: flex;
+    justify-content: space-around;
+    width: 75vw;
+    height: 28rem;
+    background-color: white;
+    border-radius: 5px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+}
+
+#settings_forms_container:after {
+    content:"";
+    position: absolute;
+    top: 15%;
+    bottom: 15%;
+    left: 50%;
+    border-left: 1px solid #DDDDDD;
+    transform: translate(-50%);
+}
+
+#settings_forms_left_side {
+    width: 50%;
+}
+
+#settings_forms_right_side {
+    width: 50%;
+}
+
+

@@ -81,16 +81,20 @@ module.exports = {
     fetchAllUsers: (acc_id, lat, lng) => {
         return db.query('SELECT `acc_id` FROM `users` WHERE acc_id<>?', [acc_id])
             .then(async data => {
-                let user = [];
-                for (let i = 0; i <= data.length; i++) {
-                    if (i === data.length - 1 && user) {
-                        return user;
-                    }
-                    user[i] = await module.exports.getUserPublicInfo(data[i].acc_id, '');
-                    // console.log(lat ,lng , user[i].latitude, user[i].longitude);
-                    user[i].dist = await geolib.getPreciseDistance({latitude: lat, longitude: lng},
-                        {latitude: user[i].latitude, longitude: user[i].longitude}) / 1000;
-                }
+                let users = [];
+                const fetchUserData = async (user, i) => {
+                    users[i] = await module.exports.getUserPublicInfo(user.acc_id, '');
+                    users[i].dist = await geolib.getPreciseDistance({latitude: lat, longitude: lng},
+                        {latitude: users[i].latitude, longitude: users[i].longitude}) / 1000;
+                    return Promise.resolve(users[i]);
+                };
+                const getUser = async (user, i) => {
+                    return await fetchUserData(user, i);
+                };
+                const getData = async () => {
+                    return await Promise.all(data.map((user, i) => getUser(user, i)))
+                };
+                return await getData();
             });
     },
     fetchTags: () => {
@@ -133,7 +137,8 @@ module.exports = {
                                         if (user.pictures[i].type === 'profile_pic' && i !== 0) {
                                             user.pictures.unshift(user.pictures[i]);
                                             user.pictures.pop();
-                                        } if (i === res.length - 1 && user) {
+                                        }
+                                        if (i === res.length - 1 && user) {
                                             return user;
                                         }
                                     }

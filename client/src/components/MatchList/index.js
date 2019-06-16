@@ -47,7 +47,7 @@ class MatchList extends Component {
             <div id={'matchlist_container'}>
                 {users.map((user, i) => (
                     <div id={`card ${i}`} style={{zIndex: `${i}`}} key={i} className={'match_card_container'}>
-                        <ProfileCard {...this.props} user={user}/>
+                        <ProfileCard {...this.props} user={user} research={this.props.research}/>
                         <MatchButtons username={user.username} like={this.likeUser}
                                       dislike={this.dislikeUser} id={i}/>
                     </div>))}

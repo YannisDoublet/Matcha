@@ -47,7 +47,6 @@ class SignUpStep2 extends Component {
                     name: 'check_password',
                     placeholder: 'Repeat password',
                     autoComplete: 'new-password'
-
                 },
                 icon: 'fas fa-lock'
             }
