@@ -60,7 +60,6 @@ db.query('CREATE TABLE IF NOT EXISTS `matcher` (' +
     '`person2` varchar(10) NOT NULL,' +
     '`like1` boolean,' +
     '`like2` boolean,' +
-    '`conv_id` varchar(10) NOT NULL,' +
     '`match` boolean)');
 
 module.exports = {
@@ -215,8 +214,10 @@ module.exports = {
         return db.query('UPDATE users SET connection=? WHERE acc_id=?', [time, acc_id]);
     },
     fetchCard: (id) => {
-        return db.query('SELECT person1, person2, conv_id FROM `matcher` WHERE `match`=? AND person1=? ' +
-            'OR `match`=? AND person2=?', [1, id, 1, id])
+        return db.query('SELECT chat.person1, chat.person2, conv_id FROM `chat` ' +
+            'INNER JOIN matcher ON chat.person1 = matcher.person1 OR chat.person1 = matcher.person2 ' +
+            'WHERE matcher.`match`=? AND chat.person1=? ' +
+            'OR matcher.`match`=? AND chat.person2=?', [1, id, 1, id])
             .then(async data => {
                 let card = [];
                 for (let i = 0; i < data.length; i++) {
@@ -230,7 +231,6 @@ module.exports = {
                         return res[0] ? res[0] : '';
                     });
                     card[i] = {...card[i], msg, conv_id: data[i].conv_id};
-                    console.log(card[i]);
                     if (i === data.length - 1 && card) {
                         return card;
                     }
@@ -312,12 +312,17 @@ module.exports = {
                     .then(fetch => {
                         if (!fetch.length) {
                             return db.query('INSERT INTO `matcher` SET person1=?, person2=?, like1=?, ' +
-                                'like2=?, conv_id=?, `match`=?', [acc_id, res[0].acc_id, 1, 0, 0, 0]);
+                                'like2=?, `match`=?', [acc_id, res[0].acc_id, 1, 0, 0]);
                         } else {
-                            return db.query('UPDATE `matcher` SET like2=?, conv_id=?, `match`=? ' +
+                            return db.query('UPDATE `matcher` SET like2=?, `match`=? ' +
                                 'WHERE person1=? AND person2=? OR person1=? AND person2=?',
-                                [1, Math.random().toString(36).substr(2, 9), 1, acc_id,
-                                    res[0].acc_id, res[0].acc_id, acc_id]);
+                                [1, 1, acc_id, res[0].acc_id, res[0].acc_id, acc_id])
+                                .then(() => {
+                                    return db.query('INSERT INTO `chat` SET conv_id=?, person1=?, person2=?, ' +
+                                        'last_message=?, date=?',
+                                        [Math.random().toString(36).substr(2, 9),
+                                        acc_id, res[0].acc_id, '', Date.now()]);
+                                })
                         }
                     })
             })
@@ -330,7 +335,7 @@ module.exports = {
                     .then(fetch => {
                         if (!fetch.length) {
                             return db.query('INSERT INTO `matcher` SET person1=?, person2=?, like1=?, ' +
-                                'like2=?, conv_id=?, `match`=?', [acc_id, res[0].acc_id, -1, 0, 0, 0]);
+                                'like2=?, `match`=?', [acc_id, res[0].acc_id, -1, 0, 0]);
                         } else {
                             return db.query('UPDATE `matcher` SET like2=?, match=? WHERE person1=? AND person2=? ' +
                                 'OR person1=? AND person2=?', [-1, 0, acc_id, res[0].acc_id, res[0].acc_id, acc_id]);
