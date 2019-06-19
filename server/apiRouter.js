@@ -14,6 +14,8 @@ exports.router = (function () {
     apiRouter.route('/account/validate').get(userManagement.validate);
     apiRouter.route('/account/verify_token').post(userManagement.verifyToken);
     apiRouter.route('/account/user_info').post(userManagement.userInfo);
+    apiRouter.route('/account/change_info').post(userManagement.changeInfo);
+    apiRouter.route('/account/change_location').post(userManagement.changeLocation);
     apiRouter.route('/account/add_tag').post(userManagement.addTag);
     apiRouter.route('/account/delete_tag').post(userManagement.deleteTag);
     apiRouter.route('/account/manage_bio').post(userManagement.manageBio);

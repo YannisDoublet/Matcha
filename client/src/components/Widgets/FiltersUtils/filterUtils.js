@@ -7,7 +7,9 @@ module.exports = {
                 tags.value.filter(val => val.indexOf(tag) === 0 ? checkTags.push(tag) : checkTags);
             });
             if (checkTags.length === tags.value.length) {
-                valid.push(user);
+                return valid.push(user);
+            } else {
+                return null;
             }
         });
         return valid;
@@ -68,7 +70,6 @@ module.exports = {
                         ((parseInt(b.dist) > parseInt(a.dist)) ? -1 : 0));
                 }
                 return filter;
-
             case 'Age':
                 if (ord === 'Ascending') {
                     filter.sort((a, b) => (parseInt(a.age) > parseInt(b.age)) ? -1 :

@@ -8,6 +8,8 @@ export const USER_INFO = 'USER_INFO';
 /* PROFILE TYPES */
 
 export const FETCH_USER = 'FETCH_USER';
+export const CHANGE_INFO = 'CHANGE_INFO';
+export const UPDATE_LOCATION = 'UPDATE_LOCATION';
 export const ADD_TAG = 'ADD_TAG';
 export const DELETE_TAG = 'DELETE_TAG';
 export const MANAGE_BIO = 'MANAGE_BIO';

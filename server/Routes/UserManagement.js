@@ -160,6 +160,27 @@ module.exports = {
             return res.status(200).json({'error': 'Invalid id'});
         }
     },
+    changeInfo: (req, res) => {
+        let {acc_id, name, value} = req.body;
+
+        if (acc_id && name && value) {
+            name = name === 'check_password' ? 'password' : name;
+            if (name === 'password') {
+                value = bcrypt.hashSync(value, 10);
+            }
+            dbUtils.updateUserInfo(acc_id, name, value);
+            return res.status(200).send('OK');
+        }
+    },
+    changeLocation: (req, res) => {
+        let {acc_id, lat, lng} = req.body;
+
+        console.log('allo wtf');
+        if (acc_id && lat && lng && typeof lat === 'number' && typeof lng === 'number') {
+            dbUtils.updateLocation(acc_id, lat, lng);
+            return res.status(200).send('OK');
+        }
+    },
     fetchUserProfileByUsername: (req, res) => {
         let username = req.body.username;
 
@@ -231,7 +252,7 @@ module.exports = {
 
         dbUtils.updateProfilePicture(acc_id, pic, pic_id)
             .then(() => {
-               return res.status(200).send({status: 'UPDATE'})
+                return res.status(200).send({status: 'UPDATE'})
             });
     },
     deletePicture: (req, res) => {

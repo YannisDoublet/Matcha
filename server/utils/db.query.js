@@ -5,8 +5,6 @@ const geolib = require('geolib');
 db.query('CREATE DATABASE IF NOT EXISTS `Matcha`');
 db.query('USE `Matcha`');
 
-/* GEOLOCALISER LA PERSONNE DE FORCE DANS LE BACK */
-
 db.query('CREATE TABLE IF NOT EXISTS `users` (' +
     '`id` int PRIMARY KEY NOT NULL AUTO_INCREMENT,' +
     '`acc_id` varchar(10) NOT NULL,' +
@@ -27,8 +25,8 @@ db.query('CREATE TABLE IF NOT EXISTS `users` (' +
 db.query('CREATE TABLE IF NOT EXISTS `users_coordinates` (' +
     '`id` int PRIMARY KEY NOT NULL AUTO_INCREMENT,' +
     '`acc_id` varchar(10) NOT NULL,' +
-    '`latitude` varchar(10) NOT NULL,' +
-    '`longitude` varchar(10) NOT NULL)');
+    '`latitude` varchar(40) NOT NULL,' +
+    '`longitude` varchar(40) NOT NULL)');
 
 db.query('CREATE TABLE IF NOT EXISTS `tags` (' +
     '`id` int PRIMARY KEY NOT NULL AUTO_INCREMENT,' +
@@ -135,8 +133,9 @@ module.exports = {
                                             type: res[i].type
                                         }];
                                         if (user.pictures[i].type === 'profile_pic' && i !== 0) {
-                                            user.pictures.unshift(user.pictures[i]);
-                                            user.pictures.pop();
+                                            let tmp = user.pictures[i];
+                                            user.pictures[i] = user.pictures[0];
+                                            user.pictures[0] = tmp;
                                         }
                                         if (i === res.length - 1 && user) {
                                             return user;
@@ -155,6 +154,12 @@ module.exports = {
             [acc_id, email, firstname.charAt(0).toUpperCase() + firstname.slice(1),
                 lastname.charAt(0).toUpperCase() + lastname.slice(1), user, psw, age,
                 gender.charAt(0).toUpperCase() + gender.slice(1), sexuality, score, connection, bio, token, activate]);
+    },
+    updateUserInfo: (acc_id, name, value) => {
+        return db.query(`UPDATE users SET ${name}=? WHERE acc_id=?`, [value, acc_id]);
+    },
+    updateLocation: (acc_id, lat, lng) => {
+        return db.query('UPDATE users_coordinates SET latitude=?, longitude=? WHERE acc_id=?', [lat, lng, acc_id]);
     },
     insertUserLocation: (acc_id, latitude, longitude) => {
         return db.query("INSERT INTO `users_coordinates` SET acc_id=?, latitude=?, longitude=?",
@@ -270,9 +275,18 @@ module.exports = {
                 .then(async data => {
                         let user = [];
                         for (let i = 0; i < data.length; i++) {
+                            let m = 0;
                             user[i] = await module.exports.getUserPublicInfo(data[i].acc_id);
                             user[i].dist = await geolib.getPreciseDistance({latitude: logged_ltg, longitude: logged_lng},
                                 {latitude: user[i].latitude, longitude: user[i].longitude}) / 1000;
+                            logged_tags.forEach(match_tag => {
+                                user[i].tag.forEach(tag => {
+                                    if (match_tag === tag) {
+                                        m++;
+                                    }
+                                });
+                            });
+                            user[i].match_tag = m;
                             if (i === data.length - 1 && user) {
                                 return user;
                             }

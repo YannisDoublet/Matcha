@@ -1,3 +1,7 @@
+.visible {
+    display: block !important;
+}
+
 #settings_forms_container {
     position: relative;
     display: flex;
@@ -21,10 +25,74 @@
 
 #settings_forms_left_side {
     width: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 #settings_forms_right_side {
     width: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#left_title {
+    font-size: 1.2rem;
+    margin: 1rem;
+}
+
+#right_title {
+    font-size: 1.2rem;
+    margin: 1rem;
+}
+
+.error_message {
+    display: none;
+    text-align: center;
+    vertical-align: middle;
+    line-height: 2rem;
+    width: 80%;
+    height: 2rem;
+    color: white;
+    background: #FF1744;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+    font-family: Rubik, sans-serif;
+    font-size: 16px;
+    box-shadow: 2px 2px 15px #FF1744;
+    transition: 0.3s;
+}
+
+.settings_form_input {
+    margin: 0.5rem;
+    width: 80%;
+    height: 2rem;
+    border-radius: 10px;
+    border: none;
+    background-color: #e6e6e6;
+    font-family: 'Rubik', sans-serif;
+    font-size: 18px;
+    color: #666666;
+    padding-left: 1rem;
+    outline: none;
+    box-shadow: 1px 2px 4px lightgrey;
+}
+
+.settings_form_select {
+    width: 80%;
+    height: 2rem;
+    margin: 0.5rem;
+    padding: 5px 35px 5px 5px;
+    background-color: #e6e6e6;
+    font-family: 'Rubik', sans-serif;
+    font-size: 16px;
+    border: none;
+    outline: none;
+    box-shadow: 1px 2px 4px lightgrey;
 }
 
 
