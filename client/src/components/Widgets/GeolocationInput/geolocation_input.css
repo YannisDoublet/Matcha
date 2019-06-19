@@ -1,21 +1,45 @@
-#google_map_autocomplete_container {
-    display: flex;
-    justify-content: center;
-    width: 100%;
-    border-bottom: solid 2px rgb(242, 243, 249);
-}
-
 .fa-map-marker-alt {
     align-self: center;
     font-size: 1.5rem;
     color: rgb(234, 87, 107);
 }
 
-#google_map_autocomplete {
+/* MATCHER CSS */
+
+#advanced_research_content #google_map_autocomplete_container {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    border-bottom: solid 2px rgb(242, 243, 249);
+}
+
+#advanced_research_content #google_map_autocomplete {
     width: 70%;
     border-radius: 5px;
     border: none;
     margin: 1rem;
     outline: none;
     text-decoration: none;
+}
+
+/* SETTINGS CSS */
+
+#settings_forms_left_side #google_map_autocomplete_container {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin: 0.5rem 0;
+    border-radius: 5px;
+    background-color: #e6e6e6;
+    box-shadow: 1px 2px 4px lightgrey;
+}
+
+#settings_forms_left_side #google_map_autocomplete {
+    width: 70%;
+    border-radius: 5px;
+    border: none;
+    margin: 0.5rem 1rem;
+    outline: none;
+    text-decoration: none;
+    background-color: #e6e6e6;
 }

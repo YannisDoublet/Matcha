@@ -16,8 +16,8 @@
 #settings_forms_container:after {
     content:"";
     position: absolute;
-    top: 15%;
-    bottom: 15%;
+    top: 7.5%;
+    bottom: 7.5%;
     left: 50%;
     border-left: 1px solid #DDDDDD;
     transform: translate(-50%);
@@ -93,6 +93,10 @@
     border: none;
     outline: none;
     box-shadow: 1px 2px 4px lightgrey;
+}
+
+#settings_form_geolocation_container {
+    width: 80%;
 }
 
 

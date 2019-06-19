@@ -8,7 +8,7 @@ import MatchList from '../../components/MatchList'
 import ResearchList from '../../containers/ResearchListContainer'
 import {userInfo, verifyToken} from '../../actions/authActions'
 import filterUtils from '../../components/Widgets/FiltersUtils/filterUtils'
-import {matchSuggestion, researchUsers} from '../../actions/matchActions'
+import {matchSuggestion, likeUser, dislikeUser, researchUsers} from '../../actions/matchActions'
 import './matcher_container.css'
 
 class MatcherContainer extends Component {
@@ -85,6 +85,14 @@ class MatcherContainer extends Component {
                 filter: filter
             })
         })
+    };
+
+    like = (username) => {
+        this.props.dispatch(likeUser(this.props.token.id, username));
+    };
+
+    dislike = (username) => {
+        this.props.dispatch(dislikeUser(this.props.token.id, username));
     };
 
     researchUsers = () => {
@@ -232,7 +240,8 @@ class MatcherContainer extends Component {
                             </div>
                             {!advanced && list.length ?
                                 <MatchList {...this.props} users={list} fetchMatch={this.fetchMatch}
-                                           research={this.state.advanced_opened}/>
+                                           research={this.state.advanced_opened} like={this.like}
+                                           dislike={this.dislike}/>
                                 : <ResearchList match={this.props.match} users={this.state.filter}
                                                 filter={this.filterUsers} research={this.state.advanced_opened}/>}
                         </div>

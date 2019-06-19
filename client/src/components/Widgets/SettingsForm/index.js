@@ -245,7 +245,9 @@ class SettingsForm extends Component {
                     </div>
                     <p id={'left_title'}>Personnal informations</p>
                     {this.manageRenderingInputForm(1)}
-                    <GeolocationInput updateValue={this.updateLocation}/>
+                    <div id={'settings_form_geolocation_container'}>
+                        <GeolocationInput updateValue={this.updateLocation}/>
+                    </div>
                 </div>
                 <div id={'settings_forms_right_side'}>
                     <div id={'error_right'} className={classnames('error_message', {visible: this.state.error_right})}>

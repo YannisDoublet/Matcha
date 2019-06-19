@@ -1,5 +1,5 @@
 import axios from 'axios'
-import {MATCH_SUGGESTION, RESEARCH_USERS, FETCH_TAGS} from './types'
+import {MATCH_SUGGESTION, LIKE_USER, DISLIKE_USER, RESEARCH_USERS, FETCH_TAGS} from './types'
 
 export const matchSuggestion = (user, count) => dispatch => {
     axios.post('/api/matcher/match_suggestion',{user: user, count: count})
@@ -7,6 +7,28 @@ export const matchSuggestion = (user, count) => dispatch => {
             console.log(res.data);
             dispatch({
                 type: MATCH_SUGGESTION,
+                payload: res.data
+            });
+        });
+};
+
+export const likeUser = (id, username) => dispatch => {
+    axios.post('/api/matcher/like_user',{acc_id: id, username: username})
+        .then(res => {
+            console.log(res.data);
+            dispatch({
+                type: LIKE_USER,
+                payload: res.data
+            });
+        });
+};
+
+export const dislikeUser = (id, username) => dispatch => {
+    axios.post('/api/matcher/dislike_user',{acc_id: id, username: username})
+        .then(res => {
+            console.log(res.data);
+            dispatch({
+                type: DISLIKE_USER,
                 payload: res.data
             });
         });

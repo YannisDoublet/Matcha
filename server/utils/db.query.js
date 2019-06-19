@@ -215,7 +215,8 @@ module.exports = {
         return db.query('UPDATE users SET connection=? WHERE acc_id=?', [time, acc_id]);
     },
     fetchCard: (id) => {
-        return db.query('SELECT person1, person2, conv_id FROM `matcher` WHERE person1=? OR person2=? AND `match`=?', [id, id, 1])
+        return db.query('SELECT person1, person2, conv_id FROM `matcher` WHERE `match`=? AND person1=? ' +
+            'OR `match`=? AND person2=?', [1, id, 1, id])
             .then(async data => {
                 let card = [];
                 for (let i = 0; i < data.length; i++) {
@@ -223,12 +224,13 @@ module.exports = {
                     card[i] = await db.query('SELECT firstname, lastname, connection, picture FROM `users` ' +
                         'INNER JOIN users_pictures ON users.acc_id = users_pictures.acc_id WHERE users.acc_id=? ' +
                         'AND users_pictures.type=?', [other, 'profile_pic']).then(res => {
-                        return res[0]
+                        return res[0];
                     });
-                    let msg = await db.query('SELECT conv_id, last_message, date FROM `chat` WHERE conv_id=?', [data[i].conv_id]).then(res => {
-                        return res[0]
+                    let msg = await db.query('SELECT last_message, date FROM `chat` WHERE conv_id=?', [data[i].conv_id]).then(res => {
+                        return res[0] ? res[0] : '';
                     });
-                    card[i] = {...card[i], msg};
+                    card[i] = {...card[i], msg, conv_id: data[i].conv_id};
+                    console.log(card[i]);
                     if (i === data.length - 1 && card) {
                         return card;
                     }
@@ -244,9 +246,11 @@ module.exports = {
                 return db.query('UPDATE `chat` SET `last_message`=?, `date`=?', [message, Date.now()])
             });
     },
-    matchSuggestion: (sexuality, searchG, searchS, logged_ltg, logged_lng, count, logged_tags) => {
+    matchSuggestion: (sexuality, searchG, searchS, logged_ltg, logged_lng, count, logged_tags, username) => {
         if (sexuality !== 'Bisexual') {
-            return db.query('SELECT `acc_id` FROM `users` WHERE gender=? AND sexuality=? OR gender=? AND sexuality=? LIMIT ?, 10', [searchG[0], searchS[0], searchG[0], searchS[1], count])
+            return db.query('SELECT `acc_id`, username FROM `users` WHERE username<>? AND gender=? AND sexuality=? ' +
+                'OR username<>? AND gender=? AND sexuality=? LIMIT ?, 10', [username, searchG[0], searchS[0],
+                username, searchG[0], searchS[1], count])
                 .then(async data => {
                         let user = [];
                         for (let i = 0; i < data.length; i++) {
@@ -269,9 +273,14 @@ module.exports = {
                     }
                 )
         } else {
-            return db.query('SELECT `acc_id` FROM `users` WHERE gender=? AND sexuality=? OR gender=? AND sexuality=? ' +
-                'OR gender=? AND sexuality=? OR gender=? AND sexuality=? LIMIT ?, 10',
-                [searchG[0], searchS[0], searchG[1], searchS[1], searchG[2], searchS[2], searchG[3], searchS[3], count])
+            return db.query('SELECT `acc_id`, username FROM `users` WHERE username<>? AND gender=? AND sexuality=? ' +
+                'OR username<>? AND gender=? AND sexuality=? ' +
+                'OR username<>? AND gender=? AND sexuality=? ' +
+                'OR username<>? AND gender=? AND sexuality=? LIMIT ?, 10',
+                [username, searchG[0], searchS[0], username,
+                    searchG[1], searchS[1], username,
+                    searchG[2], searchS[2], username,
+                    searchG[3], searchS[3], count])
                 .then(async data => {
                         let user = [];
                         for (let i = 0; i < data.length; i++) {
@@ -294,5 +303,39 @@ module.exports = {
                     }
                 )
         }
-    }
+    },
+    likeUser: (acc_id, username) => {
+        return db.query('SELECT acc_id FROM users WHERE username=?', [username])
+            .then(res => {
+                return db.query('SELECT like1, like2 FROM matcher WHERE person1=? AND person2=? ' +
+                    'OR person1=? AND person2=?', [acc_id, res[0].acc_id, res[0].acc_id, acc_id])
+                    .then(fetch => {
+                        if (!fetch.length) {
+                            return db.query('INSERT INTO `matcher` SET person1=?, person2=?, like1=?, ' +
+                                'like2=?, conv_id=?, `match`=?', [acc_id, res[0].acc_id, 1, 0, 0, 0]);
+                        } else {
+                            return db.query('UPDATE `matcher` SET like2=?, conv_id=?, `match`=? ' +
+                                'WHERE person1=? AND person2=? OR person1=? AND person2=?',
+                                [1, Math.random().toString(36).substr(2, 9), 1, acc_id,
+                                    res[0].acc_id, res[0].acc_id, acc_id]);
+                        }
+                    })
+            })
+    },
+    dislikeUser: (acc_id, username) => {
+        return db.query('SELECT acc_id FROM users WHERE username=?', [username])
+            .then(res => {
+                return db.query('SELECT like1, like2 FROM matcher WHERE person1=? AND person2=? ' +
+                    'OR person1=? AND person2=?', [acc_id, res[0].acc_id, res[0].acc_id, acc_id])
+                    .then(fetch => {
+                        if (!fetch.length) {
+                            return db.query('INSERT INTO `matcher` SET person1=?, person2=?, like1=?, ' +
+                                'like2=?, conv_id=?, `match`=?', [acc_id, res[0].acc_id, -1, 0, 0, 0]);
+                        } else {
+                            return db.query('UPDATE `matcher` SET like2=?, match=? WHERE person1=? AND person2=? ' +
+                                'OR person1=? AND person2=?', [-1, 0, acc_id, res[0].acc_id, res[0].acc_id, acc_id]);
+                        }
+                    })
+            })
+    },
 };

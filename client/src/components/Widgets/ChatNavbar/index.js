@@ -24,7 +24,7 @@ class ChatNavbar extends Component {
         let card = this.state.card;
         if (card.length > 0) {
             const filteredSuggestions = card.filter(user =>
-                user.name.indexOf(value.charAt(0).toUpperCase() + value.slice(1)) === 0);
+                user.firstname.indexOf(value.charAt(0).toUpperCase() + value.slice(1)) === 0);
             this.setState({
                 filter: filteredSuggestions,
                 value: value
@@ -44,7 +44,7 @@ class ChatNavbar extends Component {
     };
 
     render() {
-        console.log('s: ', this.state)
+        console.log('s: ', this.state);
         let filter = this.state.value.length > 0 ? this.state.filter : this.state.card;
         return (
             <Fragment>

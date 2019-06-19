@@ -11,9 +11,9 @@ const ChatCard = (props) => {
             <div className={'chatCard_user'}>
                 <div className={'chatCard_info'}>
                     <p className={'chatCard_user_name'}>{user.firstname}</p>
-                    <p className={'chatCard_date'}>{moment(parseInt(msg.date)).fromNow()}</p>
+                    <p className={'chatCard_date'}>{msg ? moment(parseInt(msg.date)).fromNow() : 'Now'}</p>
                 </div>
-                <p className={'chatCard_last_msg'}>{msg.last_message}</p>
+                <p className={'chatCard_last_msg'}>{msg? msg.last_message : 'Send the first message !'}</p>
             </div>
         </div>
     );

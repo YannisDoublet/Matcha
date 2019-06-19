@@ -34,6 +34,8 @@ exports.router = (function () {
     /* MATCH */
 
     apiRouter.route('/matcher/match_suggestion').post(matcherManagement.matchSuggestion);
+    apiRouter.route('/matcher/like_user').post(matcherManagement.likeUser);
+    apiRouter.route('/matcher/dislike_user').post(matcherManagement.dislikeUser);
     apiRouter.route('/matcher/fetch_tags').get(matcherManagement.fetchTags);
     apiRouter.route('/matcher/research_users').post(matcherManagement.researchUsers);
     apiRouter.route('/matcher/research_precise_user').post(matcherManagement.researchPreciseUser);

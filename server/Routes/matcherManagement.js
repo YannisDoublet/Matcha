@@ -46,12 +46,32 @@ module.exports = {
                 break;
         }
         return dbUtils.matchSuggestion(user.sexuality, searchG, searchS, user.latitude,
-            user.longitude, count, user.tag).then(users => {
+            user.longitude, count, user.tag, user.username).then(users => {
             users.forEach(user => {
                 user.matchScore = (user.score * 50 + user.match_tag * 150) - user.dist / 25;
             });
             res.status(200).send(validationUtils.matcherSort(users));
         })
+    },
+    likeUser: (req, res) => {
+        let {acc_id, username} = req.body;
+
+        if (acc_id && username && acc_id.length && username.length) {
+            return dbUtils.likeUser(acc_id, username)
+                .then(() => {
+                    return res.status(200).send('LIKED');
+                })
+        }
+    },
+    dislikeUser: (req, res) => {
+        let {acc_id, username} = req.body;
+
+        if (acc_id && username && acc_id.length && username.length) {
+            return dbUtils.dislikeUser(acc_id, username)
+                .then(() => {
+                    return res.status(200).send('DISLIKED');
+                })
+        }
     },
     researchUsers: (req, res) => {
         let {acc_id, name, lat, lng} = req.body;
@@ -79,7 +99,6 @@ module.exports = {
 
         dbUtils.fetchPreciseUser(user)
             .then(res => {
-                console.log(res);
                 return res;
             })
     },

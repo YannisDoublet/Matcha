@@ -5,9 +5,6 @@ import './chatMessage.css'
 
 const ChatMessage = (props) => {
     let msg = props.msg;
-
-    console.log('date', msg.date)
-
     return (
         <div className={classnames('', {'my_message': msg.sender_id === 'me', 'others_message': msg.sender_id === 'others'})}>
             <p className={'message'}>{msg.message}</p>

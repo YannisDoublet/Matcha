@@ -20,6 +20,7 @@ class MatchList extends Component {
     }
 
     likeUser = (id, username) => {
+        this.props.like(username);
         let card = document.getElementById(`card ${id}`);
         card.classList.add('isLiked');
         setTimeout(() => {
@@ -31,6 +32,7 @@ class MatchList extends Component {
     };
 
     dislikeUser = (id, username) => {
+        this.props.dislike(username);
         let card = document.getElementById(`card ${id}`);
         card.classList.add('isDisliked');
         setTimeout(() => {

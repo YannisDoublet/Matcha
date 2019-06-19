@@ -30,6 +30,13 @@ class GeolocationInput extends Component {
                 value: place.address_components[0].long_name + ', ' + place.address_components[3].long_name
             }, () => {
                 this.props.updateValue('Advanced_geo', this.state);
+                this.setState({
+                    country: '',
+                    city: '',
+                    lat: null,
+                    lng: null,
+                    value: ''
+                })
             })
         } else if (!place.address_components && !this.state.value) {
             this.setState({
@@ -39,6 +46,9 @@ class GeolocationInput extends Component {
                 lng: null,
             }, () => {
                 this.props.updateValue('Advanced_geo', this.state);
+                this.setState({
+                    value: ''
+                })
             })
         }
     };
