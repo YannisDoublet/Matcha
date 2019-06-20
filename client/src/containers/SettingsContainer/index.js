@@ -44,7 +44,8 @@ class Settings extends Component {
         return (
             authorized ?
                 <div id={'settings_wrapper'}>
-                    <SettingsForm token={this.props.token} submit={this.submitForm} updateLocation={this.updateLocation}/>
+                    <SettingsForm token={this.props.token} submit={this.submitForm} updateLocation={this.updateLocation}
+                    path={this.props.match.path}/>
                 </div>
                 : <Redirect to={'/'}/>
         );

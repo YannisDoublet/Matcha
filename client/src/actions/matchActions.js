@@ -1,8 +1,18 @@
 import axios from 'axios'
-import {MATCH_SUGGESTION, LIKE_USER, DISLIKE_USER, RESEARCH_USERS, FETCH_TAGS} from './types'
+import {MATCH_SUGGESTION, LIKE_USER, DISLIKE_USER, RESEARCH_USERS, FETCH_TAGS, FETCH_COUNT} from './types'
 
-export const matchSuggestion = (user, count) => dispatch => {
-    axios.post('/api/matcher/match_suggestion',{user: user, count: count})
+export const fetchCount = (acc_id) => dispatch => {
+    axios.post('/api/matcher/fetch_count', {acc_id: acc_id})
+        .then(res => {
+            dispatch({
+                type: FETCH_COUNT,
+                payload: res.data.length
+            })
+        })
+};
+
+export const matchSuggestion = (user, count, id) => dispatch => {
+    axios.post('/api/matcher/match_suggestion',{user: user, count: count, id: id})
         .then(res => {
             console.log(res.data);
             dispatch({
@@ -54,3 +64,4 @@ export const researchUsers = (acc_id, name, lat, lng) => dispatch => {
             });
         });
 };
+

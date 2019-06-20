@@ -1,4 +1,4 @@
-import {MATCH_SUGGESTION, RESEARCH_USERS, FETCH_TAGS} from "../actions/types";
+import {MATCH_SUGGESTION, RESEARCH_USERS, FETCH_TAGS, FETCH_COUNT} from "../actions/types";
 
 export default function(state={}, action) {
     switch(action.type) {
@@ -8,6 +8,8 @@ export default function(state={}, action) {
             return {...state, research: action.payload};
         case FETCH_TAGS:
             return {...state, tags: action.payload};
+        case FETCH_COUNT:
+            return {...state, count: action.payload};
         default:
             return state;
     }

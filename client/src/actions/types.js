@@ -4,6 +4,7 @@ export const REGISTER_USER = 'REGISTER_USER';
 export const LOGIN_USER = 'LOGIN_USER';
 export const VERIFY_TOKEN = 'VERIFY_TOKEN';
 export const USER_INFO = 'USER_INFO';
+export const CHECK_LIKES = 'CHECK_LIKES';
 
 /* PROFILE TYPES */
 
@@ -25,6 +26,7 @@ export const SEND_MESSAGE = 'SEND_MESSAGE';
 
 /* MATCH TYPES */
 
+export const FETCH_COUNT = 'FETCH_COUNT';
 export const MATCH_SUGGESTION = 'MATCH_SUGGESTION';
 export const LIKE_USER = 'LIKE_USER';
 export const DISLIKE_USER = 'DISLIKE_USER';

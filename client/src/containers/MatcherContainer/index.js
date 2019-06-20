@@ -8,7 +8,7 @@ import MatchList from '../../components/MatchList'
 import ResearchList from '../../containers/ResearchListContainer'
 import {userInfo, verifyToken} from '../../actions/authActions'
 import filterUtils from '../../components/Widgets/FiltersUtils/filterUtils'
-import {matchSuggestion, likeUser, dislikeUser, researchUsers} from '../../actions/matchActions'
+import {fetchCount, matchSuggestion, likeUser, dislikeUser, researchUsers} from '../../actions/matchActions'
 import './matcher_container.css'
 
 class MatcherContainer extends Component {
@@ -43,14 +43,20 @@ class MatcherContainer extends Component {
                 })
             } else {
                 this.props.dispatch(userInfo(nextProps.token.id));
+                this.props.dispatch(fetchCount(nextProps.token.id));
             }
-        } else if (this.state.fetchMatch) {
-            this.props.dispatch(matchSuggestion(nextProps.logged, this.state.count));
+        } else if (nextProps.count !== this.props.count) {
             this.setState({
-                count: this.state.count + 10,
+                count: nextProps.count
+            })
+        }
+        else if (this.state.fetchMatch) {
+            this.props.dispatch(matchSuggestion(nextProps.logged, this.state.count, this.props.token.id));
+            this.setState({
                 fetchMatch: false
             })
-        } else if (nextProps.users && nextProps.users !== this.props.users) {
+        }
+        else if (nextProps.users && nextProps.users !== this.props.users) {
             this.setState({
                 users: nextProps.users
             })
@@ -105,7 +111,7 @@ class MatcherContainer extends Component {
     };
 
     fetchMatch = () => {
-        this.props.dispatch(matchSuggestion(this.props.logged, this.state.count));
+        this.props.dispatch(matchSuggestion(this.props.logged, this.state.count, this.props.token.id));
         this.setState({
             count: this.state.count + 10,
         })
@@ -236,7 +242,8 @@ class MatcherContainer extends Component {
                                              submit={(e) => this.filterUsers('matcher')} reset={this.resetValue}/>
                                 <AdvancedResearch advanced={advanced} open={this.toggleResearch}
                                                   updateValue={this.updateComponentValue}
-                                                  submit={this.researchUsers} reset={this.resetValue}/>
+                                                  submit={this.researchUsers} reset={this.resetValue}
+                                                  path={this.props.match.path}/>
                             </div>
                             {!advanced && list.length ?
                                 <MatchList {...this.props} users={list} fetchMatch={this.fetchMatch}
@@ -256,11 +263,13 @@ function mapStateToProps(state) {
     let logged = state.user.info;
     let users = state.match.users;
     let research = state.match.research;
+    let count = state.match.count;
     return {
         token,
         logged,
         users,
-        research
+        research,
+        count
     };
 }
 

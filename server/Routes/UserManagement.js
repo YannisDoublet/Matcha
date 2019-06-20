@@ -160,6 +160,27 @@ module.exports = {
             return res.status(200).json({'error': 'Invalid id'});
         }
     },
+    checkLikes: (req, res) => {
+        let {acc_id, username} = req.body;
+
+        dbUtils.checkLikes(acc_id, username)
+            .then(data => {
+                if (!data) {
+                    return res.status(200).json({like: 'no_one', status: false})
+                }
+                if (!Object.keys(data).length || data.match === 1) {
+                    return res.status(200).json({like: 'no_one', status: false})
+                } else if (Object.keys(data).length) {
+                    let like = {};
+                    if (data.person1 === acc_id) {
+                        like = data.like1 !== 1 ? {like: 'dislike', status: false} : {like: 'you', status: true}
+                    } else if (data.person2 !== acc_id && data.like2 === 1){
+                        like = data.like2 !== 1 ? {like: 'dislike_other', status: false} : {like: 'other', status: true}
+                    }
+                    return res.status(200).send(like)
+                }
+            })
+    },
     changeInfo: (req, res) => {
         let {acc_id, name, value} = req.body;
 

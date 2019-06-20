@@ -121,6 +121,12 @@ class SettingsForm extends Component {
     updateLocation = (type, value) => {
         if (value.lat && value.lng && typeof value.lat === 'number' && typeof value.lng === 'number') {
             this.props.updateLocation(value.lat, value.lng);
+            let newState = this.state;
+            newState.alert.type = 'success';
+            newState.alert.message = 'Location modified !';
+            this.setState({
+                ...newState
+            })
         }
     };
 
@@ -246,7 +252,7 @@ class SettingsForm extends Component {
                     <p id={'left_title'}>Personnal informations</p>
                     {this.manageRenderingInputForm(1)}
                     <div id={'settings_form_geolocation_container'}>
-                        <GeolocationInput updateValue={this.updateLocation}/>
+                        <GeolocationInput updateValue={this.updateLocation} path={this.props.path}/>
                     </div>
                 </div>
                 <div id={'settings_forms_right_side'}>

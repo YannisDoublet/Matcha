@@ -59,11 +59,14 @@ class ProfileCard extends Component {
         let user = this.props.user;
         const path = this.props.match ? this.props.match.path : null;
         let research = this.props.research ? this.props.research : null;
+        let liked = this.props.liked ? this.props.liked : null;
         return (
             <div id={'card'} className={'card'}>
                 <div id={'profile_pic'} style={{backgroundImage: `url(${user.pictures[0].picture})`}} />
                 <p id={'name'}>{user.firstname} {user.lastname}, {user.age}</p>
                 <p id={'username'}>{user.username}</p>
+                {!this.props.myProfile && path === '/profile/:id' && liked === 'other' &&
+                    <p id={'already_liked'}><i className="fas fa-grin-hearts"/>{user.firstname} already liked you !</p>}
                 <div id={'gender_container'}>
                     <div id={'gender'}>
                         <i className="fas fa-mars"/>
@@ -90,13 +93,13 @@ class ProfileCard extends Component {
                 </div>
                 {path === '/match' && <Tags id={'card'} tags={user.tag}/>}
                 <div id={'interactions'}>
-                    {path === '/profile/:id' && this.props.like_status === 0 && this.props.myProfile === false &&
+                    {path === '/profile/:id' && (liked === 'no_one' || liked === 'dislike') && this.props.myProfile === false &&
                     <button id={'like_button'} onClick={this.props.like}>Like</button>}
                     {path === '/profile/:id' && this.props.like_status === 0 && this.props.myProfile === true &&
                     <Link to={`/settings/${user.username}`}>
                         <button id={'settings_button'}>Settings</button>
                     </Link>}
-                    {path === '/profile/:id' && this.props.like_status === 1 && this.props.myProfile === false &&
+                    {path === '/profile/:id' && liked === 'you' && this.props.myProfile === false &&
                     <button id={'unlike_button'} onClick={this.props.like}>Unlike</button>}
                     {path === '/profile/:id' && this.props.myProfile === false &&
                     <button id={'report'} onClick={this.props.report}>Report</button>}

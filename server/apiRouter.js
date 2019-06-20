@@ -14,6 +14,7 @@ exports.router = (function () {
     apiRouter.route('/account/validate').get(userManagement.validate);
     apiRouter.route('/account/verify_token').post(userManagement.verifyToken);
     apiRouter.route('/account/user_info').post(userManagement.userInfo);
+    apiRouter.route('/account/check_likes').post(userManagement.checkLikes);
     apiRouter.route('/account/change_info').post(userManagement.changeInfo);
     apiRouter.route('/account/change_location').post(userManagement.changeLocation);
     apiRouter.route('/account/add_tag').post(userManagement.addTag);
@@ -33,6 +34,7 @@ exports.router = (function () {
 
     /* MATCH */
 
+    apiRouter.route('/matcher/fetch_count').post(matcherManagement.fetchCount);
     apiRouter.route('/matcher/match_suggestion').post(matcherManagement.matchSuggestion);
     apiRouter.route('/matcher/like_user').post(matcherManagement.likeUser);
     apiRouter.route('/matcher/dislike_user').post(matcherManagement.dislikeUser);

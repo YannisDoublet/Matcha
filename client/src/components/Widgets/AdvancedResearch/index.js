@@ -18,7 +18,7 @@ const AdvancedResearch = (props) => {
             </div>
             <div id={'advanced_research_content'}
                  className={classnames('', {'active_dropdown': advanced})}>
-                <GeolocationInput updateValue={props.updateValue}/>
+                <GeolocationInput updateValue={props.updateValue} path={props.path}/>
                 <SearchUser updateValue={props.updateValue}/>
                 <div id={'advanced_research_button_container'}>
                     <SubmitButton submit={props.submit}/>

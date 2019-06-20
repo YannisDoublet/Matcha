@@ -3,7 +3,8 @@ import {connect} from 'react-redux'
 import {Redirect} from 'react-router-dom'
 import {fetchUserByUsername, addTag, deleteTag, manageBio, uploadPicture,
     updateProfilePicture, deletePicture} from "../../actions/profileActions";
-import {userInfo, verifyToken} from "../../actions/authActions";
+import {userInfo, checkLike, verifyToken} from "../../actions/authActions";
+import {likeUser, dislikeUser} from "../../actions/matchActions";
 import GoogleMaps from '../../components/GoogleMaps'
 import Alert from '../../components/Widgets/Alert'
 import ReportPopUp from '../../components/Widgets/ReportPopUp'
@@ -54,6 +55,8 @@ class ProfileContainer extends Component {
     componentWillUpdate(nextProps, nextState, nextContext) {
         if (this.props.profile && this.props.logged && this.state.myProfileCheck) {
             this.checkMyProfile(this.props.logged, this.props.profile);
+        } else if (nextState.myProfile === false && !this.state.myProfileCheck && this.props.liked === undefined) {
+            this.props.dispatch(checkLike(nextProps.id, this.props.match.params.id));
         }
     }
 
@@ -101,6 +104,10 @@ class ProfileContainer extends Component {
             }
         } else if (nextProps.bio !== this.props.bio) {
             this.props.dispatch(fetchUserByUsername(nextProps.match.params.id));
+        } else if (nextProps.liked) {
+            this.setState({
+                like: nextProps.liked.like
+            })
         }
     }
 
@@ -127,11 +134,18 @@ class ProfileContainer extends Component {
     };
 
     like = () => {
-        this.state.like ? this.setState({
-            like: 0
-        }) : this.setState({
-            like: 1
-        })
+        let like = this.state.like;
+        if (like === 'no_one' || like === 'other' || like === 'dislike') {
+            this.props.dispatch(likeUser(this.props.id, this.props.match.params.id));
+            this.setState({
+                like: 'you'
+            })
+        } else if (like === 'you') {
+            this.props.dispatch(dislikeUser(this.props.id, this.props.match.params.id))
+            this.setState({
+                like: 'no_one'
+            })
+        }
     };
 
     showReport = () => {
@@ -208,6 +222,8 @@ class ProfileContainer extends Component {
     render() {
         let {redirect, alert, popUp} = this.state;
         let user = this.props.profile;
+        // console.log('Render: ', this.props);
+        console.log('like: ', this.state.like);
         return (
             !redirect ?
                 <div id={'profile'}>
@@ -221,7 +237,7 @@ class ProfileContainer extends Component {
                         <div id={'profile_content_container'}>
                             <ProfileCard {...this.props} like={this.like} like_status={this.state.like}
                                          report={this.showReport} popUp_status={popUp}
-                                         user={user} myProfile={this.state.myProfile}/>
+                                         user={user} myProfile={this.state.myProfile} liked={this.state.like}/>
                             <div id={'profile_content'}>
                                 <div id={'bio_container'}>
                                     <div id={'bio_title_container'}>
@@ -289,13 +305,15 @@ function mapStateToProps(state) {
     let pic_status = state.profile.pic;
     let tag = state.profile.tag;
     let bio = state.profile.bio;
+    let liked = state.user.liked;
     return {
         profile,
         id,
         logged,
         pic_status,
         tag,
-        bio
+        bio,
+        liked
     };
 }
 

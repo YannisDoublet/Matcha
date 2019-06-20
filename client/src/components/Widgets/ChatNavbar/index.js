@@ -44,7 +44,6 @@ class ChatNavbar extends Component {
     };
 
     render() {
-        console.log('s: ', this.state);
         let filter = this.state.value.length > 0 ? this.state.filter : this.state.card;
         return (
             <Fragment>

@@ -3,7 +3,7 @@ const validationUtils = require('../utils/validation.utils');
 
 module.exports = {
     matchSuggestion: async (req, res) => {
-        let {user, count} = req.body;
+        let {user, count, id} = req.body;
         let searchG = [];
         let searchS = [];
         switch (user.sexuality) {
@@ -46,7 +46,7 @@ module.exports = {
                 break;
         }
         return dbUtils.matchSuggestion(user.sexuality, searchG, searchS, user.latitude,
-            user.longitude, count, user.tag, user.username).then(users => {
+            user.longitude, count, user.tag, user.username, id).then(users => {
             users.forEach(user => {
                 user.matchScore = (user.score * 50 + user.match_tag * 150) - user.dist / 25;
             });
@@ -85,7 +85,8 @@ module.exports = {
                         user = data[i].firstname.toLowerCase() + data[i].lastname.toLowerCase();
                         if (user.indexOf(search) !== -1) {
                             filter.push(data[i]);
-                        } if (i === data.length - 1) {
+                        }
+                        if (i === data.length - 1) {
                             return res.status(200).send(filter);
                         }
                     }
@@ -112,5 +113,12 @@ module.exports = {
                 return res.status(200).send(tags.toString().split(','));
             })
     },
+    fetchCount: (req, res) => {
+        let acc_id = req.body.acc_id;
 
+        return dbUtils.fetchCount(acc_id)
+            .then(data => {
+                return res.status(200).json({length: data.length});
+            })
+    },
 };
