@@ -15,6 +15,7 @@ exports.router = (function () {
     apiRouter.route('/account/verify_token').post(userManagement.verifyToken);
     apiRouter.route('/account/user_info').post(userManagement.userInfo);
     apiRouter.route('/account/check_likes').post(userManagement.checkLikes);
+    apiRouter.route('/account/check_block').post(userManagement.checkBlock);
     apiRouter.route('/account/change_info').post(userManagement.changeInfo);
     apiRouter.route('/account/change_location').post(userManagement.changeLocation);
     apiRouter.route('/account/add_tag').post(userManagement.addTag);
@@ -24,6 +25,9 @@ exports.router = (function () {
     apiRouter.route('/account/update_profile_picture').post(userManagement.updateProfilePicture);
     apiRouter.route('/account/delete_picture').post(userManagement.deletePicture);
     apiRouter.route('/account/fetch_user').post(userManagement.fetchUserProfileByUsername);
+    apiRouter.route('/account/report_user').post(userManagement.reportUser);
+    apiRouter.route('/account/block_user').post(userManagement.blockUser);
+    apiRouter.route('/account/unblock_user').post(userManagement.unblockUser);
     apiRouter.route('/account/logout').post(userManagement.logoutUser);
 
     /* CHAT */

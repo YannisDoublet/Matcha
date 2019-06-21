@@ -60,6 +60,7 @@ class ProfileCard extends Component {
         const path = this.props.match ? this.props.match.path : null;
         let research = this.props.research ? this.props.research : null;
         let liked = this.props.liked ? this.props.liked : null;
+        let blocked = this.props.blocked ? this.props.blocked.block_status : null;
         return (
             <div id={'card'} className={'card'}>
                 <div id={'profile_pic'} style={{backgroundImage: `url(${user.pictures[0].picture})`}} />
@@ -93,13 +94,14 @@ class ProfileCard extends Component {
                 </div>
                 {path === '/match' && <Tags id={'card'} tags={user.tag}/>}
                 <div id={'interactions'}>
-                    {path === '/profile/:id' && (liked === 'no_one' || liked === 'dislike') && this.props.myProfile === false &&
+                    {path === '/profile/:id' && (liked === 'no_one' || liked === 'dislike')
+                    && this.props.myProfile === false && blocked !== 1 &&
                     <button id={'like_button'} onClick={this.props.like}>Like</button>}
-                    {path === '/profile/:id' && this.props.like_status === 0 && this.props.myProfile === true &&
+                    {path === '/profile/:id' && this.props.myProfile === true &&
                     <Link to={`/settings/${user.username}`}>
                         <button id={'settings_button'}>Settings</button>
                     </Link>}
-                    {path === '/profile/:id' && liked === 'you' && this.props.myProfile === false &&
+                    {path === '/profile/:id' && liked === 'you' && this.props.myProfile === false && blocked !== 1 &&
                     <button id={'unlike_button'} onClick={this.props.like}>Unlike</button>}
                     {path === '/profile/:id' && this.props.myProfile === false &&
                     <button id={'report'} onClick={this.props.report}>Report</button>}

@@ -35,7 +35,7 @@ module.exports = {
                         let token = rand.generate(50);
                         let acc_id = Math.random().toString(36).substr(2, 9);
                         dbUtils.insertUser(acc_id, email, firstname, lastname, username,
-                            psw, age, gender, sexuality, 2.50, 'Never connected...', loremIpsum(4), token, 0);
+                            psw, age, gender, sexuality, 2.50, 'Never connected...', '', token, 0);
                         dbUtils.insertPictureAccountCreation(acc_id, '/assets/tulips.jpg', 'profile_pic');
                         dbUtils.insertPictureAccountCreation(acc_id, '/assets/banner.png', 'banner_pic');
                         dbUtils.insertUserLocation(acc_id, data.lat, data.lon).then(() => {
@@ -160,6 +160,14 @@ module.exports = {
             return res.status(200).json({'error': 'Invalid id'});
         }
     },
+    checkBlock: (req, res) => {
+        let {acc_id, username} = req.body;
+
+        dbUtils.checkBlock(acc_id, username)
+            .then(data => {
+                return res.status(200).json({'block_status': data});
+            })
+    },
     checkLikes: (req, res) => {
         let {acc_id, username} = req.body;
 
@@ -174,8 +182,8 @@ module.exports = {
                     let like = {};
                     if (data.person1 === acc_id) {
                         like = data.like1 !== 1 ? {like: 'dislike', status: false} : {like: 'you', status: true}
-                    } else if (data.person2 !== acc_id && data.like2 === 1){
-                        like = data.like2 !== 1 ? {like: 'dislike_other', status: false} : {like: 'other', status: true}
+                    } else if (data.person2 !== acc_id && data.like2 === 1) {
+                        like = data.like2 !== 1 ? {like: 'other', status: false} : {like: 'other', status: true}
                     }
                     return res.status(200).send(like)
                 }
@@ -196,7 +204,6 @@ module.exports = {
     changeLocation: (req, res) => {
         let {acc_id, lat, lng} = req.body;
 
-        console.log('allo wtf');
         if (acc_id && lat && lng && typeof lat === 'number' && typeof lng === 'number') {
             dbUtils.updateLocation(acc_id, lat, lng);
             return res.status(200).send('OK');
@@ -283,6 +290,44 @@ module.exports = {
             .then(data => {
                 return res.status(200).json({status: 'DELETE', pic_id: pic_id, type: data});
             })
+    },
+    reportUser: (req, res) => {
+        let {acc_id, username, pattern, message} = req.body;
+
+        if (acc_id.length && username.length && pattern.length) {
+            if (pattern === 'Harassment' || pattern === 'Fake account' || pattern === 'Spam' || pattern === 'Hacked') {
+                dbUtils.reportUser(acc_id, username, pattern, message)
+                    .then(data => {
+                        return data === false ? res.status(200).send('Error') : res.status(200).send('REPORTED');
+                    })
+            } else {
+                return res.status(200).send('Wrong select value !');
+            }
+        }
+    },
+    blockUser: (req, res) => {
+        let {acc_id, username} = req.body;
+
+        if (acc_id.length && username.length) {
+            dbUtils.blockUser(acc_id, username)
+                .then(data => {
+                    return data === false ? res.status(200).send('Error') : res.status(200).send('BLOCKED');
+                })
+        } else {
+            return res.status(200).send('Wrong value !');
+        }
+    },
+    unblockUser: (req, res) => {
+        let {acc_id, username} = req.body;
+
+        if (acc_id.length && username.length) {
+            dbUtils.unblockUser(acc_id, username)
+                .then(data => {
+                    return data === false ? res.status(200).send('Error') : res.status(200).send('UNBLOCKED');
+                })
+        } else {
+            return res.status(200).send('Wrong value !');
+        }
     },
     logoutUser: (req, res) => {
         let time = req.body.time;

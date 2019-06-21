@@ -1,5 +1,7 @@
-import {FETCH_USER, CHANGE_INFO, ADD_TAG, DELETE_TAG, MANAGE_BIO,
-    UPLOAD_PICTURE, UPDATE_PROFILE_PICTURE, DELETE_PICTURE} from "../actions/types";
+import {
+    FETCH_USER, CHANGE_INFO, ADD_TAG, DELETE_TAG, MANAGE_BIO,
+    UPLOAD_PICTURE, UPDATE_PROFILE_PICTURE, DELETE_PICTURE, CHECK_BLOCKED, CHECK_LIKES
+} from "../actions/types";
 
 export default function(state={}, action) {
     switch(action.type) {
@@ -19,6 +21,10 @@ export default function(state={}, action) {
             return {...state, pic: action.payload};
         case DELETE_PICTURE:
             return {...state, pic: action.payload};
+        case CHECK_BLOCKED:
+            return {...state, blocked: action.payload};
+        case CHECK_LIKES:
+            return {...state, liked: action.payload};
         default:
             return state;
     }

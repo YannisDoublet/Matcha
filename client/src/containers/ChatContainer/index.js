@@ -56,6 +56,7 @@ class Chat extends Component {
 
     render() {
         let {redirect, users, active, sidebar} = this.state;
+        console.log(users);
         return (
             !redirect ?
                 <div id={'chat_wrapper'}>

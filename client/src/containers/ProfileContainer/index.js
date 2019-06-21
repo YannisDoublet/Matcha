@@ -1,9 +1,11 @@
 import React, {Component, Fragment} from 'react'
 import {connect} from 'react-redux'
 import {Redirect} from 'react-router-dom'
-import {fetchUserByUsername, addTag, deleteTag, manageBio, uploadPicture,
-    updateProfilePicture, deletePicture} from "../../actions/profileActions";
-import {userInfo, checkLike, verifyToken} from "../../actions/authActions";
+import {
+    fetchUserByUsername, checkLike, checkBlock, addTag, deleteTag, manageBio, uploadPicture,
+    updateProfilePicture, deletePicture
+} from "../../actions/profileActions";
+import {userInfo, verifyToken} from "../../actions/authActions";
 import {likeUser, dislikeUser} from "../../actions/matchActions";
 import GoogleMaps from '../../components/GoogleMaps'
 import Alert from '../../components/Widgets/Alert'
@@ -55,7 +57,7 @@ class ProfileContainer extends Component {
     componentWillUpdate(nextProps, nextState, nextContext) {
         if (this.props.profile && this.props.logged && this.state.myProfileCheck) {
             this.checkMyProfile(this.props.logged, this.props.profile);
-        } else if (nextState.myProfile === false && !this.state.myProfileCheck && this.props.liked === undefined) {
+        } else if (nextState.myProfile === false && !this.state.myProfileCheck && this.props.liked_status === undefined) {
             this.props.dispatch(checkLike(nextProps.id, this.props.match.params.id));
         }
     }
@@ -73,6 +75,7 @@ class ProfileContainer extends Component {
             })
         } else if (nextProps.id && this.state.firstCheck) {
             this.props.dispatch(userInfo(nextProps.id));
+            this.props.dispatch(checkBlock(nextProps.id, this.props.match.params.id));
             this.setState({
                 firstCheck: false
             })
@@ -104,17 +107,24 @@ class ProfileContainer extends Component {
             }
         } else if (nextProps.bio !== this.props.bio) {
             this.props.dispatch(fetchUserByUsername(nextProps.match.params.id));
-        } else if (nextProps.liked) {
+        } else if (nextProps.liked_status !== this.props.liked_status) {
             this.setState({
-                like: nextProps.liked.like
+                like: nextProps.liked_status.like,
             })
+        } else if (nextProps.like !== this.props.like) {
+            this.props.dispatch(fetchUserByUsername(this.props.profile.username));
+        } else if (nextProps.blocked !== this.props.blocked) {
+            this.props.dispatch(fetchUserByUsername(this.props.profile.username));
         }
     }
 
     closePopUp = () => {
-        this.setState({
-            popUp: 0
-        });
+        this.props.dispatch(checkBlock(this.props.id, this.props.profile.username))
+            .then(() => {
+                this.setState({
+                    popUp: 0
+                });
+            });
     };
 
     handleAlert = (alert) => {
@@ -136,15 +146,19 @@ class ProfileContainer extends Component {
     like = () => {
         let like = this.state.like;
         if (like === 'no_one' || like === 'other' || like === 'dislike') {
-            this.props.dispatch(likeUser(this.props.id, this.props.match.params.id));
-            this.setState({
-                like: 'you'
-            })
+            this.props.dispatch(likeUser(this.props.id, this.props.match.params.id))
+                .then(() => {
+                    this.setState({
+                        like: 'you'
+                    })
+                })
         } else if (like === 'you') {
             this.props.dispatch(dislikeUser(this.props.id, this.props.match.params.id))
-            this.setState({
-                like: 'no_one'
-            })
+                .then(() => {
+                    this.setState({
+                        like: 'no_one'
+                    })
+                })
         }
     };
 
@@ -169,7 +183,7 @@ class ProfileContainer extends Component {
     };
 
     addTag = (newTag) => {
-      this.props.dispatch(addTag(this.props.id, newTag));
+        this.props.dispatch(addTag(this.props.id, newTag));
     };
 
     deleteTag = (e) => {
@@ -222,22 +236,22 @@ class ProfileContainer extends Component {
     render() {
         let {redirect, alert, popUp} = this.state;
         let user = this.props.profile;
-        // console.log('Render: ', this.props);
-        console.log('like: ', this.state.like);
+        let blocked = this.props.blocked;
         return (
             !redirect ?
                 <div id={'profile'}>
                     <Alert alert={alert} handleAlert={this.handleAlert}/>
                     {popUp ? <ReportPopUp popUp={this.showReport} alert={alert}
-                                          handleAlert={this.handleAlert} closePopUp={this.closePopUp}/>
-                        : null}
+                                          handleAlert={this.handleAlert} closePopUp={this.closePopUp}
+                                          blocked={this.props.blocked}/> : null}
                     {user &&
                     <Fragment>
                         <div id={'banner_pic_container'} style={{backgroundImage: `url(${user.pictures[1].picture})`}}/>
                         <div id={'profile_content_container'}>
                             <ProfileCard {...this.props} like={this.like} like_status={this.state.like}
                                          report={this.showReport} popUp_status={popUp}
-                                         user={user} myProfile={this.state.myProfile} liked={this.state.like}/>
+                                         user={user} myProfile={this.state.myProfile} liked={this.state.like}
+                                         blocked={blocked}/>
                             <div id={'profile_content'}>
                                 <div id={'bio_container'}>
                                     <div id={'bio_title_container'}>
@@ -253,7 +267,8 @@ class ProfileContainer extends Component {
                                         :
                                         <form id={'bio_form'} onSubmit={this.manageBio}>
                                             <input id={'bio_input'} type={'text'} onChange={(e) => this.handleChange(e)}
-                                                   value={this.state.inputValue} placeholder={'Don\'t be shy !'} autoFocus={true}/>
+                                                   value={this.state.inputValue} placeholder={'Don\'t be shy !'}
+                                                   autoFocus={true}/>
                                         </form>}
                                 </div>
                                 <div id={'gallery_container'}>
@@ -305,7 +320,9 @@ function mapStateToProps(state) {
     let pic_status = state.profile.pic;
     let tag = state.profile.tag;
     let bio = state.profile.bio;
-    let liked = state.user.liked;
+    let liked_status = state.profile.liked;
+    let like = state.match.like;
+    let blocked = state.profile.blocked;
     return {
         profile,
         id,
@@ -313,7 +330,9 @@ function mapStateToProps(state) {
         pic_status,
         tag,
         bio,
-        liked
+        liked_status,
+        like,
+        blocked
     };
 }
 

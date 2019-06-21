@@ -14,7 +14,6 @@ export const fetchCount = (acc_id) => dispatch => {
 export const matchSuggestion = (user, count, id) => dispatch => {
     axios.post('/api/matcher/match_suggestion',{user: user, count: count, id: id})
         .then(res => {
-            console.log(res.data);
             dispatch({
                 type: MATCH_SUGGESTION,
                 payload: res.data
@@ -25,23 +24,23 @@ export const matchSuggestion = (user, count, id) => dispatch => {
 export const likeUser = (id, username) => dispatch => {
     axios.post('/api/matcher/like_user',{acc_id: id, username: username})
         .then(res => {
-            console.log(res.data);
             dispatch({
                 type: LIKE_USER,
                 payload: res.data
             });
         });
+    return Promise.resolve();
 };
 
 export const dislikeUser = (id, username) => dispatch => {
     axios.post('/api/matcher/dislike_user',{acc_id: id, username: username})
         .then(res => {
-            console.log(res.data);
             dispatch({
                 type: DISLIKE_USER,
                 payload: res.data
             });
         });
+    return Promise.resolve();
 };
 
 export const fetchTags = () => dispatch => {
@@ -55,7 +54,6 @@ export const fetchTags = () => dispatch => {
 };
 
 export const researchUsers = (acc_id, name, lat, lng) => dispatch => {
-    console.log(name, lat, lng);
     axios.post('/api/matcher/research_users', {acc_id: acc_id, name: name, lat: lat, lng: lng})
         .then(res => {
             dispatch({

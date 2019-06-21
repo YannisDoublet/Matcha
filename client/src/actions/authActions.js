@@ -1,5 +1,5 @@
 import axios from 'axios'
-import {REGISTER_USER, LOGIN_USER, VERIFY_TOKEN, USER_INFO, CHECK_LIKES} from "./types";
+import {REGISTER_USER, LOGIN_USER, VERIFY_TOKEN, USER_INFO} from "./types";
 
 export const registerUser = (data) => dispatch => {
     axios.post('/api/account/register', data)
@@ -36,16 +36,6 @@ export const userInfo = (acc_id) => dispatch => {
         .then(res => {
             dispatch({
                 type: USER_INFO,
-                payload: res.data
-            })
-        })
-};
-
-export const checkLike = (acc_id, username) => dispatch => {
-    axios.post('/api/account/check_likes', {acc_id, username})
-        .then(res => {
-            dispatch({
-                type: CHECK_LIKES,
                 payload: res.data
             })
         })

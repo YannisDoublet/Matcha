@@ -1,4 +1,4 @@
-import {MATCH_SUGGESTION, RESEARCH_USERS, FETCH_TAGS, FETCH_COUNT} from "../actions/types";
+import {MATCH_SUGGESTION, RESEARCH_USERS, FETCH_TAGS, FETCH_COUNT, LIKE_USER, DISLIKE_USER} from "../actions/types";
 
 export default function(state={}, action) {
     switch(action.type) {
@@ -10,6 +10,10 @@ export default function(state={}, action) {
             return {...state, tags: action.payload};
         case FETCH_COUNT:
             return {...state, count: action.payload};
+        case LIKE_USER:
+            return {...state, like: action.payload};
+        case DISLIKE_USER:
+            return {...state, like: action.payload};
         default:
             return state;
     }

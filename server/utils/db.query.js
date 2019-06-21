@@ -62,6 +62,19 @@ db.query('CREATE TABLE IF NOT EXISTS `matcher` (' +
     '`like2` boolean,' +
     '`match` boolean)');
 
+db.query('CREATE TABLE IF NOT EXISTS `reports` (' +
+    '`id` int PRIMARY KEY NOT NULL AUTO_INCREMENT,' +
+    '`reporter` varchar(10) NOT NULL,' +
+    '`reported` varchar(10) NOT NULL,' +
+    '`pattern` varchar(100),' +
+    '`message` varchar(10000))');
+
+db.query('CREATE TABLE IF NOT EXISTS `block` (' +
+    '`id` int PRIMARY KEY NOT NULL AUTO_INCREMENT,' +
+    '`blocker` varchar(10) NOT NULL,' +
+    '`blocked` varchar(10) NOT NULL,' +
+    '`status` boolean)');
+
 module.exports = {
     searchUserByEmailOrUsername: (email, username) => {
         return db.query('SELECT * FROM `users` WHERE email=? OR username=?', [email, username])
@@ -259,14 +272,18 @@ module.exports = {
                 'FROM users ' +
                 'LEFT JOIN matcher on users.acc_id = matcher.person2 OR users.acc_id = matcher.person1 ' +
                 'WHERE (username<>? AND gender=? AND sexuality=? ' +
-                'AND matcher.person1<>? AND matcher.person2=? AND `match`=?) ' +
+                'AND matcher.person1<>? AND matcher.person2=? AND `match`=? ' +
+                'AND NOT EXISTS (SELECT blocker, blocked FROM `block` WHERE `blocker`=? AND `blocked`=users.acc_id)) ' +
                 'OR username<>? AND gender=? AND sexuality=? AND matcher.`match` IS NULL ' +
+                'AND NOT EXISTS (SELECT blocker, blocked FROM `block` WHERE `blocker`=? AND `blocked`=users.acc_id) ' +
                 'OR (username<>? AND gender=? AND sexuality=? ' +
-                'AND matcher.person1<>? AND matcher.person2=? AND `match`=?) ' +
-                'OR username<>? AND gender=? AND sexuality=? AND matcher.`match` IS NULL LIMIT ?, 10',
-                [username, searchG[0], searchS[0], logged_acc_id, logged_acc_id, 0,
-                    username, searchG[0], searchS[0], username, searchG[0], searchS[1],
-                    logged_acc_id, logged_acc_id, 0, username, searchG[0], searchS[1], count])
+                'AND matcher.person1<>? AND matcher.person2=? AND `match`=? ' +
+                'AND NOT EXISTS (SELECT blocker, blocked FROM `block` WHERE `blocker`=? AND `blocked`=users.acc_id)) ' +
+                'OR username<>? AND gender=? AND sexuality=? AND matcher.`match` IS NULL ' +
+                'AND NOT EXISTS (SELECT blocker, blocked FROM `block` WHERE `blocker`=? AND `blocked`=users.acc_id) LIMIT ?, 10',
+                [username, searchG[0], searchS[0], logged_acc_id, logged_acc_id, 0, logged_acc_id,
+                    username, searchG[0], searchS[0], logged_acc_id, username, searchG[0], searchS[1],
+                    logged_acc_id, logged_acc_id, 0, logged_acc_id, username, searchG[0], searchS[1], logged_acc_id, count])
                 .then(async data => {
                         let user = [];
                         for (let i = 0; i < data.length; i++) {
@@ -296,25 +313,33 @@ module.exports = {
                 'FROM users ' +
                 'LEFT JOIN matcher on users.acc_id = matcher.person2 OR users.acc_id = matcher.person1 ' +
                 'WHERE (username<>? AND gender=? AND sexuality=? ' +
-                'AND matcher.person1<>? AND matcher.person2=? AND `match`=?) ' +
+                'AND matcher.person1<>? AND matcher.person2=? AND `match`=? ' +
+                'AND NOT EXISTS (SELECT blocker, blocked FROM `block` WHERE `blocker`=? AND `blocked`=users.acc_id)) ' +
                 'OR username<>? AND gender=? AND sexuality=? AND matcher.`match` IS NULL ' +
+                'AND NOT EXISTS (SELECT blocker, blocked FROM `block` WHERE `blocker`=? AND `blocked`=users.acc_id) ' +
                 'OR (username<>? AND gender=? AND sexuality=? ' +
-                'AND matcher.person1<>? AND matcher.person2=? AND `match`=?) ' +
+                'AND matcher.person1<>? AND matcher.person2=? AND `match`=? ' +
+                'AND NOT EXISTS (SELECT blocker, blocked FROM `block` WHERE `blocker`=? AND `blocked`=users.acc_id)) ' +
                 'OR username<>? AND gender=? AND sexuality=? AND matcher.`match` IS NULL ' +
+                'AND NOT EXISTS (SELECT blocker, blocked FROM `block` WHERE `blocker`=? AND `blocked`=users.acc_id) ' +
                 'OR (username<>? AND gender=? AND sexuality=? ' +
-                'AND matcher.person1<>? AND matcher.person2=? AND `match`=?) ' +
+                'AND matcher.person1<>? AND matcher.person2=? AND `match`=? ' +
+                'AND NOT EXISTS (SELECT blocker, blocked FROM `block` WHERE `blocker`=? AND `blocked`=users.acc_id)) ' +
                 'OR username<>? AND gender=? AND sexuality=? AND matcher.`match` IS NULL ' +
+                'AND NOT EXISTS (SELECT blocker, blocked FROM `block` WHERE `blocker`=? AND `blocked`=users.acc_id) ' +
                 'OR (username<>? AND gender=? AND sexuality=? ' +
-                'AND matcher.person1<>? AND matcher.person2=? AND `match`=?) ' +
-                'OR username<>? AND gender=? AND sexuality=? AND matcher.`match` IS NULL LIMIT ?, 10',
-                [username, searchG[0], searchS[0], logged_acc_id, logged_acc_id, 0,
-                    username, searchG[0], searchS[0],
-                    username, searchG[1], searchS[1], logged_acc_id, logged_acc_id, 0,
-                    username, searchG[1], searchS[1],
-                    username, searchG[2], searchS[2], logged_acc_id, logged_acc_id, 0,
-                    username, searchG[2], searchS[2],
-                    username, searchG[3], searchS[3], logged_acc_id, logged_acc_id, 0,
-                    username, searchG[3], searchS[3], count])
+                'AND matcher.person1<>? AND matcher.person2=? AND `match`=? ' +
+                'AND NOT EXISTS (SELECT blocker, blocked FROM `block` WHERE `blocker`=? AND `blocked`=users.acc_id)) ' +
+                'OR username<>? AND gender=? AND sexuality=? AND matcher.`match` IS NULL ' +
+                'AND NOT EXISTS (SELECT blocker, blocked FROM `block` WHERE `blocker`=? AND `blocked`=users.acc_id) LIMIT ?, 10',
+                [username, searchG[0], searchS[0], logged_acc_id, logged_acc_id, 0, logged_acc_id,
+                    username, searchG[0], searchS[0], logged_acc_id,
+                    username, searchG[1], searchS[1], logged_acc_id, logged_acc_id, 0, logged_acc_id,
+                    username, searchG[1], searchS[1], logged_acc_id,
+                    username, searchG[2], searchS[2], logged_acc_id, logged_acc_id, 0, logged_acc_id,
+                    username, searchG[2], searchS[2], logged_acc_id,
+                    username, searchG[3], searchS[3], logged_acc_id, logged_acc_id, 0, logged_acc_id,
+                    username, searchG[3], searchS[3], logged_acc_id, count])
                 .then(async data => {
                         let user = [];
                         for (let i = 0; i < data.length; i++) {
@@ -341,16 +366,22 @@ module.exports = {
     likeUser: (acc_id, username) => {
         return db.query('SELECT acc_id FROM users WHERE username=?', [username])
             .then(res => {
-                return db.query('SELECT like1, like2 FROM matcher WHERE person1=? AND person2=? ' +
+                return db.query('SELECT person1, person2, like1, like2 FROM matcher WHERE person1=? AND person2=? ' +
                     'OR person1=? AND person2=?', [acc_id, res[0].acc_id, res[0].acc_id, acc_id])
                     .then(fetch => {
-                            if (!fetch.length) {
+                        if (!fetch.length) {
                                 return db.query('INSERT INTO `matcher` SET person1=?, person2=?, like1=?, ' +
-                                    'like2=?, `match`=?', [acc_id, res[0].acc_id, 1, 0, 0]);
+                                    'like2=?, `match`=?', [acc_id, res[0].acc_id, 1, 0, 0])
+                                    .then(() => {
+                                        return module.exports.increaseScore(res[0].acc_id, 0.02);
+                                    })
                             } else if (acc_id === fetch[0].person1 && fetch[0].like1 === -1) {
-                                if (fetch[0].like2 === 0 || fetch[0].like2 === -1) {
+                                if (fetch[0].like2 !== 1) {
                                     return db.query('UPDATE `matcher` SET like1=? WHERE person1=? AND person2=? ' +
-                                        'OR person1=? AND person2=?', [1, acc_id, res[0].acc_id, res[0].acc_id, acc_id]);
+                                        'OR person1=? AND person2=?', [1, acc_id, res[0].acc_id, res[0].acc_id, acc_id])
+                                        .then(() => {
+                                            return module.exports.increaseScore(res[0].acc_id, 0.02);
+                                        })
                                 } else if (fetch[0].like2 === 1) {
                                     return db.query('UPDATE `matcher` SET like1=?, `match`=? WHERE person1=? AND person2=? ' +
                                         'OR person1=? AND person2=?', [1, 1, acc_id, res[0].acc_id, res[0].acc_id, acc_id])
@@ -358,13 +389,19 @@ module.exports = {
                                             return db.query('INSERT INTO `chat` SET conv_id=?, person1=?, person2=?, ' +
                                                 'last_message=?, date=?',
                                                 [Math.random().toString(36).substr(2, 9),
-                                                    acc_id, res[0].acc_id, '', Date.now()]);
+                                                    acc_id, res[0].acc_id, '', Date.now()])
+                                                .then(() => {
+                                                    return module.exports.increaseScore(res[0].acc_id, 0.05);
+                                                })
                                         })
                                 }
                             } else if (acc_id === fetch[0].person2 && fetch[0].like2 === -1) {
                                 if (fetch[0].like1 === 0 || fetch[0].like1 === -1) {
                                     return db.query('UPDATE `matcher` SET like2=? WHERE person1=? AND person2=? ' +
-                                        'OR person1=? AND person2=?', [1, acc_id, res[0].acc_id, res[0].acc_id, acc_id]);
+                                        'OR person1=? AND person2=?', [1, acc_id, res[0].acc_id, res[0].acc_id, acc_id])
+                                        .then(() => {
+                                            return module.exports.increaseScore(res[0].acc_id, 0.02);
+                                        })
                                 } else if (fetch[0].like1 === 1) {
                                     return db.query('UPDATE `matcher` SET like2=?, `match`=? WHERE person1=? AND person2=? ' +
                                         'OR person1=? AND person2=?', [1, 1, acc_id, res[0].acc_id, res[0].acc_id, acc_id])
@@ -372,7 +409,10 @@ module.exports = {
                                             return db.query('INSERT INTO `chat` SET conv_id=?, person1=?, person2=?, ' +
                                                 'last_message=?, date=?',
                                                 [Math.random().toString(36).substr(2, 9),
-                                                    acc_id, res[0].acc_id, '', Date.now()]);
+                                                    acc_id, res[0].acc_id, '', Date.now()])
+                                                .then(() => {
+                                                    return module.exports.increaseScore(res[0].acc_id, 0.05);
+                                                })
                                         })
                                 }
                             }
@@ -388,20 +428,74 @@ module.exports = {
                     .then(fetch => {
                         if (!fetch.length) {
                             return db.query('INSERT INTO `matcher` SET person1=?, person2=?, like1=?, ' +
-                                'like2=?, `match`=?', [acc_id, res[0].acc_id, -1, 0, 0]);
+                                'like2=?, `match`=?', [acc_id, res[0].acc_id, -1, 0, 0])
+                                .then(() => {
+                                    return module.exports.decreaseScore(res[0].acc_id, 0.02);
+                                })
                         } else if (fetch[0].like1 === 1 && fetch[0].like2 === 1) {
                             return db.query('DELETE FROM `matcher` WHERE person1=? AND person2=? OR person1=? AND person2=?',
                                 [acc_id, res[0].acc_id, res[0].acc_id, acc_id])
+                                .then(() => {
+                                    return db.query('DELETE FROM chat WHERE person1=? AND person2=?' +
+                                        'OR person1=? AND person2=?', [acc_id, res[0].acc_id,
+                                        res[0].acc_id, acc_id])
+                                        .then(() => {
+                                            return module.exports.decreaseScore(res[0].acc_id, 0.05);
+                                        })
+                                })
                         } else {
                             if (acc_id === fetch[0].person1 && fetch[0].like1 === 1) {
                                 return db.query('UPDATE `matcher` SET like1=?, `match`=? WHERE person1=? AND person2=? ' +
-                                    'OR person1=? AND person2=?', [-1, 0, acc_id, res[0].acc_id, res[0].acc_id, acc_id]);
+                                    'OR person1=? AND person2=?', [-1, 0, acc_id, res[0].acc_id, res[0].acc_id, acc_id])
+                                    .then(() => {
+                                        return module.exports.decreaseScore(res[0].acc_id, 0.02);
+                                    })
                             } else {
                                 return db.query('UPDATE `matcher` SET like2=?, `match`=? WHERE person1=? AND person2=? ' +
-                                    'OR person1=? AND person2=?', [-1, 0, acc_id, res[0].acc_id, res[0].acc_id, acc_id]);
+                                    'OR person1=? AND person2=?', [-1, 0, acc_id, res[0].acc_id, res[0].acc_id, acc_id])
+                                    .then(() => {
+                                        return module.exports.decreaseScore(res[0].acc_id, 0.05);
+                                    })
                             }
                         }
                     })
+            })
+    },
+    reportUser: (acc_id, username, pattern, message) => {
+        return db.query('SELECT acc_id FROM users WHERE username=?', [username])
+            .then(res => {
+                if (res[0].acc_id !== acc_id) {
+                    return db.query('INSERT INTO reports SET reporter=?, reported=?, pattern=?, message=?',
+                        [acc_id, res[0].acc_id, pattern, message])
+                        .then(() => {
+                            return module.exports.decreaseScore(res[0].acc_id, 0.20);
+                        })
+                } else {
+                    return false;
+                }
+            })
+    },
+    blockUser: (acc_id, username) => {
+        return db.query('SELECT acc_id FROM users WHERE username=?', [username])
+            .then(res => {
+                if (acc_id !== res[0].acc_id) {
+                    return db.query('INSERT INTO `block` SET `blocker`=?, `blocked`=?', [acc_id, res[0].acc_id])
+                        .then(() => {
+                            return module.exports.decreaseScore(res[0].acc_id, 0.40);
+                        })
+                } else {
+                    return false;
+                }
+            })
+    },
+    unblockUser: (acc_id, username) => {
+        return db.query('SELECT acc_id FROM users WHERE username=?', [username])
+            .then(res => {
+                if (acc_id !== res[0].acc_id) {
+                    return db.query('DELETE FROM `block` WHERE `blocker`=? AND `blocked`=?', [acc_id, res[0].acc_id]);
+                } else {
+                    return false;
+                }
             })
     },
     checkLikes: (acc_id, username) => {
@@ -414,4 +508,42 @@ module.exports = {
                     })
             })
     },
+    checkBlock: (acc_id, username) => {
+        return db.query('SELECT acc_id from `users` WHERE username=?', [username])
+            .then(data => {
+                return db.query('SELECT * FROM `block` WHERE blocker=? AND blocked=?',
+                    [acc_id, data[0].acc_id])
+                    .then(data => {
+                        return data.length;
+                    })
+            })
+    },
+    increaseScore(acc_id, score) {
+        return db.query('SELECT score FROM users WHERE acc_id=?', [acc_id])
+            .then(data => {
+                if (data[0].score !== 5) {
+                    let newScore;
+                    if (data[0].score + score > 5) {
+                        newScore = 5;
+                    } else {
+                        newScore = parseFloat(data[0].score) + score;
+                    }
+                    return db.query('UPDATE users SET score=? WHERE acc_id=?', [newScore, acc_id]);
+                }
+            })
+    },
+    decreaseScore(acc_id, score) {
+        return db.query('SELECT score FROM users WHERE acc_id=?', [acc_id])
+            .then(data => {
+                if (data[0].score !== 0) {
+                    let newScore;
+                    if (data[0].score - score < 0) {
+                        newScore = 0;
+                    } else {
+                        newScore = parseFloat(data[0].score) - score;
+                    }
+                    return db.query('UPDATE users SET score=? WHERE acc_id=?', [newScore, acc_id]);
+                }
+            })
+    }
 };
