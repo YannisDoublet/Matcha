@@ -2,6 +2,8 @@
 
 export const REGISTER_USER = 'REGISTER_USER';
 export const LOGIN_USER = 'LOGIN_USER';
+export const FORGOT_PASSWORD = 'FORGOT_PASSWORD';
+export const RESET_PASSWORD = 'RESET_PASSWORD';
 export const VERIFY_TOKEN = 'VERIFY_TOKEN';
 export const USER_INFO = 'USER_INFO';
 

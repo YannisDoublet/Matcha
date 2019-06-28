@@ -13,6 +13,8 @@ exports.router = (function () {
     apiRouter.route('/account/login').post(userManagement.login);
     apiRouter.route('/account/validate').get(userManagement.validate);
     apiRouter.route('/account/verify_token').post(userManagement.verifyToken);
+    apiRouter.route('/account/send_forgot_password').post(userManagement.sendForgotPassword);
+    apiRouter.route('/account/reset_password').post(userManagement.resetPassword);
     apiRouter.route('/account/user_info').post(userManagement.userInfo);
     apiRouter.route('/account/check_likes').post(userManagement.checkLikes);
     apiRouter.route('/account/check_block').post(userManagement.checkBlock);

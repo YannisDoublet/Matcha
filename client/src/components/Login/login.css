@@ -88,7 +88,7 @@ p {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    width: 35rem;
+    width: 30rem;
     transition: 0.3s;
 }
 
@@ -130,14 +130,6 @@ p {
 @media screen and (max-width: 1160px) {
     .login_content {
         width: 30rem;
-    }
-
-    .login_option {
-        width: 86%;
-    }
-
-    .login_error {
-        margin-left: -2.5rem;
     }
 }
 

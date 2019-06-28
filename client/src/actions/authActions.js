@@ -1,5 +1,5 @@
 import axios from 'axios'
-import {REGISTER_USER, LOGIN_USER, VERIFY_TOKEN, USER_INFO} from "./types";
+import {REGISTER_USER, LOGIN_USER, VERIFY_TOKEN, USER_INFO, FORGOT_PASSWORD, RESET_PASSWORD} from "./types";
 
 export const registerUser = (data) => dispatch => {
     axios.post('/api/account/register', data)
@@ -19,6 +19,26 @@ export const loginUser = (data) => dispatch => {
                 payload: res.data
             })
         });
+};
+
+export const sendForgotPassword = (email) => dispatch => {
+    axios.post('/api/account/send_forgot_password', {email})
+        .then(res => {
+            dispatch({
+                type: FORGOT_PASSWORD,
+                payload: res.data
+            })
+        })
+};
+
+export const resetPassword = (password, code) => dispatch => {
+    axios.post('/api/account/reset_password', {password, code})
+        .then(res => {
+            dispatch({
+                type: RESET_PASSWORD,
+                payload: res.data
+            })
+        })
 };
 
 export const verifyToken = (token) => dispatch => {

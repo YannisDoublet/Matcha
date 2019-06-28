@@ -1,5 +1,9 @@
 const fs = require('fs');
 const path = require('path');
+const secret = require('../config/private/secret');
+const crypto = require('crypto'),
+    algorithm = 'aes-256-ctr',
+    password = secret.SECRET;
 const bcrypt = require('bcrypt');
 const rand = require('rand-token');
 const jwtUtils = require('../utils/jwt.utils');
@@ -7,7 +11,6 @@ const dbUtils = require('../utils/db.query');
 const mailsUtils = require('../utils/mails.utils');
 const validationUtils = require('../utils/validation.utils');
 const {StringDecoder} = require('string_decoder');
-const {loremIpsum} = require('lorem-ipsum');
 const decoder = new StringDecoder('utf8');
 
 module.exports = {
@@ -132,6 +135,56 @@ module.exports = {
                 status: true,
                 type: 'error',
                 message: 'Invalid token provided !'
+            });
+        }
+    },
+    sendForgotPassword: (req, res) => {
+        let {email} = req.body;
+
+        dbUtils.verifyUser(email)
+            .then(user => {
+                if (user.length) {
+                    const key = crypto.scryptSync(secret.SECRET, secret.SALT, 32);
+                    const iv = Buffer.alloc(16, 0);
+                    let cipher = crypto.createCipheriv(algorithm, key, iv);
+                    let crypted = cipher.update(email, 'utf8', 'hex');
+                    crypted += cipher.final('hex');
+                    mailsUtils.sendResetEmail(email, crypted)
+                        .then(() => {
+                            return res.status(200).json({
+                                status: true,
+                                type: 'success',
+                                message: 'Email sent !'
+                            });
+                        });
+                } else {
+                    return res.status(200).json({
+                        status: true,
+                        type: 'error',
+                        message: 'Invalid email !'
+                    });
+                }
+            })
+    },
+    resetPassword: (req, res) => {
+        let {password, code} = req.body;
+
+        if (password.length >= 8 && !!/[A-Z]+/.test(password) && !!/[0-9]+/.test(password)
+            && !!/[!@#$%^&*(),.?":{}|<>]+/.test(password)) {
+            const key = crypto.scryptSync(secret.SECRET, secret.SALT, 32);
+            const iv = Buffer.alloc(16, 0);
+            let decipher = crypto.createDecipheriv(algorithm, key, iv);
+            let dec = decipher.update(code, 'hex', 'utf8');
+            dec += decipher.final('utf8');
+            return dbUtils.resetPassword(bcrypt.hashSync(password, 10), dec)
+                .then(() => {
+                    return res.status(200).json({type: 'redirect'});
+                })
+        } else {
+            return res.status(200).json({
+                status: true,
+                type: 'error',
+                message: 'Invalid password provided !'
             });
         }
     },

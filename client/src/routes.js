@@ -9,12 +9,14 @@ import Settings from './containers/SettingsContainer'
 import Matcher from './components/Matcher'
 import Chat from './containers/ChatContainer'
 import Layout from './HOC/Layout'
+import ResetPassword from './components/ResetPassword'
 import ValidateEmail from './components/Widgets/ValidateEmail'
 
 const Routes = () => {
     return (
         <Switch>
             <Route path={'/register'} exact component={Login}/>
+            <Route path={'/reset/:code'} exact component={ResetPassword}/>
             <Route path={'/validate:token'} exact component={ValidateEmail} />
             <Route path={'/logout'} exact component={Logout} />
             <Layout>

@@ -1,12 +1,12 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import { registerUser } from "../../../actions/authActions";
+import SignUpStep1 from './sign_up_step_1'
+import SignUpStep2 from "./sign_up_step_2";
 import './sign_up.css'
 
 // Forgot-password remaining
 
-import SignUpStep1 from './sign_up_step_1'
-import SignUpStep2 from "./sign_up_step_2";
 
 class SignUpForm extends Component {
 

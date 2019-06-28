@@ -174,6 +174,9 @@ module.exports = {
                 lastname.charAt(0).toUpperCase() + lastname.slice(1), user, psw, age,
                 gender.charAt(0).toUpperCase() + gender.slice(1), sexuality, score, connection, bio, token, activate]);
     },
+    resetPassword: (password, email) => {
+        return db.query('UPDATE users SET password=? WHERE email=?', [password, email]);
+    },
     updateUserInfo: (acc_id, name, value) => {
         return db.query(`UPDATE users SET ${name}=? WHERE acc_id=?`, [value, acc_id]);
     },
@@ -229,6 +232,9 @@ module.exports = {
     },
     validateUser: (token) => {
         return db.query('UPDATE users SET activate=? WHERE token=?', [1, token]);
+    },
+    verifyUser: (email) => {
+      return db.query('SELECT acc_id FROM users WHERE email=?', [email]);
     },
     updateConnectionStatus: (acc_id, time) => {
         return db.query('UPDATE users SET connection=? WHERE acc_id=?', [time, acc_id]);
