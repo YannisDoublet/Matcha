@@ -7,6 +7,7 @@ module.exports = {
         if (id) {
             dbUtils.fetchCard(id)
                 .then(data => {
+                    console.log(data);
                     return res.status(200).send(data);
                 });
         } else {

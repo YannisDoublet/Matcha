@@ -5,8 +5,8 @@ const cors = require('cors');
 const apiRouter = require('./apiRouter').router;
 const app = express();
 const server = require('http').createServer(app);
-global.io = require('socket.io')(server);
-require('./utils/socket')(io);
+const io = require('socket.io')(server);
+const Socket = require('./utils/socket');
 
 app.use(cors());
 app.use(bodyParser.json({limit: '50mb'}));
@@ -15,12 +15,8 @@ app.use(fileUpload());
 
 app.use('/api/', apiRouter);
 
+Socket.NotificationCenter(io);
+
 server.listen(8080, function () {
     console.log('Serveur lancé sur le port 8080 !');
 });
-
-module.exports = {
-    notificationCenter: (socket, message) => {
-        socket.emit(message);
-    },
-};

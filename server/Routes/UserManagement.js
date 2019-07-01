@@ -12,6 +12,7 @@ const mailsUtils = require('../utils/mails.utils');
 const validationUtils = require('../utils/validation.utils');
 const {StringDecoder} = require('string_decoder');
 const decoder = new StringDecoder('utf8');
+const Socket = require('../utils/socket');
 
 module.exports = {
     register: (req, res) => {
@@ -88,7 +89,7 @@ module.exports = {
                         } else {
                             dbUtils.updateConnectionStatus(user.acc_id, 'Connected');
                             let token = jwtUtils.generateTokenforUser(user);
-                            return res.status(200).json({success: token});
+                            return res.status(200).json({type: 'success', token: token, id: user.acc_id});
                         }
                     })
                 }

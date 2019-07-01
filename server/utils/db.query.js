@@ -75,6 +75,12 @@ db.query('CREATE TABLE IF NOT EXISTS `block` (' +
     '`blocked` varchar(10) NOT NULL,' +
     '`status` boolean)');
 
+db.query('CREATE TABLE IF NOT EXISTS `notifications` (' +
+    '`id` int PRIMARY KEY NOT NULL AUTO_INCREMENT,' +
+    '`type` varchar(100) NOT NULL,' +
+    '`img` varchar(1000) NOT NULL,' +
+    '`message` varchar(1000))');
+
 module.exports = {
     searchUserByEmailOrUsername: (email, username) => {
         return db.query('SELECT * FROM `users` WHERE email=? OR username=?', [email, username])
@@ -166,6 +172,7 @@ module.exports = {
                             })
                     });
             });
+
     },
     insertUser: (acc_id, email, firstname, lastname, user, psw, age, gender, sexuality, score, connection, bio, token, activate) => {
         return db.query("INSERT INTO `users` SET acc_id=?, email=?, firstname=?," +
@@ -234,7 +241,7 @@ module.exports = {
         return db.query('UPDATE users SET activate=? WHERE token=?', [1, token]);
     },
     verifyUser: (email) => {
-      return db.query('SELECT acc_id FROM users WHERE email=?', [email]);
+        return db.query('SELECT acc_id FROM users WHERE email=?', [email]);
     },
     updateConnectionStatus: (acc_id, time) => {
         return db.query('UPDATE users SET connection=? WHERE acc_id=?', [time, acc_id]);
@@ -261,6 +268,7 @@ module.exports = {
                         return card;
                     }
                 }
+                return card;
             })
     },
     fetchMsg: (conv_id) => {
@@ -375,7 +383,7 @@ module.exports = {
                 return db.query('SELECT person1, person2, like1, like2 FROM matcher WHERE person1=? AND person2=? ' +
                     'OR person1=? AND person2=?', [acc_id, res[0].acc_id, res[0].acc_id, acc_id])
                     .then(fetch => {
-                        if (!fetch.length) {
+                            if (!fetch.length) {
                                 return db.query('INSERT INTO `matcher` SET person1=?, person2=?, like1=?, ' +
                                     'like2=?, `match`=?', [acc_id, res[0].acc_id, 1, 0, 0])
                                     .then(() => {
