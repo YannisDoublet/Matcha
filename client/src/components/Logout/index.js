@@ -1,6 +1,8 @@
 import React, {Component, Fragment} from 'react'
 import axios from 'axios'
 import {Redirect} from 'react-router-dom'
+import socketIOClient from "socket.io-client";
+import {ENDPOINT} from "../../config/socket";
 
 /* FINIR LOGOUT ET UPDATE TIME */
 
@@ -21,9 +23,11 @@ class Logout extends Component {
 
     logout = (token) => {
         axios.post('/api/account/verify_token', {token: token})
-            .then(res =>
-                axios.post('/api/account/logout', {time: Date.now(), id: res.data.id})
-            )
+            .then(res => {
+                axios.post('/api/account/logout', {time: Date.now(), id: res.data.id});
+                socketIOClient(ENDPOINT).emit('leaveRoom', {id: res.data.id});
+            }
+    )
     };
 
     render() {

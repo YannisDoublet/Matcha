@@ -11,7 +11,7 @@ class Notifications extends Component {
         return notifications.map((notif, i) => (
             <div key={i} id={`notifications ${i}`} className={'notifications_container'}>
                 <img src={notif.img} id={`notifications_img ${i}`} className={'notifications_img'} alt={'notification_img'}/>
-                <p id={`notifications_msg ${i}`} className={'notifications_msg'}>{notif.msg}</p>
+                <p id={`notifications_msg ${i}`} className={'notifications_msg'}>{notif.message}</p>
             </div>
         ))
     };

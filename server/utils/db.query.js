@@ -77,9 +77,12 @@ db.query('CREATE TABLE IF NOT EXISTS `block` (' +
 
 db.query('CREATE TABLE IF NOT EXISTS `notifications` (' +
     '`id` int PRIMARY KEY NOT NULL AUTO_INCREMENT,' +
+    '`sender` varchar(10) NOT NULL,' +
+    '`receiver` varchar(10) NOT NULL,' +
     '`type` varchar(100) NOT NULL,' +
     '`img` varchar(1000) NOT NULL,' +
-    '`message` varchar(1000))');
+    '`message` varchar(1000) NOT NULL,' +
+    '`open` boolean)');
 
 module.exports = {
     searchUserByEmailOrUsername: (email, username) => {
@@ -174,6 +177,12 @@ module.exports = {
             });
 
     },
+    getUserNotifications: (acc_id) => {
+      return db.query('SELECT `sender`, `img`, `message`, `open` FROM notifications WHERE receiver=?', [acc_id])
+          .then(res => {
+              return res;
+          })
+    },
     insertUser: (acc_id, email, firstname, lastname, user, psw, age, gender, sexuality, score, connection, bio, token, activate) => {
         return db.query("INSERT INTO `users` SET acc_id=?, email=?, firstname=?," +
             "lastname=?, username=?, password=?, age=?, gender=?, sexuality=?, score=?, connection=?, bio=?,token=?, activate=?",
@@ -208,6 +217,29 @@ module.exports = {
     },
     insertPicture: (acc_id, img, type) => {
         return db.query("INSERT INTO `users_pictures` SET acc_id=?, picture=?, type=?", [acc_id, `/assets/uploads/${img}`, type]);
+    },
+    insertNotification: (sender, receiver, type, img, msg) => {
+        return db.query('SELECT firstname FROM users WHERE acc_id=?', [sender])
+            .then(sender_info => {
+                msg = sender_info[0].firstname + msg;
+                return db.query('SELECT acc_id FROM users WHERE username=?', [receiver])
+                    .then(receiver_info => {
+                        return db.query('SELECT `open` FROM notifications WHERE sender=? AND receiver=? AND type=?',
+                            [sender_info[0].firstname, receiver_info[0].acc_id, type])
+                            .then(res => {
+                                if (!res.length || res[0].open === 1) {
+                                    return db.query('INSERT INTO notifications SET sender=?, receiver=?, type=?, ' +
+                                        'img=?, message=?, open=?', [sender_info[0].firstname,
+                                        receiver_info[0].acc_id, type, img, msg, 0])
+                                        .then(() => {
+                                            return receiver_info[0].acc_id;
+                                        })
+                                } else if (res[0].open === 0) {
+                                    return null;
+                                }
+                            })
+                    })
+            })
     },
     checkNumbersOfPicture: (acc_id) => {
         return db.query('SELECT * FROM `users_pictures` WHERE acc_id=?', [acc_id])
@@ -389,16 +421,16 @@ module.exports = {
                                     .then(() => {
                                         return module.exports.increaseScore(res[0].acc_id, 0.02);
                                     })
-                            } else if (acc_id === fetch[0].person1 && fetch[0].like1 === -1) {
+                            } else if (acc_id === fetch[0].person1) {
                                 if (fetch[0].like2 !== 1) {
-                                    return db.query('UPDATE `matcher` SET like1=? WHERE person1=? AND person2=? ' +
-                                        'OR person1=? AND person2=?', [1, acc_id, res[0].acc_id, res[0].acc_id, acc_id])
+                                    return db.query('UPDATE `matcher` SET like1=? WHERE person1=? AND person2=?',
+                                        [1, acc_id, res[0].acc_id])
                                         .then(() => {
                                             return module.exports.increaseScore(res[0].acc_id, 0.02);
                                         })
                                 } else if (fetch[0].like2 === 1) {
-                                    return db.query('UPDATE `matcher` SET like1=?, `match`=? WHERE person1=? AND person2=? ' +
-                                        'OR person1=? AND person2=?', [1, 1, acc_id, res[0].acc_id, res[0].acc_id, acc_id])
+                                    return db.query('UPDATE `matcher` SET like1=?, `match`=? WHERE person1=? AND person2=?',
+                                        [1, 1, acc_id, res[0].acc_id])
                                         .then(() => {
                                             return db.query('INSERT INTO `chat` SET conv_id=?, person1=?, person2=?, ' +
                                                 'last_message=?, date=?',
@@ -409,16 +441,16 @@ module.exports = {
                                                 })
                                         })
                                 }
-                            } else if (acc_id === fetch[0].person2 && fetch[0].like2 === -1) {
-                                if (fetch[0].like1 === 0 || fetch[0].like1 === -1) {
-                                    return db.query('UPDATE `matcher` SET like2=? WHERE person1=? AND person2=? ' +
-                                        'OR person1=? AND person2=?', [1, acc_id, res[0].acc_id, res[0].acc_id, acc_id])
+                            } else if (acc_id === fetch[0].person2) {
+                                if (fetch[0].like1 !== 1) {
+                                    return db.query('UPDATE `matcher` SET like2=? WHERE person1=? AND person2=?'
+                                        , [1, res[0].acc_id, acc_id])
                                         .then(() => {
                                             return module.exports.increaseScore(res[0].acc_id, 0.02);
                                         })
                                 } else if (fetch[0].like1 === 1) {
-                                    return db.query('UPDATE `matcher` SET like2=?, `match`=? WHERE person1=? AND person2=? ' +
-                                        'OR person1=? AND person2=?', [1, 1, acc_id, res[0].acc_id, res[0].acc_id, acc_id])
+                                    return db.query('UPDATE `matcher` SET like2=?, `match`=? WHERE person1=? AND person2=?',
+                                        [1, 1, res[0].acc_id, acc_id])
                                         .then(() => {
                                             return db.query('INSERT INTO `chat` SET conv_id=?, person1=?, person2=?, ' +
                                                 'last_message=?, date=?',
@@ -458,15 +490,15 @@ module.exports = {
                                         })
                                 })
                         } else {
-                            if (acc_id === fetch[0].person1 && fetch[0].like1 === 1) {
-                                return db.query('UPDATE `matcher` SET like1=?, `match`=? WHERE person1=? AND person2=? ' +
-                                    'OR person1=? AND person2=?', [-1, 0, acc_id, res[0].acc_id, res[0].acc_id, acc_id])
+                            if (acc_id === fetch[0].person1) {
+                                return db.query('UPDATE `matcher` SET like1=?, `match`=? WHERE person1=? AND person2=?',
+                                    [-1, 0, acc_id, res[0].acc_id])
                                     .then(() => {
                                         return module.exports.decreaseScore(res[0].acc_id, 0.02);
                                     })
-                            } else {
-                                return db.query('UPDATE `matcher` SET like2=?, `match`=? WHERE person1=? AND person2=? ' +
-                                    'OR person1=? AND person2=?', [-1, 0, acc_id, res[0].acc_id, res[0].acc_id, acc_id])
+                            } else if (acc_id === fetch[0].person2) {
+                                return db.query('UPDATE `matcher` SET like2=?, `match`=? WHERE person1=? AND person2=?',
+                                    [-1, 0, res[0].acc_id, acc_id])
                                     .then(() => {
                                         return module.exports.decreaseScore(res[0].acc_id, 0.05);
                                     })

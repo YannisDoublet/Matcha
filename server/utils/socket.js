@@ -1,3 +1,5 @@
+const dbUtils = require('./db.query');
+
 module.exports = {
     NotificationCenter: (io) => {
         io.on('connection', socket => {
@@ -6,8 +8,12 @@ module.exports = {
                 console.log(`Room ${data.id} created`);
             });
             socket.on('visitProfile', (data) => {
-                console.log(data);
-                // console.log(`Room ${data.id} leaved`);
+                dbUtils.insertNotification(data.sender, data.receiver, data.type, data.img, ' visit your profile !')
+                    .then(room => {
+                        if (room) {
+                            io.sockets.to(room).emit('reloadNotification');
+                        }
+                    })
             });
             socket.on('leaveRoom', (data) => {
                 socket.leave(data.id);

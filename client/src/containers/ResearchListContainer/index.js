@@ -10,7 +10,9 @@ const ResearchList = (props) => {
             ))
         )
     };
+
     const users = props.users;
+    console.log(users);
     return (
         <div id={'research_list_container'}>
             {users.length > 0 ? renderResearch(users) :

@@ -14,6 +14,8 @@ import ProfileCard from '../../components/Widgets/ProfileCard'
 import Tags from '../../components/Widgets/Tags'
 import InputTag from "../../components/Widgets/InputTag";
 import './profile_container.css'
+import socketIOClient from "socket.io-client";
+import {ENDPOINT} from "../../config/socket";
 
 /* ADD PICTURE WIP, INVESTIGATE PROFILE_PIC*/
 
@@ -24,6 +26,7 @@ class ProfileContainer extends Component {
         myProfile: false,
         myProfileCheck: true,
         firstCheck: true,
+        sendNotif: true,
         inputTag: false,
         inputBio: false,
         inputValue: '',
@@ -54,14 +57,6 @@ class ProfileContainer extends Component {
         }
     };
 
-    componentWillUpdate(nextProps, nextState, nextContext) {
-        if (this.props.profile && this.props.logged && this.state.myProfileCheck) {
-            this.checkMyProfile(this.props.logged, this.props.profile);
-        } else if (nextState.myProfile === false && !this.state.myProfileCheck && this.props.liked_status === undefined) {
-            this.props.dispatch(checkLike(nextProps.id, this.props.match.params.id));
-        }
-    }
-
     componentWillReceiveProps(nextProps) {
         if (!nextProps.id) {
             this.setState({
@@ -71,13 +66,28 @@ class ProfileContainer extends Component {
         if (nextProps.match.params.id !== this.props.match.params.id) {
             this.props.dispatch(fetchUserByUsername(nextProps.match.params.id));
             this.setState({
-                myProfileCheck: true
+                myProfileCheck: true,
+                sendNotif: true,
+                firstCheck: true
             })
         } else if (nextProps.id && this.state.firstCheck) {
             this.props.dispatch(userInfo(nextProps.id));
             this.props.dispatch(checkBlock(nextProps.id, this.props.match.params.id));
+            this.props.dispatch(checkLike(nextProps.id, this.props.match.params.id));
             this.setState({
                 firstCheck: false
+            })
+        } else if (nextProps.logged && nextProps.profile && this.state.myProfileCheck) {
+            this.checkMyProfile(nextProps.logged, nextProps.profile);
+        } else if (nextProps.logged && nextProps.profile && this.state.myProfile === false && this.state.sendNotif) {
+            socketIOClient(ENDPOINT).emit('visitProfile', {
+                sender: this.props.id,
+                receiver: this.props.profile.username,
+                type: 'visitProfile',
+                img: this.props.logged.pictures[0].picture
+            });
+            this.setState({
+                sendNotif: false
             })
         } else if (nextProps.pic_status !== this.props.pic_status) {
             if (nextProps.pic_status.status === 'DELETE') {
@@ -152,7 +162,7 @@ class ProfileContainer extends Component {
                         like: 'you'
                     })
                 })
-        } else if (like === 'you') {
+        } else if (like === 'you' || like === 'match') {
             this.props.dispatch(dislikeUser(this.props.id, this.props.match.params.id))
                 .then(() => {
                     this.setState({

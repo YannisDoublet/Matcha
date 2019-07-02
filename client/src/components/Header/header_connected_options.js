@@ -2,20 +2,19 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import ProfileTag from '../Widgets/ProfileTag'
 import Notifications from '../Widgets/Notifications'
-import {userInfo} from "../../actions/authActions";
+import {userInfo} from "../../actions/authActions"
+import {getNotifications, readNotifications} from '../../actions/notifActions'
 import './header_connected_options.css'
+import socketIOClient from "socket.io-client"
+import {ENDPOINT} from "../../config/socket"
+
+const socket = socketIOClient(ENDPOINT);
 
 class HeaderConnectedOptions extends Component {
     state = {
         id: '',
         user_img: '',
-        notifications: [
-            {type: 'like', img: '/assets/heart.svg', msg: 'Someone like your profile !'},
-            {type: 'visit', img: '/assets/mask.svg', msg: 'Someone visit your profile !'},
-            {type: 'message', img: '/assets/love.svg', msg: 'You\'ve got a message !'},
-            {type: 'match', img: '/assets/match.svg', msg: 'Congratulation ! It\'s a match !'},
-            {type: 'dislike', img: '/assets/broken-heart.svg', msg: 'Someone dislike your profile !'}
-        ],
+        notifications: [],
         dropdown_content: [
             {img: '/assets/resume.svg', msg: 'My profile page', link: ''},
             {img: '/assets/settings-gears.svg', msg: 'Settings', link: ''},
@@ -34,7 +33,7 @@ class HeaderConnectedOptions extends Component {
     }
 
     componentWillReceiveProps(nextProps, nextContext) {
-        if (nextProps.user.info) {
+        if (nextProps.user.info !== this.props.user.info) {
             let newState = this.state;
             newState.user_img = nextProps.user.info.pictures[0].picture;
             newState.dropdown_content[0].link = `/profile/${nextProps.user.info.username}`;
@@ -42,8 +41,20 @@ class HeaderConnectedOptions extends Component {
             this.setState({
                 ...newState
             });
+        } else if (nextProps.notifications !== this.props.notifications) {
+            this.setState({
+                notifications: nextProps.notifications,
+                notifications_number: this.getNotificationsNumber(nextProps.notifications)
+            });
         }
     }
+
+    getNotificationsNumber = (notifications) => {
+        notifications.forEach(notif => {
+            if (notif.open === 0) {
+            }
+        });
+    };
 
     hideDropdown = () => {
         let st = window.pageYOffset || document.documentElement.scrollTop;
@@ -100,8 +111,13 @@ class HeaderConnectedOptions extends Component {
     };
 
     componentDidMount() {
+        this.props.dispatch(getNotifications(this.props.id));
         this.setState({
             notifications_number: this.state.notifications.length
+        });
+        socket.emit('createRoom', {id: this.props.id});
+        socket.on('reloadNotification', () => {
+            this.props.dispatch(getNotifications(this.props.id));
         });
         window.addEventListener('mousedown', this.untoggleDropdown, false);
         window.addEventListener("scroll", this.hideDropdown, false);
@@ -110,6 +126,7 @@ class HeaderConnectedOptions extends Component {
     componentWillUnmount() {
         window.removeEventListener('mousedown', this.untoggleDropdown);
         window.removeEventListener('scroll', this.hideDropdown);
+        socket.emit('leaveRoom', {id: this.props.id});
     }
 
     render() {
@@ -130,9 +147,11 @@ class HeaderConnectedOptions extends Component {
 function mapStateToProps(state) {
     const user = state.user;
     const checkProfile = state.profile.res;
+    const notifications = state.notifications.all;
     return {
         user,
-        checkProfile
+        checkProfile,
+        notifications
     };
 }
 

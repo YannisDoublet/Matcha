@@ -98,9 +98,10 @@
 }
 
 .notifications_img {
-    width: 2.5rem;
-    height: 2.5rem;
-    margin-left: 1rem;
+    width: 3rem;
+    height: 3rem;
+    margin-left: 0.5rem;
+    border-radius: 50%;
 }
 
 .notifications_msg {

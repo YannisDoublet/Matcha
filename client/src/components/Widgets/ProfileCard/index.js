@@ -94,14 +94,15 @@ class ProfileCard extends Component {
                 </div>
                 {path === '/match' && <Tags id={'card'} tags={user.tag}/>}
                 <div id={'interactions'}>
-                    {path === '/profile/:id' && (liked === 'no_one' || liked === 'dislike')
+                    {path === '/profile/:id' && (liked === 'no_one' || liked === 'dislike' || liked === 'other')
                     && this.props.myProfile === false && blocked !== 1 &&
                     <button id={'like_button'} onClick={this.props.like}>Like</button>}
                     {path === '/profile/:id' && this.props.myProfile === true &&
                     <Link to={`/settings/${user.username}`}>
                         <button id={'settings_button'}>Settings</button>
                     </Link>}
-                    {path === '/profile/:id' && liked === 'you' && this.props.myProfile === false && blocked !== 1 &&
+                    {path === '/profile/:id' && (liked === 'you' || liked === 'match')
+                    && this.props.myProfile === false && blocked !== 1 &&
                     <button id={'unlike_button'} onClick={this.props.like}>Unlike</button>}
                     {path === '/profile/:id' && this.props.myProfile === false &&
                     <button id={'report'} onClick={this.props.report}>Report</button>}

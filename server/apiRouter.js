@@ -2,7 +2,7 @@ const express = require('express');
 const userManagement = require('./Routes/UserManagement');
 const chatManagement = require('./Routes/chatManagement');
 const matcherManagement = require('./Routes/matcherManagement');
-
+const notificationsManagement = require('./Routes/notificationsManagement');
 
 exports.router = (function () {
     const apiRouter = express.Router();
@@ -47,6 +47,10 @@ exports.router = (function () {
     apiRouter.route('/matcher/fetch_tags').get(matcherManagement.fetchTags);
     apiRouter.route('/matcher/research_users').post(matcherManagement.researchUsers);
     apiRouter.route('/matcher/research_precise_user').post(matcherManagement.researchPreciseUser);
+
+    /* NOTIFICATIONS */
+
+    apiRouter.route('/notifications/get_notifications').post(notificationsManagement.getNotifications);
 
     return apiRouter;
 })();

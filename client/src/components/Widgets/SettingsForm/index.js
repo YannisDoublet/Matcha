@@ -160,6 +160,10 @@ class SettingsForm extends Component {
                 this.handleError(side, 'Passwords should match !', 'toggle');
                 return false;
             }
+        } else if (name === 'gender' || name === 'sexuality') {
+            if (value === 'Gender' || value === 'Sexuality') {
+                return false;
+            }
         }
         return true;
     };

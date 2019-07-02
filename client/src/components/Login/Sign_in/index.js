@@ -4,6 +4,8 @@ import ForgotPassword from '../../ForgotPassword'
 import {CSSTransition} from 'react-transition-group'
 import {loginUser} from '../../../actions/authActions'
 import {Redirect} from 'react-router-dom'
+import socketIOClient from "socket.io-client";
+import {ENDPOINT} from "../../../config/socket";
 import './sign_in.css'
 
 class SignInForm extends Component {
@@ -79,8 +81,9 @@ class SignInForm extends Component {
     componentWillReceiveProps(nextProps, nextContext) {
         if (nextProps.login.res.type === 'error')
             this.props.alert(nextProps.login.res);
-        else if (nextProps.login.res.success) {
-            localStorage.setItem('T', nextProps.login.res.success);
+        else if (nextProps.login.res.type === 'success') {
+            localStorage.setItem('T', nextProps.login.res.token);
+            socketIOClient(ENDPOINT).emit('createRoom', {id: nextProps.login.res.id});
             let newState = this.state;
             newState.redirect = true;
             this.setState({

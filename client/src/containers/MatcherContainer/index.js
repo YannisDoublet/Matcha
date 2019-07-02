@@ -49,14 +49,12 @@ class MatcherContainer extends Component {
             this.setState({
                 count: nextProps.count
             })
-        }
-        else if (this.state.fetchMatch) {
+        } else if (this.state.fetchMatch) {
             this.props.dispatch(matchSuggestion(nextProps.logged, this.state.count, this.props.token.id));
             this.setState({
                 fetchMatch: false
             })
-        }
-        else if (nextProps.users && nextProps.users !== this.props.users) {
+        } else if (nextProps.users && nextProps.users !== this.props.users) {
             this.setState({
                 users: nextProps.users
             })
@@ -70,7 +68,7 @@ class MatcherContainer extends Component {
     }
 
     filterUsers = () => {
-        let {users, tags, dist, age, pop, sort, order, research} = this.state;
+        let {users, tags, dist, age, pop, sort, order, research, adv_search} = this.state;
         let filter;
 
         filter = this.state.advanced_opened ? research : users;
@@ -87,9 +85,15 @@ class MatcherContainer extends Component {
         }).then(filter => {
             return filterUtils.filterOrderSort(filter, order, sort)
         }).then(filter => {
-            this.setState({
-                filter: filter
-            })
+            if (adv_search.value.length > 0 && adv_search.touched) {
+                this.setState({
+                    filter: filter
+                })
+            } else {
+                this.setState({
+                    filter: filter.length === users.length || filter.length === research.length ? [] : filter
+                })
+            }
         })
     };
 
