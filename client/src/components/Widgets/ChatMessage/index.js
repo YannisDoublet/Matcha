@@ -5,11 +5,9 @@ import './chatMessage.css'
 
 const ChatMessage = (props) => {
     let msg = props.msg;
-
-    console.log('date', msg.date)
-
+    let auth = props.auth;
     return (
-        <div className={classnames('', {'my_message': msg.sender_id === 'me', 'others_message': msg.sender_id === 'others'})}>
+        <div className={classnames('', {'my_message': msg.sender_id === auth.id, 'others_message': msg.sender_id !== auth.id})}>
             <p className={'message'}>{msg.message}</p>
             <p className={'date'}>{moment(parseInt(msg.date)).format('MMMM Do YYYY, h:mm:ss a')}</p>
         </div>

@@ -42,8 +42,10 @@ class ProfileCard extends Component {
     };
 
     componentDidMount() {
-        Geocode.setApiKey(GoogleApiKey);
-        this.getLocation(this.props.user.latitude, this.props.user.longitude);
+        if (!this.props.research) {
+            Geocode.setApiKey(GoogleApiKey);
+            this.getLocation(this.props.user.latitude, this.props.user.longitude);
+        }
     }
 
     componentWillReceiveProps(nextProps, nextContext) {
@@ -56,12 +58,16 @@ class ProfileCard extends Component {
     render () {
         let user = this.props.user;
         const path = this.props.match ? this.props.match.path : null;
-        const research = this.props.research ? this.props.research : null;
+        let research = this.props.research ? this.props.research : null;
+        let liked = this.props.liked ? this.props.liked : null;
+        let blocked = this.props.blocked ? this.props.blocked.block_status : null;
         return (
             <div id={'card'} className={'card'}>
                 <div id={'profile_pic'} style={{backgroundImage: `url(${user.pictures[0].picture})`}} />
                 <p id={'name'}>{user.firstname} {user.lastname}, {user.age}</p>
                 <p id={'username'}>{user.username}</p>
+                {!this.props.myProfile && path === '/profile/:id' && liked === 'other' &&
+                    <p id={'already_liked'}><i className="fas fa-grin-hearts"/>{user.firstname} already liked you !</p>}
                 <div id={'gender_container'}>
                     <div id={'gender'}>
                         <i className="fas fa-mars"/>
@@ -75,7 +81,8 @@ class ProfileCard extends Component {
                 <div id={'infos'}>
                     <div id={'location'}>
                         <i className="fas fa-map-marker-alt"/>
-                        <p id={'city'}>{this.state.location}</p>
+                        {path === '/profile/:id' ? <p id={'city'}>{this.state.location}</p> :
+                            <p id={'city'}>{parseInt(user.dist)} km</p>}
                     </div>
                     <div id={'popularity'}>
                         <i className="fas fa-star"/>
@@ -85,20 +92,22 @@ class ProfileCard extends Component {
                 <div id={'connection_status'}>
                     {this.getConnectionStatus(user.connection)}
                 </div>
-                {path === '/match' && <Tags id={'card'} tags={user.tags}/>}
+                {path === '/match' && <Tags id={'card'} tags={user.tag}/>}
                 <div id={'interactions'}>
-                    {path === '/profile/:id' && this.props.like_status === 0 && this.props.myProfile === false &&
+                    {path === '/profile/:id' && (liked === 'no_one' || liked === 'dislike' || liked === 'other')
+                    && this.props.myProfile === false && blocked !== 1 &&
                     <button id={'like_button'} onClick={this.props.like}>Like</button>}
-                    {path === '/profile/:id' && this.props.like_status === 0 && this.props.myProfile === true &&
-                    <Link to={'/settings'}>
+                    {path === '/profile/:id' && this.props.myProfile === true &&
+                    <Link to={`/settings/${user.username}`}>
                         <button id={'settings_button'}>Settings</button>
                     </Link>}
-                    {path === '/profile/:id' && this.props.like_status === 1 && this.props.myProfile === false &&
+                    {path === '/profile/:id' && (liked === 'you' || liked === 'match')
+                    && this.props.myProfile === false && blocked !== 1 &&
                     <button id={'unlike_button'} onClick={this.props.like}>Unlike</button>}
                     {path === '/profile/:id' && this.props.myProfile === false &&
                     <button id={'report'} onClick={this.props.report}>Report</button>}
                     {research &&
-                    <Link to={'/profile'}>
+                    <Link to={`/profile/${user.username}`}>
                         <button id={'profile_button'}>Profile</button>
                     </Link>}
                 </div>

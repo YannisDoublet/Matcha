@@ -149,10 +149,6 @@
 }
 
 @media screen and (max-width: 1160px) {
-    .sign_up_container {
-        width: 86%;
-    }
-
     div[class*='-enter'], select[class*='-enter'],button[class*='-enter'],p[class*='-enter'] {
         transform: translateY(0%);
         opacity: 1;
@@ -170,10 +166,6 @@
 }
 
 @media screen and (max-width: 650px) {
-    .sign_up_container {
-        width: 100%;
-    }
-
     .sign_up_input {
         width: 17rem;
     }

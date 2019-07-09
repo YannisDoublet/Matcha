@@ -9,20 +9,24 @@ import './chatbox.css'
 class ChatBox extends Component {
 
     state = {
-        message: [],
-        fetch: false
+        message: []
     };
 
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        let content = document.querySelector('#chat_content_container');
+        content.scrollTop = content.scrollHeight;
+    }
+
     componentWillReceiveProps(nextProps) {
-        if (nextProps.conversation && !this.state.fetch) {
-            this.props.dispatch(fetchMsg(nextProps.conversation.msg.conv_id));
+        if (nextProps.conversation !== this.props.conversation) {
+            this.props.dispatch(fetchMsg(nextProps.conversation.conv_id));
+            this.props.socket.on('reloadMessage', () => {
+                this.props.dispatch(fetchMsg(nextProps.conversation.conv_id));
+                this.props.updateCard();
+            });
+        } else if (nextProps.message !== this.props.message) {
             this.setState({
-                fetch: true
-            })
-        } else if (nextProps.message) {
-            this.setState({
-                message: nextProps.message,
-                fetch: false
+                message: nextProps.message
             })
         }
     };
@@ -35,7 +39,7 @@ class ChatBox extends Component {
             <Fragment>
                 <ChatBanner user={user_info} toggle={this.props.toggle}/>
                 <ChatContent message={msg} id={id}/>
-                <ChatInput conv_id={user_info} sender={id}/>
+                <ChatInput info={user_info} sender={id}/>
             </Fragment>
         );
     }

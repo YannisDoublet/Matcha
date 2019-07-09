@@ -2,22 +2,22 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import ProfileTag from '../Widgets/ProfileTag'
 import Notifications from '../Widgets/Notifications'
-import {userInfo} from "../../actions/authActions";
+import {userInfo} from "../../actions/authActions"
+import {getNotifications, readNotifications} from '../../actions/notifActions'
 import './header_connected_options.css'
+import socketIOClient from "socket.io-client"
+import {ENDPOINT} from "../../config/socket"
+
+const socket = socketIOClient(ENDPOINT);
 
 class HeaderConnectedOptions extends Component {
     state = {
-        notifications: [
-            {type: 'like', img: '/assets/heart.svg', msg: 'Someone like your profile !'},
-            {type: 'visit', img: '/assets/mask.svg', msg: 'Someone visit your profile !'},
-            {type: 'message', img: '/assets/love.svg', msg: 'You\'ve got a message !'},
-            {type: 'match', img: '/assets/match.svg', msg: 'Congratulation ! It\'s a match !'},
-            {type: 'dislike', img: '/assets/broken-heart.svg', msg: 'Someone dislike your profile !'}
-        ],
+        id: '',
         user_img: '',
+        notifications: [],
         dropdown_content: [
             {img: '/assets/resume.svg', msg: 'My profile page', link: ''},
-            {img: '/assets/settings-gears.svg', msg: 'Settings', link: '/settings'},
+            {img: '/assets/settings-gears.svg', msg: 'Settings', link: ''},
             {img: '/assets/logout.svg', msg: 'Logout', link: '/logout'},
         ],
         notifications_number: 0,
@@ -27,16 +27,46 @@ class HeaderConnectedOptions extends Component {
 
     componentWillMount() {
         this.props.dispatch(userInfo(this.props.id));
+        this.setState({
+            id: this.props.id
+        })
+    }
+
+    componentDidMount() {
+        this.props.dispatch(getNotifications(this.props.id));
+        this.setState({
+            notifications_number: this.state.notifications.length
+        });
+        socket.emit('createRoom', {id: this.props.id});
+        socket.on('reloadNotification', (data) => {
+            if (this.props.location.pathname === '/chat') {
+                if (!data.message) {
+                    this.props.dispatch(getNotifications(this.props.id));
+                }
+            } else {
+                this.props.dispatch(getNotifications(this.props.id));
+            }
+        });
+        socket.on('reloadProfile', () => {
+            this.props.dispatch(userInfo(this.props.id));
+        });
+        window.addEventListener('mousedown', this.untoggleDropdown, false);
+        window.addEventListener("scroll", this.hideDropdown, false);
     }
 
     componentWillReceiveProps(nextProps, nextContext) {
-        console.log('HEYO: ', nextProps);
-        if (nextProps.user.info) {
+        if (nextProps.user.info !== this.props.user.info) {
             let newState = this.state;
             newState.user_img = nextProps.user.info.pictures[0].picture;
             newState.dropdown_content[0].link = `/profile/${nextProps.user.info.username}`;
+            newState.dropdown_content[1].link = `/settings/${nextProps.user.info.username}`;
             this.setState({
                 ...newState
+            });
+        } else if (nextProps.notifications !== this.props.notifications) {
+            this.setState({
+                notifications: nextProps.notifications.content,
+                notifications_number: nextProps.notifications.number
             });
         }
     }
@@ -70,6 +100,7 @@ class HeaderConnectedOptions extends Component {
     toggleDropdown = (evt) => {
         const id = evt.target.id;
         if (id === 'notifications_wrapper') {
+            this.props.dispatch(readNotifications(this.props.id));
             this.setState({
                 notification_opened: !this.state.notification_opened,
                 profile_tag_opened: false,
@@ -89,25 +120,28 @@ class HeaderConnectedOptions extends Component {
         }
     };
 
-    componentDidMount() {
-            this.setState({
-                notifications_number: this.state.notifications.length
-            });
-            window.addEventListener('mousedown', this.untoggleDropdown, false);
-            window.addEventListener("scroll", this.hideDropdown, false);
-    }
+    checkId = () => {
+        if (this.props.id !== this.state.id) {
+            this.props.dispatch(userInfo(this.props.id))
+        }
+    };
+
 
     componentWillUnmount() {
         window.removeEventListener('mousedown', this.untoggleDropdown);
         window.removeEventListener('scroll', this.hideDropdown);
+        socket.emit('leaveRoom', {id: this.props.id});
     }
 
     render() {
+        this.checkId();
+        let profile_pic = this.state.user_img;
         return (
             <div id={'connected_options_wrapper'}>
                 <Notifications opened={this.state.notification_opened} toggle={this.toggleDropdown}
                                notifications={this.state.notifications} number={this.state.notifications_number}/>
-                <ProfileTag opened={this.state.profile_tag_opened} user_img={this.state.user_img}
+                <ProfileTag opened={this.state.profile_tag_opened}
+                            user_img={profile_pic}
                             options={this.state.dropdown_content} toggle={this.toggleDropdown}/>
             </div>
         );
@@ -116,8 +150,12 @@ class HeaderConnectedOptions extends Component {
 
 function mapStateToProps(state) {
     const user = state.user;
+    const checkProfile = state.profile.res;
+    const notifications = state.notifications.all;
     return {
-        user
+        user,
+        checkProfile,
+        notifications
     };
 }
 

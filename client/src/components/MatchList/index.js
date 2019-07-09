@@ -10,7 +10,17 @@ class MatchList extends Component {
         count: 0
     };
 
+    componentWillUpdate(nextProps, nextState, nextContext) {
+        if (nextState.count === 10) {
+            this.props.fetchMatch();
+            this.setState({
+                count: 0
+            })
+        }
+    }
+
     likeUser = (id, username) => {
+        this.props.like(username);
         let card = document.getElementById(`card ${id}`);
         card.classList.add('isLiked');
         setTimeout(() => {
@@ -22,6 +32,7 @@ class MatchList extends Component {
     };
 
     dislikeUser = (id, username) => {
+        this.props.dislike(username);
         let card = document.getElementById(`card ${id}`);
         card.classList.add('isDisliked');
         setTimeout(() => {
@@ -38,7 +49,7 @@ class MatchList extends Component {
             <div id={'matchlist_container'}>
                 {users.map((user, i) => (
                     <div id={`card ${i}`} style={{zIndex: `${i}`}} key={i} className={'match_card_container'}>
-                        <ProfileCard {...this.props} users={user}/>
+                        <ProfileCard {...this.props} user={user} research={this.props.research}/>
                         <MatchButtons username={user.username} like={this.likeUser}
                                       dislike={this.dislikeUser} id={i}/>
                     </div>))}
@@ -46,7 +57,7 @@ class MatchList extends Component {
                     <div id={'pulse'}>
                         <i id='marker' className="fas fa-map-marker-alt"/>
                     </div>
-                    <p id={'message'}>No more users in your zone...</p>
+                    <p id={'message'}>No more users in your criteria...</p>
                 </div>
             </div>
         );

@@ -64,6 +64,7 @@ p {
 .login_forms {
     display: flex;
     justify-content: center;
+    width: 50%;
 }
 
 .login_error {
@@ -88,7 +89,7 @@ p {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    width: 35rem;
+    width: 30rem;
     transition: 0.3s;
 }
 
@@ -132,12 +133,8 @@ p {
         width: 30rem;
     }
 
-    .login_option {
-        width: 86%;
-    }
-
-    .login_error {
-        margin-left: -2.5rem;
+    .login_forms {
+        width: 100%;
     }
 }
 

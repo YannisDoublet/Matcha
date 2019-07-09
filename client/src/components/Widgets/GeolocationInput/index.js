@@ -1,6 +1,8 @@
 import React, {Component} from 'react'
 import Autocomplete from 'react-google-autocomplete'
 import './geolocation_input.css'
+import {GoogleApiWrapper} from "google-maps-react";
+import {GoogleApiKey} from "../../../config/apiKey";
 
 class GeolocationInput extends Component {
 
@@ -18,7 +20,6 @@ class GeolocationInput extends Component {
         })
     };
 
-
     onPlaceSelected = (place) => {
         if (place.address_components) {
             this.setState({
@@ -29,6 +30,12 @@ class GeolocationInput extends Component {
                 value: place.address_components[0].long_name + ', ' + place.address_components[3].long_name
             }, () => {
                 this.props.updateValue('Advanced_geo', this.state);
+                this.setState({
+                    country: '',
+                    city: '',
+                    lat: null,
+                    lng: null
+                })
             })
         } else if (!place.address_components && !this.state.value) {
             this.setState({
@@ -38,6 +45,10 @@ class GeolocationInput extends Component {
                 lng: null,
             }, () => {
                 this.props.updateValue('Advanced_geo', this.state);
+            })
+        } if (this.props.path === '/settings/:id') {
+            this.setState({
+                value: ''
             })
         }
     };
@@ -61,4 +72,6 @@ class GeolocationInput extends Component {
     }
 }
 
-export default GeolocationInput;
+export default GoogleApiWrapper({
+    apiKey: GoogleApiKey
+})(GeolocationInput);

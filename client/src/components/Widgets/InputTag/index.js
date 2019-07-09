@@ -1,37 +1,32 @@
-import React, {Component, Fragment} from 'react';
-import './inputTag.css'
-
+import React, {Component, Fragment} from 'react'
+import {connect} from 'react-redux'
+import {fetchTags} from '../../../actions/matchActions'
 import Tags from '../Tags'
+import './inputTag.css'
 
 class InputTag extends Component {
 
     state = {
         tags: [],
         input_value: '',
-        suggestions: [
-            'Funny',
-            'Fun',
-            'Romantic',
-            'Weird',
-            'React',
-            'Arnaud',
-            'Tanguy',
-            'Shana',
-            'Yannis',
-            '42'
-        ],
+        suggestions: [],
         filtered: [],
         activeSuggestion: 0,
         showSuggestion: false,
         erase_check: false
     };
 
+
+    componentDidMount() {
+        this.props.dispatch(fetchTags());
+    }
+
     handleInput = (evt) => {
         this.setState({
             input_value: evt.target.value,
             erase_check: false
         }, () => {
-            this.handleAutoComplete(this.state.input_value, this.state.suggestions);
+            this.handleAutoComplete(this.state.input_value, this.props.tags);
         });
     };
 
@@ -92,32 +87,52 @@ class InputTag extends Component {
     };
 
     deleteTag = (evt) => {
-        let tags = this.state.tags.slice();
-        evt ? tags.splice(evt.target.id, 1) : tags.pop();
-        this.setState({
-            tags: tags,
-            erase_check: false
-        }, () => {
-            this.props.deleteValue('Tags', this.state.tags.slice())
-        })
+        if (this.props.id === 'searchbar') {
+            let tags = this.state.tags.slice();
+            evt ? tags.splice(evt.target.id, 1) : tags.pop();
+            this.setState({
+                tags: tags,
+                erase_check: false
+            }, () => {
+                if (this.props.id === 'searchbar') {
+                    this.props.deleteValue('Tags', this.state.tags.slice())
+                } else {
+                    return null;
+                }
+            })
+        } else if (this.props.id === 'myProfile') {
+            console.log(evt.target.value);
+        }
+
     };
 
     submitTag = (evt) => {
         evt.preventDefault();
-        let tags = this.state.tags.slice();
-        let newTag = this.state.filtered[this.state.activeSuggestion] ?
-            this.state.filtered[this.state.activeSuggestion] : null;
-        if (newTag && newTag.length > 0) {
-            if (this.checkTags(newTag, tags) === -1 && this.props.match.path === '/match') {
-                this.state.input_value.length && this.setState({
-                    tags: [...tags, newTag],
-                    input_value: '',
-                    filtered: [],
-                    activeSuggestion: 0,
-                    showSuggestion: false
-                }, () => {
-                    this.props.updateValue('Tags', this.state.tags.slice());
-                });
+        if (this.props.id === 'searchbar') {
+            let tags = this.state.tags.slice();
+            let newTag = this.state.filtered[this.state.activeSuggestion] ?
+                this.state.filtered[this.state.activeSuggestion] : null;
+            if (newTag && newTag.length > 0) {
+                if (this.checkTags(newTag, tags) === -1 && this.props.match.path === '/match') {
+                    this.state.input_value.length && this.setState({
+                        tags: [...tags, newTag],
+                        input_value: '',
+                        filtered: [],
+                        activeSuggestion: 0,
+                        showSuggestion: false
+                    }, () => {
+                        this.props.updateValue('Tags', this.state.tags.slice());
+                    });
+                }
+            }
+        } else if (this.props.id === 'myProfile') {
+            let mytags = this.props.mytags.slice();
+            let newTag = this.state.filtered[this.state.activeSuggestion] ?
+                this.state.filtered[this.state.activeSuggestion] : this.state.input_value;
+            if (newTag && newTag.length > 0) {
+                if (this.checkTags(newTag, mytags) === -1) {
+                    this.props.addTag(newTag);
+                }
             }
         }
     };
@@ -128,7 +143,7 @@ class InputTag extends Component {
         let autoComplete = this.renderAutoComplete(filtered);
         return (
             <div id={'input_tag_container'}>
-                <Tags tags={tags} location={this.props.match.path} delete={this.deleteTag} id={'searchbar'}>
+                <Tags tags={tags} location={this.props.match.path} delete={this.deleteTag} id={this.props.id}>
                     <i className="fas fa-search"/>
                     <form id='form_container' onSubmit={this.submitTag}>
                         <input id={'input_tag'} type={'text'} value={this.state.input_value} placeholder={'Tags...'}
@@ -145,4 +160,11 @@ class InputTag extends Component {
     }
 }
 
-export default InputTag;
+function mapStateToProps(state) {
+    let tags = state.match.tags;
+    return {
+        tags
+    };
+}
+
+export default connect(mapStateToProps)(InputTag);

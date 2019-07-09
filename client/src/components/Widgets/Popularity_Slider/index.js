@@ -43,7 +43,6 @@ class Popularity extends Component {
                 density: 3
             }
         });
-        this.updateValue();
     }
 
     render() {

@@ -1,6 +1,8 @@
-import React, {Component} from 'react'
+import React, {Component, Fragment} from 'react'
 import axios from 'axios'
 import {Redirect} from 'react-router-dom'
+import socketIOClient from "socket.io-client";
+import {ENDPOINT} from "../../config/socket";
 
 /* FINIR LOGOUT ET UPDATE TIME */
 
@@ -10,24 +12,29 @@ class Logout extends Component {
         redirect: false
     };
 
-    logout = () => {
-        axios.post('/api/account/verify_token', {token: localStorage.getItem('T')})
-            .then(res =>
-                axios.post('/api/account/logout', {time: Date.now(), id: res.data.id})
-                    .then(res => {
-                        localStorage.removeItem('T');
-                        this.setState({
-                            redirect: true
-                        })
-                    })
-            )
+    componentDidMount() {
+        let token = localStorage.getItem('T');
+        this.logout(token);
+        localStorage.removeItem('T');
+        this.setState({
+            redirect: true
+        })
+    }
+
+    logout = (token) => {
+        axios.post('/api/account/verify_token', {token: token})
+            .then(res => {
+                axios.post('/api/account/logout', {time: Date.now(), id: res.data.id});
+                socketIOClient(ENDPOINT).emit('leaveRoom', {id: res.data.id});
+            }
+    )
     };
 
     render() {
-        let redirect = this.state.redirect;
-        this.logout();
         return (
-            redirect && <Redirect to={'/'}/>
+            <Fragment>
+                {this.state.redirect && <Redirect to={'/'}/>}
+            </Fragment>
         )
     }
 }

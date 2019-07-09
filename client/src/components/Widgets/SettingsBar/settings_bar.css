@@ -15,3 +15,9 @@
     justify-content: space-around;
     background: #FFFFFF;
 }
+
+#settings_bar_button_container {
+    width: 100%;
+    display: flex;
+    justify-content: space-evenly;
+}

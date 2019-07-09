@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-
+import {reportUser, blockUser, unblockUser} from '../../../actions/profileActions'
 import './report.css'
 
 class ReportPopUp extends Component {
@@ -20,7 +20,7 @@ class ReportPopUp extends Component {
             value: ''
         },
         report_message: {
-            placeholder: 'Enter your complain here...',
+            placeholder: 'Optionnal',
             value: ''
         }
     };
@@ -55,12 +55,24 @@ class ReportPopUp extends Component {
 
     blockUser = (evt) => {
         evt.preventDefault();
+        this.props.dispatch(blockUser(this.props.id, this.props.profile.username));
         let alert = this.props.alert;
         alert.status = true;
         alert.type = 'success';
         alert.message = 'User successfully blocked !';
         this.props.handleAlert(alert);
-        this.props.closePopUp();
+        this.props.closePopUp('blocked');
+    };
+
+    unblockUser = (evt) => {
+        evt.preventDefault();
+        this.props.dispatch(unblockUser(this.props.id, this.props.profile.username));
+        let alert = this.props.alert;
+        alert.status = true;
+        alert.type = 'success';
+        alert.message = 'User successfully unblocked !';
+        this.props.handleAlert(alert);
+        this.props.closePopUp('unblocked');
     };
 
     submitForm = (evt) => {
@@ -72,6 +84,8 @@ class ReportPopUp extends Component {
                 ...newState,
             })
         } else {
+            this.props.dispatch(reportUser(this.props.id, this.props.profile.username, newState.report_select.value,
+                newState.report_message.value));
             let alert = this.props.alert;
             alert.status = true;
             alert.type = 'success';
@@ -88,6 +102,7 @@ class ReportPopUp extends Component {
         };
         let select = this.state.report_select;
         let textarea = this.state.report_message;
+        let blocked = this.props.blocked.block_status;
         return (
             <div id={'popUp_container'}>
                 <div id={'popUp_box'}>
@@ -116,10 +131,12 @@ class ReportPopUp extends Component {
                         <button id='report_button' onClick={(evt) => this.submitForm(evt)}>Report</button>
                     </form>}
                     {this.state.block &&
-                    <form id={'block_container'} onSubmit={this.blockUser}>
-                        <p id={'block_warning'}>Block this user to hide all interaction between you and him. This action
-                            can be reverted.</p>
-                        <button id={'block_button'} onClick={(evt) => this.blockUser(evt)}>BLOCK</button>
+                    <form id={'block_container'} onSubmit={!blocked ? this.blockUser : this.unblockUser}>
+                        <p id={'block_warning'}>{!blocked ? 'Block this user to hide all interactions between you and him. This action ' +
+                            'can be reverted.' : 'Unblock this user to unhide all interactions between you and him'}</p>
+                        <button id={'block_button'} onClick={(evt) => !blocked ? this.blockUser(evt) : this.unblockUser(evt)}>
+                            {!blocked ? 'BLOCK' : 'UNBLOCK'}
+                        </button>
                     </form>}
                 </div>
             </div>
@@ -128,7 +145,12 @@ class ReportPopUp extends Component {
 }
 
 function mapStateToProps(state) {
-    return {};
+    let profile = state.profile.res;
+    let id = state.user.res.id;
+    return {
+        profile,
+        id
+    };
 }
 
 export default connect(mapStateToProps)(ReportPopUp);

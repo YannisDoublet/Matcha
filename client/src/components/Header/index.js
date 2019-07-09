@@ -109,7 +109,7 @@ class Header extends Component {
                     </Link>
                 </div>
                 <div className={'navbar_content_right'}>
-                    {connected === true ? <HeaderConnectedOptions id={this.props.user.res.id}/> :
+                    {connected === true ? <HeaderConnectedOptions id={this.props.user.res.id} location={this.props.location}/> :
                         this.renderNavbarContent({
                         sign_in: this.state.navbarItems.sign_in
                     })}

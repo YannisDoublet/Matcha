@@ -1,0 +1,19 @@
+#reset_button {
+    width: 7rem;
+    align-self: center;
+    padding: 0.5rem;
+    margin: 0.5rem;
+    background: rgb(152,91,152);
+    color: white;
+    font-size: 1.15rem;
+    cursor: pointer;
+    outline: none;
+    text-decoration: none;
+    border: none;
+    -webkit-transition: box-shadow 0.3s;
+    transition: box-shadow 0.3s;
+}
+
+#reset_button:hover {
+    background-color: rgb(152,91,152);
+}

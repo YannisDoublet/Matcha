@@ -48,6 +48,18 @@ button {
     font-style: italic;
 }
 
+#profile #already_liked {
+    align-self: center;
+    margin-top: 0.5rem;
+    font-size: 1.1rem;
+}
+
+#profile .fa-grin-hearts {
+    font-size: 1.3rem;
+    margin-right: 0.5rem;
+    color: #FF1744;
+}
+
 #profile #gender_container {
     display: flex;
     justify-content: center;
@@ -230,8 +242,8 @@ button {
 }
 
 #matchlist_container #profile_pic {
-    width: 12rem;
-    height: 12rem;
+    width: 10rem;
+    height: 11rem;
     border-radius: 50%;
     align-self: center;
     margin: 1rem 0;
@@ -422,7 +434,7 @@ button {
 }
 
 #research_list_container #profile_pic {
-    width: 8rem;
+    width: 6rem;
     height: 8rem;
     border-radius: 50%;
     align-self: center;

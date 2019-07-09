@@ -36,9 +36,32 @@ body {
     margin: 1rem;
 }
 
+#bio_title_container {
+    display: flex;
+    align-items: center;
+}
+
 #bio_title {
     color: rgb(179, 181, 183);
-    margin: 1rem;
+    margin: 0.8rem 0.5rem 0.5rem 1rem;
+}
+
+#bio_edit {
+    margin: 0;
+}
+
+#bio_form {
+    width: 100%;
+}
+
+#bio_input {
+    width: 100%;
+    outline: none;
+    text-decoration: none;
+    background: transparent;
+    border: none;
+    margin: 0 1rem 1rem;
+    font-size: 1.10rem;
 }
 
 #bio_content {
@@ -102,12 +125,14 @@ body {
     font-size: 1.5rem;
     opacity: 0.5;
     color: #FF1744;
+    cursor: pointer;
 }
 
 #profile .fa-pen {
-    position: absolute;
-    bottom: 0;
-    right: 0;
+    margin: 0.33rem;
+    font-size: 1.2rem;
+    opacity: 0.5;
+    cursor: pointer;
 }
 
 
@@ -122,9 +147,24 @@ body {
     margin: 1rem;
 }
 
+#tag_title_container {
+    display: flex;
+    align-items: center;
+}
+
 #tag_title {
     color: rgb(179, 181, 183);
     margin: 1rem 0 0 1rem;
+}
+.fa-edit {
+    margin: 1rem 0 0 0.5rem;
+    cursor: pointer;
+}
+
+#tags_empty_message {
+    margin: 1rem;
+    font-style: italic;
+    color: #888888;
 }
 
 #map_container {

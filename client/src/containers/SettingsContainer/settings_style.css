@@ -1,0 +1,9 @@
+#settings_wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    min-height: calc(100vh - 4rem - 9.5rem);
+    margin-top: 4rem;
+    user-select: none;
+}

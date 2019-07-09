@@ -17,9 +17,11 @@
 
 #matcher_container #form_container {
     position: relative;
+    width: 85%;
 }
 
 #matcher_container #input_tag {
+    width: 100%;
     outline: none;
     text-decoration: none;
     background: transparent;
@@ -51,6 +53,61 @@
 
 @media screen and (max-width: 375px) {
     #matcher_container #input_tag {
+        width: 15rem;
+    }
+}
+
+/* PROFILE CSS */
+
+#tag_container #input_tag_container {
+    width: 100%;
+    border-radius: 5px;
+}
+
+#tag_container .fa-search {
+    display: flex;
+    align-self: center;
+    font-size: 1.25rem;
+    margin: 0.5rem 0.5rem 0.5rem 1rem;
+}
+
+#tag_container #form_container {
+    position: relative;
+}
+
+#tag_container #input_tag {
+    width: 100%;
+    outline: none;
+    text-decoration: none;
+    background: transparent;
+    border: none;
+    margin: 0.5rem 1rem;
+    font-size: 1.10rem;
+}
+
+#tag_container #autocomplete_container {
+    position: absolute;
+    width: 11.80rem;
+    top: calc(23px + 0.5rem);
+    left: 0.5rem;
+    border-radius: 5px;
+    z-index: 10;
+}
+
+#tag_container .suggestion {
+    border: solid 1px rgb(179, 181, 183);
+    background: #FFFFFF;
+    padding: 0.5rem;
+}
+
+#tag_container .suggestion-active {
+    background: rgb(70, 95, 196);
+    padding: 0.5rem;
+    color: white;
+}
+
+@media screen and (max-width: 375px) {
+    #tag_container #input_tag {
         width: 15rem;
     }
 }
