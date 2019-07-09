@@ -61,7 +61,7 @@ class ReportPopUp extends Component {
         alert.type = 'success';
         alert.message = 'User successfully blocked !';
         this.props.handleAlert(alert);
-        this.props.closePopUp();
+        this.props.closePopUp('blocked');
     };
 
     unblockUser = (evt) => {
@@ -72,7 +72,7 @@ class ReportPopUp extends Component {
         alert.type = 'success';
         alert.message = 'User successfully unblocked !';
         this.props.handleAlert(alert);
-        this.props.closePopUp();
+        this.props.closePopUp('unblocked');
     };
 
     submitForm = (evt) => {

@@ -1,6 +1,7 @@
 const Database = require('../config/db.config').Database;
 const dbCredentials = require('../config/private/db.credentials').dbCredentials;
 const db = new Database(dbCredentials);
+const validationUtils = require('./validation.utils');
 const geolib = require('geolib');
 db.query('CREATE DATABASE IF NOT EXISTS `Matcha`');
 db.query('USE `Matcha`');
@@ -97,8 +98,15 @@ module.exports = {
                 return data[0];
             });
     },
+    findIdByUsername: (username) => {
+        return db.query('SELECT acc_id FROM `users` WHERE username=?', [username])
+            .then(res => {
+                return res[0].acc_id;
+            })
+    },
     fetchAllUsers: (acc_id, lat, lng) => {
-        return db.query('SELECT `acc_id` FROM `users` WHERE acc_id<>?', [acc_id])
+        return db.query('SELECT `acc_id` FROM `users` WHERE acc_id<>? ' +
+            'AND NOT EXISTS (SELECT blocker, blocked FROM `block` WHERE `blocker`=? AND blocked=users.acc_id)', [acc_id, acc_id])
             .then(async data => {
                 let users = [];
                 const fetchUserData = async (user, i) => {
@@ -177,11 +185,23 @@ module.exports = {
             });
 
     },
+    fetchReceiver: (conv_id, sender) => {
+        return db.query('SELECT person1, person2 FROM `chat` WHERE conv_id=?', [conv_id])
+            .then(res => {
+                return res[0].person1 !== sender ? res[0].person1 : res[0].person2;
+            })
+    },
     getUserNotifications: (acc_id) => {
-      return db.query('SELECT `sender`, `img`, `message`, `open` FROM notifications WHERE receiver=?', [acc_id])
-          .then(res => {
-              return res;
-          })
+        return db.query('SELECT `sender`, `img`, `message`, `open` FROM notifications WHERE receiver=? ' +
+            'ORDER BY `id` DESC', [acc_id])
+            .then(async res => {
+                let unread = await res.filter(notif => notif.open === 0).length;
+                console.log(unread);
+                return {content: res, number: unread};
+            })
+    },
+    readUserNotifications: (acc_id) => {
+        return db.query('UPDATE notifications SET open=? WHERE receiver=?', [1, acc_id]);
     },
     insertUser: (acc_id, email, firstname, lastname, user, psw, age, gender, sexuality, score, connection, bio, token, activate) => {
         return db.query("INSERT INTO `users` SET acc_id=?, email=?, firstname=?," +
@@ -218,26 +238,52 @@ module.exports = {
     insertPicture: (acc_id, img, type) => {
         return db.query("INSERT INTO `users_pictures` SET acc_id=?, picture=?, type=?", [acc_id, `/assets/uploads/${img}`, type]);
     },
-    insertNotification: (sender, receiver, type, img, msg) => {
-        return db.query('SELECT firstname FROM users WHERE acc_id=?', [sender])
+    insertNotification: (sender, receiver, type, msg) => {
+        return db.query('SELECT firstname, picture FROM users ' +
+            'INNER JOIN users_pictures ON users.acc_id = users_pictures.acc_id ' +
+            'WHERE users.acc_id=? AND type=?', [sender, 'profile_pic'])
             .then(sender_info => {
                 msg = sender_info[0].firstname + msg;
                 return db.query('SELECT acc_id FROM users WHERE username=?', [receiver])
                     .then(receiver_info => {
-                        return db.query('SELECT `open` FROM notifications WHERE sender=? AND receiver=? AND type=?',
-                            [sender_info[0].firstname, receiver_info[0].acc_id, type])
-                            .then(res => {
-                                if (!res.length || res[0].open === 1) {
-                                    return db.query('INSERT INTO notifications SET sender=?, receiver=?, type=?, ' +
-                                        'img=?, message=?, open=?', [sender_info[0].firstname,
-                                        receiver_info[0].acc_id, type, img, msg, 0])
-                                        .then(() => {
-                                            return receiver_info[0].acc_id;
+                        return db.query('SELECT `blocker`, `blocked` FROM `block` WHERE `blocker`=? AND `blocked`=?', [receiver_info[0].acc_id, sender])
+                            .then(status => {
+                                if (!status.length) {
+                                    return db.query('SELECT `open` FROM notifications WHERE sender=? AND receiver=? AND type=?',
+                                        [sender_info[0].firstname, receiver_info[0].acc_id, type])
+                                        .then(res => {
+                                            if (!res.length || validationUtils.checkOpen(res)) {
+                                                return db.query('INSERT INTO notifications SET sender=?, receiver=?, type=?, ' +
+                                                    'img=?, message=?, open=?', [sender_info[0].firstname,
+                                                    receiver_info[0].acc_id, type, sender_info[0].picture, msg, 0])
+                                                    .then(() => {
+                                                        return receiver_info[0].acc_id;
+                                                    })
+                                            } else if (res[0].open === 0) {
+                                                return null;
+                                            }
                                         })
-                                } else if (res[0].open === 0) {
+                                } else {
                                     return null;
                                 }
                             })
+                    })
+            })
+    },
+    insertMatchNotification: (acc_id, username) => {
+        return db.query('SELECT acc_id FROM users WHERE username=?', [username])
+            .then(data => {
+                return db.query('SELECT firstname, picture FROM users ' +
+                    'INNER JOIN users_pictures ON users.acc_id = users_pictures.acc_id ' +
+                    'WHERE users.acc_id=? AND type=? OR users.acc_id=? AND type=?', [acc_id, 'profile_pic',
+                    data[0].acc_id, 'profile_pic'])
+                    .then(async users => {
+                        await db.query('INSERT INTO notifications SET sender=?, receiver=?, type=?, ' +
+                            'img=?, message=?, open=?', [users[0].firstname, data[0].acc_id, 'matchUser',
+                            users[1].picture, `${users[1].firstname} and you matched ! Start a conversation !`, 0]);
+                        await db.query('INSERT INTO notifications SET sender=?, receiver=?, type=?, ' +
+                            'img=?, message=?, open=?', [users[1].firstname, acc_id, 'matchUser',
+                            users[0].picture, `${users[0].firstname} and you matched ! Start a conversation !`, 0]);
                     })
             })
     },
@@ -248,10 +294,20 @@ module.exports = {
             })
     },
     updateProfilePicture: (acc_id, pic) => {
-        return db.query('UPDATE users_pictures SET type=? WHERE type=? AND acc_id=?', ['pic', 'profile_pic', acc_id])
-            .then(() => {
-                return db.query('UPDATE users_pictures SET type=? WHERE picture=? AND acc_id=?', ['profile_pic', pic, acc_id]);
-            })
+        return db.query('SELECT picture FROM users_pictures WHERE type=? AND acc_id=?', ['profile_pic', acc_id])
+            .then(data => {
+                if (data[0].picture === '/assets/tulips.jpg') {
+                    return db.query('DELETE FROM users_pictures WHERE picture=? AND acc_id=?', ['/assets/tulips.jpg', acc_id])
+                        .then(() => {
+                            return db.query('UPDATE users_pictures SET type=? WHERE picture=? AND acc_id=?', ['profile_pic', pic, acc_id]);
+                        })
+                } else {
+                    return db.query('UPDATE users_pictures SET type=? WHERE type=? AND acc_id=?', ['pic', 'profile_pic', acc_id])
+                        .then(() => {
+                            return db.query('UPDATE users_pictures SET type=? WHERE picture=? AND acc_id=?', ['profile_pic', pic, acc_id]);
+                        })
+                }
+            });
     },
     deletePicture: (acc_id, img) => {
         return db.query('SELECT type FROM `users_pictures` WHERE acc_id=? AND picture=?', [acc_id, img])
@@ -280,11 +336,10 @@ module.exports = {
     },
     fetchCard: (id) => {
         return db.query('SELECT chat.person1, chat.person2, conv_id FROM `chat` ' +
-            'INNER JOIN matcher ON chat.person1 = matcher.person1 OR chat.person1 = matcher.person2 ' +
-            'WHERE matcher.`match`=? AND chat.person1=? ' +
-            'OR matcher.`match`=? AND chat.person2=?', [1, id, 1, id])
+            'WHERE chat.person1=? OR chat.person2=?', [id, id])
             .then(async data => {
                 let card = [];
+                console.log(data);
                 for (let i = 0; i < data.length; i++) {
                     let other = data[i].person1 === id ? data[i].person2 : data[i].person1;
                     card[i] = await db.query('SELECT firstname, lastname, connection, picture FROM `users` ' +
@@ -309,7 +364,16 @@ module.exports = {
     sendMsg: (conv_id, sender, message) => {
         return db.query('INSERT INTO `chat_messages` SET `conv_id`=?, `sender_id`=?, `message`=?, `date`=?', [conv_id, sender, message, Date.now()])
             .then(() => {
-                return db.query('UPDATE `chat` SET `last_message`=?, `date`=?', [message, Date.now()])
+                return db.query('UPDATE `chat` SET `last_message`=?, `date`=? WHERE conv_id=?', [message, Date.now(), conv_id])
+                    .then(() => {
+                        return module.exports.fetchReceiver(conv_id, sender)
+                            .then(res => {
+                                return db.query('SELECT username FROM `users` WHERE acc_id=?', [res])
+                                    .then(res => {
+                                        return module.exports.insertNotification(sender, res[0].username, 'message', ' sent you a message !');
+                                    })
+                            })
+                    })
             });
     },
     matchSuggestion: (sexuality, searchG, searchS, logged_ltg, logged_lng, count, logged_tags, username, logged_acc_id) => {
@@ -419,14 +483,22 @@ module.exports = {
                                 return db.query('INSERT INTO `matcher` SET person1=?, person2=?, like1=?, ' +
                                     'like2=?, `match`=?', [acc_id, res[0].acc_id, 1, 0, 0])
                                     .then(() => {
-                                        return module.exports.increaseScore(res[0].acc_id, 0.02);
+                                        return module.exports.increaseScore(res[0].acc_id, 0.02)
+                                            .then(() => {
+                                                return module.exports.insertNotification(acc_id, username, 'likeUser',
+                                                    ' liked you !');
+                                            })
                                     })
                             } else if (acc_id === fetch[0].person1) {
                                 if (fetch[0].like2 !== 1) {
                                     return db.query('UPDATE `matcher` SET like1=? WHERE person1=? AND person2=?',
                                         [1, acc_id, res[0].acc_id])
                                         .then(() => {
-                                            return module.exports.increaseScore(res[0].acc_id, 0.02);
+                                            return module.exports.increaseScore(res[0].acc_id, 0.02)
+                                                .then(() => {
+                                                    return module.exports.insertNotification(acc_id, username, 'likeUser',
+                                                        ' liked you !');
+                                                })
                                         })
                                 } else if (fetch[0].like2 === 1) {
                                     return db.query('UPDATE `matcher` SET like1=?, `match`=? WHERE person1=? AND person2=?',
@@ -437,7 +509,10 @@ module.exports = {
                                                 [Math.random().toString(36).substr(2, 9),
                                                     acc_id, res[0].acc_id, '', Date.now()])
                                                 .then(() => {
-                                                    return module.exports.increaseScore(res[0].acc_id, 0.05);
+                                                    return module.exports.increaseScore(res[0].acc_id, 0.05)
+                                                        .then(() => {
+                                                            return module.exports.insertMatchNotification(acc_id, username);
+                                                        })
                                                 })
                                         })
                                 }
@@ -446,7 +521,11 @@ module.exports = {
                                     return db.query('UPDATE `matcher` SET like2=? WHERE person1=? AND person2=?'
                                         , [1, res[0].acc_id, acc_id])
                                         .then(() => {
-                                            return module.exports.increaseScore(res[0].acc_id, 0.02);
+                                            return module.exports.increaseScore(res[0].acc_id, 0.02)
+                                                .then(() => {
+                                                    return module.exports.insertNotification(acc_id, username, 'likeUser',
+                                                        ' liked you !');
+                                                })
                                         })
                                 } else if (fetch[0].like1 === 1) {
                                     return db.query('UPDATE `matcher` SET like2=?, `match`=? WHERE person1=? AND person2=?',
@@ -457,7 +536,10 @@ module.exports = {
                                                 [Math.random().toString(36).substr(2, 9),
                                                     acc_id, res[0].acc_id, '', Date.now()])
                                                 .then(() => {
-                                                    return module.exports.increaseScore(res[0].acc_id, 0.05);
+                                                    return module.exports.increaseScore(res[0].acc_id, 0.05)
+                                                        .then(() => {
+                                                            return module.exports.insertMatchNotification(acc_id, username);
+                                                        })
                                                 })
                                         })
                                 }
@@ -486,7 +568,11 @@ module.exports = {
                                         'OR person1=? AND person2=?', [acc_id, res[0].acc_id,
                                         res[0].acc_id, acc_id])
                                         .then(() => {
-                                            return module.exports.decreaseScore(res[0].acc_id, 0.05);
+                                            return module.exports.decreaseScore(res[0].acc_id, 0.05)
+                                                .then(() => {
+                                                    return module.exports.insertNotification(acc_id, username,
+                                                        'unmatch', ' has unmatched you... :(')
+                                                })
                                         })
                                 })
                         } else {
@@ -504,6 +590,16 @@ module.exports = {
                                     })
                             }
                         }
+                    })
+            })
+    },
+    deleteChat: (acc_id, other_acc_id) => {
+        return db.query('SELECT conv_id FROM `chat` WHERE person1=? AND person2=? OR person1=? AND person2=?',
+            [acc_id, other_acc_id, other_acc_id, acc_id])
+            .then(data => {
+                return db.query('DELETE FROM `chat` WHERE conv_id=?', [data[0].conv_id])
+                    .then(() => {
+                        return db.query('DELETE FROM `chat_messages` WHERE conv_id=?', [data[0].conv_id]);
                     })
             })
     },
@@ -527,7 +623,14 @@ module.exports = {
                 if (acc_id !== res[0].acc_id) {
                     return db.query('INSERT INTO `block` SET `blocker`=?, `blocked`=?', [acc_id, res[0].acc_id])
                         .then(() => {
-                            return module.exports.decreaseScore(res[0].acc_id, 0.40);
+                            return db.query('DELETE FROM `matcher` WHERE person1=? AND person2=? OR person1=? AND person2=?',
+                                [acc_id, res[0].acc_id, res[0].acc_id, acc_id])
+                                .then(() => {
+                                    return module.exports.deleteChat(acc_id, res[0].acc_id)
+                                        .then(() => {
+                                            return module.exports.decreaseScore(res[0].acc_id, 0.40);
+                                        });
+                                })
                         })
                 } else {
                     return false;
@@ -564,7 +667,23 @@ module.exports = {
                     })
             })
     },
-    increaseScore(acc_id, score) {
+    checkMatch: (acc_id, username) => {
+        return db.query('SELECT acc_id FROM users WHERE username=?', [username])
+            .then(data => {
+                if (data.length) {
+                    return db.query('SELECT `match` FROM `matcher` WHERE person1=? AND person2=? ' +
+                        'OR person1=? AND person2=?', [acc_id, data[0].acc_id, data[0].acc_id, acc_id])
+                        .then(res => {
+                            if (res.length) {
+                                return res[0].match;
+                            } else {
+                                return null;
+                            }
+                        })
+                }
+            })
+    },
+    increaseScore: (acc_id, score) => {
         return db.query('SELECT score FROM users WHERE acc_id=?', [acc_id])
             .then(data => {
                 if (data[0].score !== 5) {

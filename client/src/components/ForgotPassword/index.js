@@ -40,11 +40,11 @@ class ForgotPassword extends Component {
     submitForm = (e) => {
         e.preventDefault();
         let {email} = this.state;
-
-        if (email) {
+        let regex = RegExp("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$");
+        if (regex.test(email)) {
             this.props.dispatch(sendForgotPassword(email));
         } else {
-            this.handleAlert({type: 'error', status: true, message: 'No email provided !'})
+            this.handleAlert({type: 'error', status: true, message: 'Invalid email provided !'})
         }
         this.setState({
             email: ''
@@ -58,6 +58,7 @@ class ForgotPassword extends Component {
                 <form id={'forgot_password_form'} onSubmit={this.submitForm}>
                     <input type={'email'} id={'forgot_password_input'} onChange={(e) => this.handleChange(e)}
                            value={this.state.email} placeholder={'Email'} onSubmit={(e) => this.submitForm(e)}/>
+                    <button onClick={(e) => this.submitForm(e)}>Submit</button>
                 </form>
                 <button id={'forgot_password_back'} onClick={(e) => this.props.toggleForgot(e)}>Back</button>
             </div>

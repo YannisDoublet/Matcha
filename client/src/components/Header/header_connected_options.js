@@ -32,6 +32,28 @@ class HeaderConnectedOptions extends Component {
         })
     }
 
+    componentDidMount() {
+        this.props.dispatch(getNotifications(this.props.id));
+        this.setState({
+            notifications_number: this.state.notifications.length
+        });
+        socket.emit('createRoom', {id: this.props.id});
+        socket.on('reloadNotification', (data) => {
+            if (this.props.location.pathname === '/chat') {
+                if (!data.message) {
+                    this.props.dispatch(getNotifications(this.props.id));
+                }
+            } else {
+                this.props.dispatch(getNotifications(this.props.id));
+            }
+        });
+        socket.on('reloadProfile', () => {
+            this.props.dispatch(userInfo(this.props.id));
+        });
+        window.addEventListener('mousedown', this.untoggleDropdown, false);
+        window.addEventListener("scroll", this.hideDropdown, false);
+    }
+
     componentWillReceiveProps(nextProps, nextContext) {
         if (nextProps.user.info !== this.props.user.info) {
             let newState = this.state;
@@ -43,18 +65,11 @@ class HeaderConnectedOptions extends Component {
             });
         } else if (nextProps.notifications !== this.props.notifications) {
             this.setState({
-                notifications: nextProps.notifications,
-                notifications_number: this.getNotificationsNumber(nextProps.notifications)
+                notifications: nextProps.notifications.content,
+                notifications_number: nextProps.notifications.number
             });
         }
     }
-
-    getNotificationsNumber = (notifications) => {
-        notifications.forEach(notif => {
-            if (notif.open === 0) {
-            }
-        });
-    };
 
     hideDropdown = () => {
         let st = window.pageYOffset || document.documentElement.scrollTop;
@@ -85,6 +100,7 @@ class HeaderConnectedOptions extends Component {
     toggleDropdown = (evt) => {
         const id = evt.target.id;
         if (id === 'notifications_wrapper') {
+            this.props.dispatch(readNotifications(this.props.id));
             this.setState({
                 notification_opened: !this.state.notification_opened,
                 profile_tag_opened: false,
@@ -110,18 +126,6 @@ class HeaderConnectedOptions extends Component {
         }
     };
 
-    componentDidMount() {
-        this.props.dispatch(getNotifications(this.props.id));
-        this.setState({
-            notifications_number: this.state.notifications.length
-        });
-        socket.emit('createRoom', {id: this.props.id});
-        socket.on('reloadNotification', () => {
-            this.props.dispatch(getNotifications(this.props.id));
-        });
-        window.addEventListener('mousedown', this.untoggleDropdown, false);
-        window.addEventListener("scroll", this.hideDropdown, false);
-    }
 
     componentWillUnmount() {
         window.removeEventListener('mousedown', this.untoggleDropdown);

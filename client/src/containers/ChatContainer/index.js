@@ -7,6 +7,9 @@ import ChatNavbar from '../../components/Widgets/ChatNavbar'
 import ChatBox from '../../components/Widgets/ChatBox'
 import './chat.css'
 import {fetchCard} from "../../actions/chatActions";
+import socketIOClient from "socket.io-client";
+import {ENDPOINT} from "../../config/socket";
+const socket = socketIOClient(ENDPOINT);
 
 class Chat extends Component {
 
@@ -35,11 +38,20 @@ class Chat extends Component {
                 })
             }
         } else if (nextProps.card) {
+            if (!this.state.users.length) {
+                nextProps.card.map(card => {
+                    return socket.emit('createChatRoom', {id: card.conv_id});
+                });
+            }
             this.setState({
                 users: nextProps.card
             })
         }
     }
+
+    updateCard = () => {
+        this.props.dispatch(fetchCard(this.props.token.id));
+    };
 
     toggleSidebar = (evt) => {
         this.setState({
@@ -56,7 +68,6 @@ class Chat extends Component {
 
     render() {
         let {redirect, users, active, sidebar} = this.state;
-        console.log(users);
         return (
             !redirect ?
                 <div id={'chat_wrapper'}>
@@ -65,7 +76,7 @@ class Chat extends Component {
                     </div>
                     <div id={'chat_box_container'}>
                         <ChatBox conversation={users[active]} id={this.props.token ? this.props.token : null}
-                                 toggle={this.toggleSidebar}/>
+                                 toggle={this.toggleSidebar} socket={socket} updateCard={this.updateCard}/>
                     </div>
                 </div> : <Redirect to={'/register'}/>
         );

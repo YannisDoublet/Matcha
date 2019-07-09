@@ -8,10 +8,8 @@ const ChatContent = (props) => {
 
     const renderMessage = (auth) => (
         msg.map((msg, i) => {
-                msg.sender_id = msg.sender_id !== auth.id ? 'others' : 'me';
-                return <ChatMessage key={i} msg={msg}/>
-            }
-        )
+                return <ChatMessage key={i} msg={msg} auth={auth}/>
+        })
     );
 
     return (

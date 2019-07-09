@@ -2,7 +2,7 @@ import React, {Component, Fragment} from 'react'
 import {connect} from 'react-redux'
 import {Redirect} from 'react-router-dom'
 import {
-    fetchUserByUsername, checkLike, checkBlock, addTag, deleteTag, manageBio, uploadPicture,
+    fetchUserByUsername, checkLike, checkBlock, checkMatch, addTag, deleteTag, manageBio, uploadPicture,
     updateProfilePicture, deletePicture
 } from "../../actions/profileActions";
 import {userInfo, verifyToken} from "../../actions/authActions";
@@ -16,8 +16,6 @@ import InputTag from "../../components/Widgets/InputTag";
 import './profile_container.css'
 import socketIOClient from "socket.io-client";
 import {ENDPOINT} from "../../config/socket";
-
-/* ADD PICTURE WIP, INVESTIGATE PROFILE_PIC*/
 
 class ProfileContainer extends Component {
 
@@ -40,6 +38,9 @@ class ProfileContainer extends Component {
     };
 
     componentWillMount() {
+        if (this.props.location.state) {
+            this.handleAlert(this.props.location.state);
+        }
         this.props.dispatch(verifyToken(localStorage.getItem('T')));
         if (this.props.match.params.id) {
             this.props.dispatch(fetchUserByUsername(this.props.match.params.id));
@@ -57,6 +58,12 @@ class ProfileContainer extends Component {
         }
     };
 
+    componentWillUpdate(nextProps, nextState, nextContext) {
+        if (!nextState.myProfile && nextState.myProfileCheck) {
+            this.props.dispatch(checkLike(nextProps.id, this.props.match.params.id));
+        }
+    }
+
     componentWillReceiveProps(nextProps) {
         if (!nextProps.id) {
             this.setState({
@@ -73,7 +80,6 @@ class ProfileContainer extends Component {
         } else if (nextProps.id && this.state.firstCheck) {
             this.props.dispatch(userInfo(nextProps.id));
             this.props.dispatch(checkBlock(nextProps.id, this.props.match.params.id));
-            this.props.dispatch(checkLike(nextProps.id, this.props.match.params.id));
             this.setState({
                 firstCheck: false
             })
@@ -125,16 +131,26 @@ class ProfileContainer extends Component {
             this.props.dispatch(fetchUserByUsername(this.props.profile.username));
         } else if (nextProps.blocked !== this.props.blocked) {
             this.props.dispatch(fetchUserByUsername(this.props.profile.username));
+        } else if (nextProps.match_status !== this.props.match_status) {
+            if (nextProps.match_status === 1) {
+                socketIOClient(ENDPOINT).emit('matchUser', {
+                    firstUser: this.props.id,
+                    secondUser: this.props.profile.username
+                });
+            } else {
+                socketIOClient(ENDPOINT).emit('likeUser', {
+                    receiver: this.props.profile.username
+                });
+            }
         }
     }
 
-    closePopUp = () => {
-        this.props.dispatch(checkBlock(this.props.id, this.props.profile.username))
-            .then(() => {
-                this.setState({
-                    popUp: 0
-                });
-            });
+    closePopUp = (status) => {
+        this.props.dispatch(checkBlock(this.props.id, this.props.profile.username));
+        this.props.dispatch(checkLike(this.props.id, this.props.match.params.id));
+        this.setState({
+            popUp: 0
+        });
     };
 
     handleAlert = (alert) => {
@@ -158,6 +174,7 @@ class ProfileContainer extends Component {
         if (like === 'no_one' || like === 'other' || like === 'dislike') {
             this.props.dispatch(likeUser(this.props.id, this.props.match.params.id))
                 .then(() => {
+                    this.props.dispatch(checkMatch(this.props.id, this.props.profile.username));
                     this.setState({
                         like: 'you'
                     })
@@ -165,6 +182,9 @@ class ProfileContainer extends Component {
         } else if (like === 'you' || like === 'match') {
             this.props.dispatch(dislikeUser(this.props.id, this.props.match.params.id))
                 .then(() => {
+                    socketIOClient(ENDPOINT).emit('dislikeUser', {
+                        receiver: this.props.profile.username
+                    });
                     this.setState({
                         like: 'no_one'
                     })
@@ -220,6 +240,7 @@ class ProfileContainer extends Component {
 
     updateProfilePicture = (evt, pic) => {
         this.props.dispatch(updateProfilePicture(this.props.id, pic, evt.target.id));
+        socketIOClient(ENDPOINT).emit('reloadProfile', {id: this.props.id});
     };
 
     deletePicture = (evt, pic) => {
@@ -333,6 +354,7 @@ function mapStateToProps(state) {
     let liked_status = state.profile.liked;
     let like = state.match.like;
     let blocked = state.profile.blocked;
+    let match_status = state.profile.match_status;
     return {
         profile,
         id,
@@ -342,7 +364,8 @@ function mapStateToProps(state) {
         bio,
         liked_status,
         like,
-        blocked
+        blocked,
+        match_status
     };
 }
 

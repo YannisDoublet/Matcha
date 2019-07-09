@@ -1,7 +1,8 @@
 import axios from 'axios'
 import {
     FETCH_USER, CHECK_LIKES, CHANGE_INFO, UPDATE_LOCATION, ADD_TAG, DELETE_TAG, MANAGE_BIO,
-    UPLOAD_PICTURE, UPDATE_PROFILE_PICTURE, DELETE_PICTURE, BLOCK_USER, UNBLOCK_USER, REPORT_USER, CHECK_BLOCKED
+    UPLOAD_PICTURE, UPDATE_PROFILE_PICTURE, DELETE_PICTURE, BLOCK_USER, UNBLOCK_USER, REPORT_USER, CHECK_BLOCKED,
+    CHECK_MATCH
 } from './types'
 
 export const fetchUserByUsername = (id) => dispatch => {
@@ -31,6 +32,17 @@ export const checkBlock = (acc_id, username) => dispatch => {
             dispatch({
                 type: CHECK_BLOCKED,
                 payload: res.data
+            });
+        });
+    return Promise.resolve();
+};
+
+export const checkMatch = (acc_id, username) => dispatch => {
+    axios.post('/api/account/check_match', {acc_id, username})
+        .then(res => {
+            dispatch({
+                type: CHECK_MATCH,
+                payload: res.data.code
             });
         });
     return Promise.resolve();
@@ -117,10 +129,8 @@ export const deletePicture = (acc_id, pic, pic_id) => dispatch => {
 };
 
 export const reportUser = (acc_id, username, pattern, message) => dispatch => {
-    console.log(acc_id, username, pattern, message);
     axios.post('/api/account/report_user', {acc_id, username, pattern, message})
         .then(res => {
-            console.log(res);
             dispatch({
                 type: REPORT_USER,
                 payload: res.data
@@ -131,7 +141,6 @@ export const reportUser = (acc_id, username, pattern, message) => dispatch => {
 export const blockUser = (acc_id, username) => dispatch => {
     axios.post('/api/account/block_user', {acc_id, username})
         .then(res => {
-            console.log(res);
             dispatch({
               type: BLOCK_USER,
               payload: res.data
@@ -142,7 +151,6 @@ export const blockUser = (acc_id, username) => dispatch => {
 export const unblockUser = (acc_id, username) => dispatch => {
     axios.post('/api/account/unblock_user', {acc_id, username})
         .then(res => {
-            console.log(res);
             dispatch({
                 type: UNBLOCK_USER,
                 payload: res.data

@@ -1,6 +1,6 @@
 import {
     FETCH_USER, CHANGE_INFO, ADD_TAG, DELETE_TAG, MANAGE_BIO,
-    UPLOAD_PICTURE, UPDATE_PROFILE_PICTURE, DELETE_PICTURE, CHECK_BLOCKED, CHECK_LIKES
+    UPLOAD_PICTURE, UPDATE_PROFILE_PICTURE, DELETE_PICTURE, CHECK_BLOCKED, CHECK_LIKES, CHECK_MATCH
 } from "../actions/types";
 
 export default function(state={}, action) {
@@ -25,6 +25,8 @@ export default function(state={}, action) {
             return {...state, blocked: action.payload};
         case CHECK_LIKES:
             return {...state, liked: action.payload};
+        case CHECK_MATCH:
+            return {...state, match_status: action.payload};
         default:
             return state;
     }

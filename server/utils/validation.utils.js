@@ -2,6 +2,14 @@ const axios = require('axios');
 const pip = require('public-ip');
 
 module.exports = {
+    validateName: (name) => {
+        let regex = RegExp('^[A-Za-z]+$');
+        return (regex.test(name));
+    },
+    validateAge: (age) => {
+        let regex = RegExp('^[0-9]+$');
+        return regex.test(age);
+    },
     validateGender: (gender) => {
         return (gender === 'Male' || gender === 'Female' || gender === 'Undefined')
     },
@@ -47,5 +55,15 @@ module.exports = {
             .then(res => {
                 return Promise.resolve(res.data);
             })
+    },
+    checkOpen: (notifications) => {
+        for (let i = 0; i < notifications.length; i++) {
+            if (notifications[i].open === 0) {
+                return false;
+            }
+            if (i === notifications.length - 1) {
+                return true;
+            }
+        }
     }
 };

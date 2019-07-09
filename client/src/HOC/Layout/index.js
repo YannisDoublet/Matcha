@@ -8,7 +8,7 @@ import Footer from '../../components/Footer'
 const Layout = (props) => {
     return (
         <div id={'wrapper'}>
-            <Header/>
+            <Header location={props.location}/>
             <div id="container">
                 {props.children}
             </div>

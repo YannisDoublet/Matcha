@@ -78,7 +78,6 @@ module.exports = {
         return dbUtils.fetchAllUsers(acc_id, lat, lng)
             .then(data => {
                 if (name) {
-                    console.log(name);
                     let user;
                     let search = name.split(' ').join('').toLowerCase();
                     let filter = [];

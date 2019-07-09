@@ -33,7 +33,6 @@ module.exports = {
         if (conv_id && sender && message) {
             dbUtils.sendMsg(conv_id, sender, message)
                 .then(() => {
-                    // server.notificationCenter(server.socketIo, 'new message');
                     return res.status(200);
                 })
         } else {

@@ -28,7 +28,8 @@ export const sendMessage = (conv_id, sender, message) => dispatch => {
                 type: SEND_MESSAGE,
                 payload: res.data
             })
-        })
+        });
+    return Promise.resolve()
 };
 
 

@@ -23,6 +23,7 @@ export const REPORT_USER = 'REPORT_USER';
 export const BLOCK_USER = 'BLOCK_USER';
 export const UNBLOCK_USER = 'UNBLOCK_USER';
 export const CHECK_BLOCKED = 'CHECK_BLOCKED';
+export const CHECK_MATCH = 'CHECK_MATCH';
 
 /* CHAT TYPES */
 

@@ -22,13 +22,15 @@ module.exports = {
         let username = req.body.username;
         let psw = req.body.password;
         let psw1 = req.body.check_password;
-        let age = parseInt(req.body.age);
+        let age = req.body.age;
         let sexuality = !req.body.sexuality ? 'Bisexual' : req.body.sexuality;
         let gender = req.body.gender;
 
-        if (!email.length || mailsUtils.ValidateEmail(email) === false ||
-            !firstname.length || !lastname.length || !psw.length || !psw1.length ||
-            age < 18 && age > 99 || !gender.length || validationUtils.validateGender(gender) === false
+        if (!email.length || mailsUtils.ValidateEmail(email) === false
+            || !firstname.length || !lastname.length || !validationUtils.validateName(firstname)
+            || !validationUtils.validateName(lastname) || !psw.length || !psw1.length
+            || !validationUtils.validateAge(age) || age < 18 && age > 99 || !gender.length
+            || validationUtils.validateGender(gender) === false
             || !sexuality.length || validationUtils.validateSexuality(sexuality) === false || psw !== psw1)
             return res.status(200).json({status: true, type: 'error', message: 'Invalid inputs !'});
         return dbUtils.searchUserByEmailOrUsername(email, username).then(user => {
@@ -39,7 +41,8 @@ module.exports = {
                         let token = rand.generate(50);
                         let acc_id = Math.random().toString(36).substr(2, 9);
                         dbUtils.insertUser(acc_id, email, firstname, lastname, username,
-                            psw, age, gender, sexuality, 2.50, 'Never connected...', '', token, 0);
+                            psw, parseInt(age), gender, sexuality,2.50,'Never connected...',
+                            '', token,0);
                         dbUtils.insertPictureAccountCreation(acc_id, '/assets/tulips.jpg', 'profile_pic');
                         dbUtils.insertPictureAccountCreation(acc_id, '/assets/banner.png', 'banner_pic');
                         dbUtils.insertUserLocation(acc_id, data.lat, data.lon).then(() => {
@@ -214,6 +217,14 @@ module.exports = {
             return res.status(200).json({'error': 'Invalid id'});
         }
     },
+    checkMatch: (req, res) => {
+        let {acc_id, username} = req.body;
+
+        dbUtils.checkMatch(acc_id, username)
+            .then(data => {
+                return res.status(200).json({code: data});
+            });
+    },
     checkBlock: (req, res) => {
         let {acc_id, username} = req.body;
 
@@ -250,6 +261,14 @@ module.exports = {
 
         if (acc_id && name && value) {
             name = name === 'check_password' ? 'password' : name;
+            if (!value.length || (name === 'email' && mailsUtils.ValidateEmail(email) === false)
+                || ((name === 'firstname' || name === 'lastname') && !validationUtils.validateName(value))
+                || (name === 'age' && (parseInt(value) < 18 && parseInt(value) > 99 || !validationUtils.validateAge(value)))
+                || (name === 'gender' && validationUtils.validateGender(value) === false)
+                || (name === 'sexuality' && validationUtils.validateSexuality(value) === false)
+                || (name === 'password' && value.length >= 8 && !!/[A-Z]+/.test(value) && !!/[0-9]+/.test(value)
+                && !!/[!@#$%^&*(),.?":{}|<>]+/.test(password)))
+                    return res.status(200).json({status: true, type: 'error', message: 'Invalid inputs !'});
             if (name === 'password') {
                 value = bcrypt.hashSync(value, 10);
             }

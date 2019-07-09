@@ -18,6 +18,7 @@ class MatcherContainer extends Component {
         research: [],
         filter: [],
         redirect: false,
+        full_profile: false,
         tags: {value: [], touched: false},
         dist: {value: [], touched: false},
         age: {value: [], touched: false},
@@ -50,10 +51,17 @@ class MatcherContainer extends Component {
                 count: nextProps.count
             })
         } else if (this.state.fetchMatch) {
-            this.props.dispatch(matchSuggestion(nextProps.logged, this.state.count, this.props.token.id));
-            this.setState({
-                fetchMatch: false
-            })
+            if (nextProps.logged.tag.length && nextProps.logged.bio.length && nextProps.logged.pictures[0].picture !== '/assets/tulips.jpg') {
+                this.props.dispatch(matchSuggestion(nextProps.logged, this.state.count, this.props.token.id));
+                this.setState({
+                    fetchMatch: false
+                })
+            } else {
+                this.setState({
+                    full_profile: true
+                })
+            }
+
         } else if (nextProps.users && nextProps.users !== this.props.users) {
             this.setState({
                 users: nextProps.users
@@ -229,34 +237,36 @@ class MatcherContainer extends Component {
     };
 
     render() {
-        const advanced = this.state.advanced_opened;
-        let redirect = this.state.redirect;
+        let {advanced_opened, redirect, full_profile} = this.state;
         let list = this.state.filter.length > 0 ? this.state.filter : this.state.users;
         return (
             !redirect ?
                 <div id={'matcher_wrapper'}>
-                    <div id={'matcher_container'}>
+                    {!full_profile ? <div id={'matcher_container'}>
                         <div id={'searchbar_container'}>
                             <InputTag {...this.props} updateValue={this.updateComponentValue}
                                       deleteValue={this.deleteComponentValue} id={'searchbar'}/>
                         </div>
                         <div id={'content_container'}>
                             <div id={'settings_container'} onSubmit={this.filterUsers}>
-                                <SettingsBar advanced={advanced} updateValue={this.updateComponentValue}
+                                <SettingsBar advanced={advanced_opened} updateValue={this.updateComponentValue}
                                              submit={(e) => this.filterUsers('matcher')} reset={this.resetValue}/>
-                                <AdvancedResearch advanced={advanced} open={this.toggleResearch}
+                                <AdvancedResearch advanced={advanced_opened} open={this.toggleResearch}
                                                   updateValue={this.updateComponentValue}
                                                   submit={this.researchUsers} reset={this.resetValue}
                                                   path={this.props.match.path}/>
                             </div>
-                            {!advanced && list.length ?
+                            {!advanced_opened && list.length ?
                                 <MatchList {...this.props} users={list} fetchMatch={this.fetchMatch}
                                            research={this.state.advanced_opened} like={this.like}
                                            dislike={this.dislike}/>
                                 : <ResearchList match={this.props.match} users={this.state.filter}
                                                 filter={this.filterUsers} research={this.state.advanced_opened}/>}
                         </div>
-                    </div>
+                    </div> : <Redirect to={{
+                        pathname: `/profile/${this.props.logged.username}`,
+                        state: {status: true, type: 'error', message: 'You need to update your profile first !'}
+                    }}/>}
                 </div> : <Redirect to={'/register'}/>
         );
     }

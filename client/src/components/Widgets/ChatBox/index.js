@@ -9,20 +9,24 @@ import './chatbox.css'
 class ChatBox extends Component {
 
     state = {
-        message: [],
-        fetch: false
+        message: []
     };
 
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        let content = document.querySelector('#chat_content_container');
+        content.scrollTop = content.scrollHeight;
+    }
+
     componentWillReceiveProps(nextProps) {
-        if (nextProps.conversation && !this.state.fetch) {
+        if (nextProps.conversation !== this.props.conversation) {
             this.props.dispatch(fetchMsg(nextProps.conversation.conv_id));
+            this.props.socket.on('reloadMessage', () => {
+                this.props.dispatch(fetchMsg(nextProps.conversation.conv_id));
+                this.props.updateCard();
+            });
+        } else if (nextProps.message !== this.props.message) {
             this.setState({
-                fetch: true
-            })
-        } else if (nextProps.message) {
-            this.setState({
-                message: nextProps.message,
-                fetch: false
+                message: nextProps.message
             })
         }
     };

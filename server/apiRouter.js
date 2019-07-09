@@ -18,6 +18,7 @@ exports.router = (function () {
     apiRouter.route('/account/user_info').post(userManagement.userInfo);
     apiRouter.route('/account/check_likes').post(userManagement.checkLikes);
     apiRouter.route('/account/check_block').post(userManagement.checkBlock);
+    apiRouter.route('/account/check_match').post(userManagement.checkMatch);
     apiRouter.route('/account/change_info').post(userManagement.changeInfo);
     apiRouter.route('/account/change_location').post(userManagement.changeLocation);
     apiRouter.route('/account/add_tag').post(userManagement.addTag);
@@ -51,6 +52,7 @@ exports.router = (function () {
     /* NOTIFICATIONS */
 
     apiRouter.route('/notifications/get_notifications').post(notificationsManagement.getNotifications);
+    apiRouter.route('/notifications/read_notifications').post(notificationsManagement.readNotifications);
 
     return apiRouter;
 })();
